@@ -1,5 +1,9 @@
+ARGS = -std=c99 -Wall -O2
+
+LIBS = -lSDL2
+
 tooDeep: obj/main.o obj/renderer.o
-			cc -o tooDeep obj/main.o obj/renderer.o
+			cc $(ARGS) $(LIBS) -o tooDeep obj/main.o obj/renderer.o
 
 obj/main.o: src/main.c
 			cc -c src/main.c -o obj/main.o
