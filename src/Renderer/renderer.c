@@ -2,9 +2,6 @@
 #include <SDL2/SDL.h>
 #include "renderer.h"
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
-
 struct td_renderer {
     SDL_Window *window;
 };
@@ -13,7 +10,7 @@ struct td_renderer {
     Initialises the main window and returns the renderer struct.
     SDL must have bee initialised before this can be called.
 */
-td_renderer initRenderer() {
+td_renderer initRenderer(int width, int height) {
     // The main game window
     SDL_Window *window = NULL;
 
@@ -24,8 +21,8 @@ td_renderer initRenderer() {
     window = SDL_CreateWindow( "TooDeep", 
                                 SDL_WINDOWPOS_UNDEFINED,
                                 SDL_WINDOWPOS_UNDEFINED,
-                                SCREEN_WIDTH,
-                                SCREEN_HEIGHT,
+                                width,
+                                height,
                                 SDL_WINDOW_SHOWN );
 
     if(!window) {

@@ -3,7 +3,7 @@
 
 typedef struct td_renderer *td_renderer;
 
-td_renderer initRenderer();
+td_renderer initRenderer(int,int);
 
 void destroyRenderer(td_renderer);
 
