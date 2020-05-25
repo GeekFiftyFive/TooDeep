@@ -65,6 +65,14 @@ td_renderer initRenderer(int width, int height) {
     return renderer;
 }
 
+void renderFrame(td_renderer renderer) {
+    SDL_SetRenderDrawColor(renderer -> renderer, 66, 134, 244, 0xFF );
+
+    SDL_RenderPresent(renderer -> renderer);
+
+    SDL_RenderClear(renderer -> renderer);
+}
+
 /*
     Frees a td_renderer pointer
 */

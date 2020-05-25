@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <SDL2/SDL.h>
 #include "Renderer/renderer.h"
 
@@ -11,9 +12,14 @@ int main(int argc, char *args[]) {
         return 1;
     }
 
+    bool quit = false;
     SDL_Event e;
 
-    SDL_PollEvent(&e);
+    while(!quit) {
+        SDL_PollEvent(&e);
+        quit = e.type == SDL_QUIT;
+        renderFrame(renderer);
+    }
 
     SDL_Delay(2000);
 
