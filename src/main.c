@@ -1,6 +1,5 @@
-#include <stdbool.h>
-#include <SDL2/SDL.h>
 #include "Renderer/renderer.h"
+#include "Events/eventLoop.h"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
@@ -12,18 +11,11 @@ int main(int argc, char *args[]) {
         return 1;
     }
 
-    bool quit = false;
-    SDL_Event e;
-
-    while(!quit) {
-        SDL_PollEvent(&e);
-        quit = e.type == SDL_QUIT;
-        renderFrame(renderer);
-    }
+    startEventLoop(renderer);
 
     destroyRenderer(renderer);
 
-    SDL_Quit();
+    quit();
 
     return 0;
 }
