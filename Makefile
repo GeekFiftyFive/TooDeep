@@ -1,6 +1,6 @@
 ARGS = -std=c99 -Wall -O2
 
-LIBS = -lSDL2
+LIBS = -lSDL2 -lSDL2_image
 
 tooDeep: obj/main.o obj/renderer.o
 			cc $(ARGS) $(LIBS) -o tooDeep obj/main.o obj/renderer.o

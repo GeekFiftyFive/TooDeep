@@ -5,14 +5,11 @@
 #define SCREEN_HEIGHT 600
 
 int main(int argc, char *args[]) {
-    int err = SDL_Init(SDL_INIT_VIDEO);
+    td_renderer renderer = initRenderer(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    if(err) {
-        fprintf(stderr, "Error initialising SDL: %s\n", SDL_GetError());
+    if(!renderer) {
         return 1;
     }
-
-    td_renderer renderer = initRenderer(SCREEN_WIDTH, SCREEN_HEIGHT);
 
     SDL_Event e;
 

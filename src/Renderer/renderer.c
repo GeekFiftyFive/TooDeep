@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include "renderer.h"
 
 struct td_renderer {
     SDL_Window *window;
+    SDL_Renderer *renderer;
 };
 
 /*
@@ -11,8 +13,25 @@ struct td_renderer {
     SDL must have bee initialised before this can be called.
 */
 td_renderer initRenderer(int width, int height) {
+    int err = SDL_Init(SDL_INIT_VIDEO);
+
+    if(err) {
+        fprintf(stderr, "Error initialising SDL: %s\n", SDL_GetError());
+        return NULL;
+    }
+
+    int imgFlags = IMG_INIT_PNG;
+    if( !( IMG_Init( imgFlags ) & imgFlags ) )
+    {
+        printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
+        return NULL;
+    }
+
     // The main game window
     SDL_Window *window = NULL;
+
+    // The main renderer
+    SDL_Renderer *sdlRenderer = NULL;
 
     // The Window Surface
     SDL_Surface *screen = NULL;
@@ -30,17 +49,18 @@ td_renderer initRenderer(int width, int height) {
         return NULL;
     }
 
-    // Get the window's surface
-    screen = SDL_GetWindowSurface(window);
+    // Create the accelerated renderer
+    sdlRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    // Clear the surface
-    SDL_FillRect(screen, NULL, SDL_MapRGB( screen -> format, 0xFF, 0xFF, 0xFF ));
-
-    SDL_UpdateWindowSurface(window);
+    if(!sdlRenderer) {
+        fprintf(stderr, "Unable to initialise the renderer: %s\n", SDL_GetError());
+    }
 
     td_renderer renderer = malloc(sizeof(struct td_renderer));
 
     renderer -> window = window;
+
+    renderer -> renderer = sdlRenderer;
 
     return renderer;
 }
@@ -50,5 +70,6 @@ td_renderer initRenderer(int width, int height) {
 */
 void destroyRenderer(td_renderer renderer) {
     SDL_DestroyWindow(renderer -> window);
+    SDL_DestroyRenderer(renderer -> renderer);
     free(renderer);
 }
