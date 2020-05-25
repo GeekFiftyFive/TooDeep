@@ -21,8 +21,6 @@ int main(int argc, char *args[]) {
         renderFrame(renderer);
     }
 
-    SDL_Delay(2000);
-
     destroyRenderer(renderer);
 
     SDL_Quit();
