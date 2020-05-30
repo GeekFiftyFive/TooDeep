@@ -61,11 +61,11 @@ void *getFromList(td_linkedList list, char *key) {
     return NULL;
 }
 
-void listForEach(td_linkedList list, void (*callback)(void *)) {
+void listForEach(td_linkedList list, void (*callback)(void *, void*), void *data) {
     td_listNode current = list -> head;
 
     do {
-        callback(current -> data);
+        callback(current -> data, data);
         current = current -> next;
     } while(current != list -> head);
 }
