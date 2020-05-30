@@ -141,8 +141,6 @@ void drawRenderable(void *renderableData, void *rendererData) {
     td_renderable renderable = (td_renderable) renderableData;
     td_renderer renderer = (td_renderer) rendererData;
 
-    printf("Rendering %d\n", renderable -> num);
-
     //TODO: Set the positioning properly
     SDL_Rect rect;
     rect.x = 0;
