@@ -16,9 +16,9 @@ bool shouldRunTests(int argc, char *args[]) {
 }
 
 int main(int argc, char *args[]) {
-    td_renderer renderer = initRenderer(SCREEN_WIDTH, SCREEN_HEIGHT);
-
     if(shouldRunTests(argc, args)) return runTests();
+
+    td_renderer renderer = initRenderer(SCREEN_WIDTH, SCREEN_HEIGHT);
 
     if(!renderer) return 1;
 

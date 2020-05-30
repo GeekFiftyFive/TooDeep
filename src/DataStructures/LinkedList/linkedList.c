@@ -1,0 +1,78 @@
+#include <stdlib.h>
+#include <string.h>
+#include "linkedList.h"
+
+typedef struct td_listNode *td_listNode;
+
+struct td_linkedList {
+    td_listNode head;
+    td_listNode tail;
+};
+
+struct td_listNode {
+    char *key;
+    void *data;
+    void (*freeFunc)(void *);
+    td_listNode prev;
+    td_listNode next;
+};
+
+td_linkedList createLinkedList() {
+    return malloc(sizeof(struct td_linkedList));
+}
+
+void appendWithFree(td_linkedList list, void *data, char *key, void *freeFunc) {
+    // Create a new node to store the data
+    td_listNode node = malloc(sizeof(struct td_listNode));
+    char *keyCopy = malloc(strlen(key) + 1);
+    node -> key = strcpy(keyCopy, key);
+    node -> data = data;
+    node -> freeFunc = freeFunc;
+
+    // Append the node to the list
+    if(!list -> tail) {
+        list -> head = node;
+        node -> next = node;
+        node -> prev = node;
+    } else {
+        td_listNode tail = list -> tail;
+        tail -> next = node;
+        node -> prev = tail;
+        node -> next = list -> head; 
+    }
+
+    list -> tail = node;
+}
+
+void append(td_linkedList list, void *data, char *key) {
+    appendWithFree(list, data, key, NULL);
+}
+
+void *getFromList(td_linkedList list, char *key) {
+    if(!list -> head) return NULL;
+
+    td_listNode current = list -> head;
+
+    do {
+        if(strcmp(current -> key, key) == 0) return current -> data;
+        current = current -> next;
+    } while(current != list -> head);
+
+    return NULL;
+}
+
+void destroyLinkedList(td_linkedList list) {
+    td_listNode current = list -> head;
+
+    do {
+        if(current -> freeFunc) {
+            current -> freeFunc(current -> data);
+            free(current -> key);
+            td_listNode next = current -> next;
+            free(current);
+            current = next;
+        }
+    } while(current != list -> tail);
+
+    free(list);
+}

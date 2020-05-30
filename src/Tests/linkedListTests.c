@@ -1,3 +1,5 @@
 #include "linkedListTests.h"
 
-int runLinkedListTests();
+int runLinkedListTests() {
+    return 0;
+}

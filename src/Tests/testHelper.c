@@ -3,6 +3,14 @@
 #include "linkedListTests.h"
 
 int runTests() {
-    printf("All tests passed!\n");
+    int testFailures = 0;
+
+    testFailures += runLinkedListTests();
+
+    if(testFailures) {
+        fprintf(stderr, "%d tests failed!\n", testFailures);
+    } else {
+        printf("All tests passed!\n");
+    }
     return 0;
 };

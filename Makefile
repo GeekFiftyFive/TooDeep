@@ -2,8 +2,8 @@ ARGS = -std=c99 -Wall -O2
 
 LIBS = -lSDL2 -lSDL2_image
 
-tooDeep: obj/main.o obj/renderer.o obj/eventLoop.o obj/testHelper.o obj/linkedListTests.o
-			cc $(ARGS) $(LIBS) -o tooDeep obj/main.o obj/renderer.o obj/eventLoop.o obj/testHelper.o obj/linkedListTests.o
+tooDeep: obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o
+			cc $(ARGS) $(LIBS) -o tooDeep obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o
 
 obj/main.o: src/main.c
 			cc -c src/main.c -o obj/main.o
@@ -19,6 +19,9 @@ obj/testHelper.o: src/Tests/testHelper.c src/Tests/testHelper.h
 
 obj/linkedListTests.o: src/Tests/linkedListTests.c src/Tests/linkedListTests.h
 			cc -c src/Tests/linkedListTests.c -o obj/linkedListTests.o
+
+obj/linkedList.o: src/DataStructures/LinkedList/linkedList.c src/DataStructures/LinkedList/linkedList.h
+			cc -c src/DataStructures/LinkedList/linkedList.c -o obj/linkedList.o
 
 clean:
 	rm -rf obj/*
