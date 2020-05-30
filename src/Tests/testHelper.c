@@ -19,7 +19,7 @@ int runTests() {
 int assertString(char *expected, char *actual, char *message) {
     int result = strcmp(expected, actual) == 0 ? 0 : 1;
     if(result) {
-        fprintf(stderr, "\033[0;31m%s failed!\033[0m\n", message);
+        fprintf(stderr, "\033[0;31m%s failed! Expected %s, got %s\033[0m\n", message, expected, actual);
     }
 
     return result;
