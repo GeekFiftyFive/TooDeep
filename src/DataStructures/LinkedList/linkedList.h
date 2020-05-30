@@ -13,6 +13,8 @@ void *getFromList(td_linkedList, char *);
 
 void listForEach(td_linkedList, void (*callback)(void *, void *), void *);
 
+char *listToString(td_linkedList);
+
 void destroyLinkedList(td_linkedList);
 
 #endif

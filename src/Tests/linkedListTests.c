@@ -2,6 +2,8 @@
 #include "testHelper.h"
 #include "../DataStructures/LinkedList/linkedList.h"
 
+#define EXPECTED_STRING "A -> B -> C"
+
 int runLinkedListTests() {
     int failedTests = 0;
 
@@ -20,6 +22,12 @@ int runLinkedListTests() {
     failedTests += assert(a, *((int *) getFromList(list, "A")), "Fetch 'A' from list");
     failedTests += assert(b, *((int *) getFromList(list, "B")), "Fetch 'B' from list");
     failedTests += assert(c, *((int *) getFromList(list, "C")), "Fetch 'C' from list");
+
+    // Ensure that they are in the correct order
+    //failedTests += assertString(EXPECTED_STRING, listToString(list), "listToString");
+
+    // Destroy the list
+    destroyLinkedList(list);
 
     return failedTests;
 }

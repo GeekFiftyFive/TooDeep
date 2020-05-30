@@ -7,4 +7,6 @@
 
 int runTests();
 
+int assertString(char *, char *, char *);
+
 #endif

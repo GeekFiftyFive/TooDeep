@@ -1,10 +1,12 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include "linkedList.h"
 
 typedef struct td_listNode *td_listNode;
 
 struct td_linkedList {
+    int length;
     td_listNode head;
     td_listNode tail;
 };
@@ -18,7 +20,11 @@ struct td_listNode {
 };
 
 td_linkedList createLinkedList() {
-    return malloc(sizeof(struct td_linkedList));
+    td_linkedList list = malloc(sizeof(struct td_linkedList));
+    list -> head = NULL;
+    list -> tail = NULL;
+    list -> length = 0;
+    return list;
 }
 
 void appendWithFree(td_linkedList list, void *data, char *key, void *freeFunc) {
@@ -42,6 +48,7 @@ void appendWithFree(td_linkedList list, void *data, char *key, void *freeFunc) {
     }
 
     list -> tail = node;
+    list -> length++;
 }
 
 void append(td_linkedList list, void *data, char *key) {
@@ -68,6 +75,33 @@ void listForEach(td_linkedList list, void (*callback)(void *, void*), void *data
         callback(current -> data, data);
         current = current -> next;
     } while(current != list -> head);
+}
+
+char *listToString(td_linkedList list) {
+    // Accumulate length of keys
+    // TODO: Re-allocate the length of the string instead of traversing the list twice
+    int accLength = 0;
+    td_listNode current = list -> head;
+
+    do {
+        accLength += strlen(current -> key);
+        current = current -> next;
+    } while(current != list -> head);
+
+    char *out = malloc(accLength + 4 * list -> length);
+    size_t offset = 0;
+
+    do {
+        if(current -> next == list -> head) {
+            sprintf(out + offset, "%s", current -> key);
+        } else {
+            sprintf(out + offset, "%s -> ", current -> key);
+            offset += strlen(current -> key) + 4;
+            current = current -> next;
+        }
+    } while(current != list -> head);
+
+    return out;
 }
 
 void destroyLinkedList(td_linkedList list) {
