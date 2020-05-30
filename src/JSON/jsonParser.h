@@ -5,4 +5,6 @@ typedef struct json *json;
 
 json jsonParse(char *);
 
+void freeJson(json);
+
 #endif

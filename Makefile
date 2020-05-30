@@ -1,6 +1,6 @@
 ARGS = -std=c99 -Wall -O2
 
-LIBS = -lSDL2 -lSDL2_image -lm
+LIBS = -lSDL2 -lSDL2_image -lm -lcJSON
 
 tooDeep: obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o obj/fileIO.o obj/jsonParser.o
 			cc $(ARGS) $(LIBS) -o tooDeep obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o obj/fileIO.o obj/jsonParser.o

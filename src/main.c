@@ -23,10 +23,13 @@ int main(int argc, char *args[]) {
 
     // TODO: Pull target file from the command arguments
     char *configFile = readFile("examples/spaceship/td.json");
+    json config;
 
     if(configFile) {
-        jsonParse(configFile);
+        config = jsonParse(configFile);
         free(configFile);
+    } else {
+        fprintf(stderr, "Could not load config file!\n");
     }
 
     td_renderer renderer = initRenderer(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -38,6 +41,8 @@ int main(int argc, char *args[]) {
     startEventLoop(renderer);
 
     destroyRenderer(renderer);
+
+    freeJson(config);
 
     quit();
 
