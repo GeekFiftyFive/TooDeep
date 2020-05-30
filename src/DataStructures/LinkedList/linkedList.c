@@ -70,6 +70,7 @@ void *getFromList(td_linkedList list, char *key) {
 }
 
 void listForEach(td_linkedList list, void (*callback)(void *, void*), void *data) {
+    if(list -> length == 0) return;
     td_listNode current = list -> head;
 
     do {
@@ -79,6 +80,12 @@ void listForEach(td_linkedList list, void (*callback)(void *, void*), void *data
 }
 
 char *listToString(td_linkedList list) {
+    if(list -> length == 0) {
+        char *blank = malloc(3);
+        strcpy(blank, "[]");
+        return blank;
+    }
+
     // Accumulate length of keys
     // TODO: Re-allocate the length of the string instead of traversing the list twice
     int accLength = 0;
@@ -111,6 +118,8 @@ int listLength(td_linkedList list) {
 }
 
 void destroyLinkedList(td_linkedList list) {
+    if(list -> length == 0) return;
+
     td_listNode current = list -> head;
 
     do {

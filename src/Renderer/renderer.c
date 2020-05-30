@@ -2,11 +2,14 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
+#include <math.h>
 #include "renderer.h"
+#include "../DataStructures/LinkedList/linkedList.h"
 
 struct td_renderer {
     SDL_Window *window;
     SDL_Renderer *renderer;
+    td_linkedList renderQueue;
 };
 
 struct td_renderable {
@@ -67,6 +70,8 @@ td_renderer initRenderer(int width, int height) {
 
     renderer -> renderer = sdlRenderer;
 
+    renderer -> renderQueue = createLinkedList();
+
     return renderer;
 }
 /*
@@ -102,12 +107,31 @@ SDL_Texture *loadTexture(const char *path, td_renderer renderer){
     else return newTexture;
 }
 
+/*
+Function to be called when the render queue is destroyed in order to
+free up renderables
+*/
+void renderableFreeFunc(void* renderableData) {
+    td_renderable renderable = (td_renderable) renderableData;
+    SDL_DestroyTexture(renderable -> texture);
+    free(renderable);
+}
+
 td_renderable createRendereable(const char *path, td_renderer renderer) {
     td_renderable renderable = malloc(sizeof(struct td_renderable));
 
     renderable -> texture = loadTexture(path, renderer);
 
-    //TODO: Register the renderable with the renderer
+    int queueLength = listLength(renderer -> renderQueue);
+
+    // Create a unique key
+    char *key = malloc((int) ceil(log10(queueLength + 1)) + 1);
+
+    sprintf(key, "%d", queueLength + 1);
+
+    appendWithFree(renderer -> renderQueue, renderable, key, renderableFreeFunc);
+
+    free(key);
 
     return renderable;
 }
@@ -124,7 +148,13 @@ void renderFrame(td_renderer renderer) {
     Frees a td_renderer pointer
 */
 void destroyRenderer(td_renderer renderer) {
+    //TODO: Delete dump of render queue
+    char *stringList = listToString(renderer -> renderQueue);
+    printf("Render queue: %s\n", stringList);
+    free(stringList);
+
     SDL_DestroyWindow(renderer -> window);
     SDL_DestroyRenderer(renderer -> renderer);
+    destroyLinkedList(renderer -> renderQueue);
     free(renderer);
 }
