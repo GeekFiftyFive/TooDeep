@@ -14,6 +14,7 @@ struct td_renderer {
 
 struct td_renderable {
     SDL_Texture *texture;
+    int num;
 };
 
 /*
@@ -131,16 +132,32 @@ td_renderable createRendereable(const char *path, td_renderer renderer) {
 
     appendWithFree(renderer -> renderQueue, renderable, key, renderableFreeFunc);
 
-    free(key);
+    renderable -> num = queueLength + 1;
 
     return renderable;
+}
+
+void drawRenderable(void *renderableData, void *rendererData) {
+    td_renderable renderable = (td_renderable) renderableData;
+    td_renderer renderer = (td_renderer) rendererData;
+
+    printf("Rendering %d\n", renderable -> num);
+
+    //TODO: Set the positioning properly
+    SDL_Rect rect;
+    rect.x = 0;
+    rect.y = 0;
+    rect.w = 256;
+    rect.h = 256;
+    SDL_RenderCopyEx(renderer -> renderer, renderable -> texture, NULL, &rect, 0, NULL, SDL_FLIP_NONE);
 }
 
 void renderFrame(td_renderer renderer) {
     SDL_SetRenderDrawColor(renderer -> renderer, 66, 134, 244, 0xFF );
 
-    SDL_RenderPresent(renderer -> renderer);
+    listForEach(renderer -> renderQueue, drawRenderable, renderer);
 
+    SDL_RenderPresent(renderer -> renderer);
     SDL_RenderClear(renderer -> renderer);
 }
 
@@ -148,11 +165,6 @@ void renderFrame(td_renderer renderer) {
     Frees a td_renderer pointer
 */
 void destroyRenderer(td_renderer renderer) {
-    //TODO: Delete dump of render queue
-    char *stringList = listToString(renderer -> renderQueue);
-    printf("Render queue: %s\n", stringList);
-    free(stringList);
-
     SDL_DestroyWindow(renderer -> window);
     SDL_DestroyRenderer(renderer -> renderer);
     destroyLinkedList(renderer -> renderQueue);
