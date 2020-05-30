@@ -15,6 +15,8 @@ void listForEach(td_linkedList, void (*callback)(void *, void *), void *);
 
 char *listToString(td_linkedList);
 
+int listLength(td_linkedList);
+
 void destroyLinkedList(td_linkedList);
 
 #endif

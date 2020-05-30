@@ -44,6 +44,8 @@ int runLinkedListTests() {
     listForEach(list, testCallback, &acc);
     failedTests += assert(a + b + c, acc, "listForEach");
     
+    // Test the length of the list
+    failedTests += assert(3, listLength(list), "listLength");
 
     // Destroy the list
     destroyLinkedList(list);

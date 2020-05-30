@@ -106,6 +106,10 @@ char *listToString(td_linkedList list) {
     return out;
 }
 
+int listLength(td_linkedList list) {
+    return list -> length;
+}
+
 void destroyLinkedList(td_linkedList list) {
     td_listNode current = list -> head;
 
