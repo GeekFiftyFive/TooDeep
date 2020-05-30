@@ -1,8 +1,10 @@
 #include <stdbool.h>
 #include <string.h>
+#include <cjson/cJSON.h>
 #include "Renderer/renderer.h"
 #include "Events/eventLoop.h"
 #include "Tests/testHelper.h"
+#include "IO/fileIO.h"
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
@@ -17,6 +19,9 @@ bool shouldRunTests(int argc, char *args[]) {
 
 int main(int argc, char *args[]) {
     if(shouldRunTests(argc, args)) return runTests();
+
+    // TODO: Pull target file from the command arguments
+    char *configFile = readFile("examples/spaceship/td.json");
 
     td_renderer renderer = initRenderer(SCREEN_WIDTH, SCREEN_HEIGHT);
 
