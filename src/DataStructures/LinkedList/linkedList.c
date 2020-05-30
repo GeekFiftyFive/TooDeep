@@ -61,6 +61,15 @@ void *getFromList(td_linkedList list, char *key) {
     return NULL;
 }
 
+void listForEach(td_linkedList list, void (*callback)(void *)) {
+    td_listNode current = list -> head;
+
+    do {
+        callback(current -> data);
+        current = current -> next;
+    } while(current != list -> head);
+}
+
 void destroyLinkedList(td_linkedList list) {
     td_listNode current = list -> head;
 
@@ -72,7 +81,7 @@ void destroyLinkedList(td_linkedList list) {
             free(current);
             current = next;
         }
-    } while(current != list -> tail);
+    } while(current != list -> head);
 
     free(list);
 }
