@@ -23,6 +23,8 @@ int main(int argc, char *args[]) {
     // TODO: Pull target file from the command arguments
     char *configFile = readFile("examples/spaceship/td.json");
 
+    printf("%s\n", configFile);
+
     td_renderer renderer = initRenderer(SCREEN_WIDTH, SCREEN_HEIGHT);
 
     td_renderable testRenderable = createRendereable("examples/spaceship/assets/rocket.png", renderer);
@@ -32,6 +34,8 @@ int main(int argc, char *args[]) {
     startEventLoop(renderer);
 
     destroyRenderer(renderer);
+
+    if(configFile) free(configFile);
 
     quit();
 
