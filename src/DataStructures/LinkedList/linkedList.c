@@ -84,14 +84,10 @@ char *listToString(td_linkedList list) {
     int accLength = 0;
     td_listNode current = list -> head;
 
-    printf("Begin list\n");
-
     do {
         accLength += strlen(current -> key);
         current = current -> next;
     } while(current != list -> head);
-
-    printf("Accumulated string length");
 
     char *out = malloc(accLength + 4 * list -> length);
     size_t offset = 0;
@@ -102,11 +98,10 @@ char *listToString(td_linkedList list) {
         } else {
             sprintf(out + offset, "%s -> ", current -> key);
             offset += strlen(current -> key) + 4;
-            current = current -> next;
         }
-    } while(current != list -> head);
 
-    printf("Finished building string\n");
+        current = current -> next;
+    } while(current != list -> head);
 
     return out;
 }
