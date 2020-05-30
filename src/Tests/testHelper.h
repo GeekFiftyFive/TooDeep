@@ -1,7 +1,9 @@
 #ifndef TESTS
 #define TESTS
 
-#define assert(A, B) (A == B ? 0 : 1)
+#include <stdio.h>
+
+#define assert(A, B, C) (A == B ? 0 : 1); if(A != B) fprintf(stderr, "%s failed!\n", C)
 
 int runTests();
 

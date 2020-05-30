@@ -17,9 +17,9 @@ int runLinkedListTests() {
     append(list1, &c, "C");
 
     // Retrieve the data and assert the result
-    failedTests += assert(a, *((int *) getFromList(list1, "A")));
-    failedTests += assert(b, *((int *) getFromList(list1, "B")));
-    failedTests += assert(c, *((int *) getFromList(list1, "C")));
+    failedTests += assert(a, *((int *) getFromList(list1, "A")), "Fetch 'A' from list");
+    failedTests += assert(b, *((int *) getFromList(list1, "B")), "Fetch 'B' from list");
+    failedTests += assert(c, *((int *) getFromList(list1, "C")), "Fetch 'C' from list");
 
     return failedTests;
 }
