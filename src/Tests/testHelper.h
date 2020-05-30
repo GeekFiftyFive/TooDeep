@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#define assert(A, B, C) (A == B ? 0 : 1); if(A != B) fprintf(stderr, "%s failed!\n", C)
+#define assert(A, B, C) (A == B ? 0 : 1); if(A != B) fprintf(stderr, "\033[0;31m%s failed!\033[0m\n", C)
 
 int runTests();
 
