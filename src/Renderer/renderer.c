@@ -6,17 +6,19 @@
 #include "renderer.h"
 #include "../DataStructures/LinkedList/linkedList.h"
 
+#define BASE_WIDTH 1920
+
 struct td_renderer {
     SDL_Window *window;
     SDL_Renderer *renderer;
     td_linkedList renderQueue;
-    int width;
-    int height;
+    float scaleFactor;
 };
 
 struct td_renderable {
     SDL_Texture *texture;
     SDL_Rect rect;
+    td_renderSpace space;
     int num;
 };
 
@@ -71,14 +73,9 @@ td_renderer initRenderer(int width, int height) {
     td_renderer renderer = malloc(sizeof(struct td_renderer));
 
     renderer -> window = window;
-
     renderer -> renderer = sdlRenderer;
-
     renderer -> renderQueue = createLinkedList();
-
-    renderer -> width = width;
-
-    renderer -> height = height;
+    renderer -> scaleFactor = (float) width / BASE_WIDTH;
 
     return renderer;
 }
@@ -145,15 +142,35 @@ td_renderable createRendereable(const char *path, td_renderer renderer) {
 
     renderable -> rect.x = 0;
     renderable -> rect.y = 0;
+    renderable -> space = WORLD_SPACE;
 
     return renderable;
+}
+
+void setRenderSpace(td_renderable renderable, td_renderSpace space) {
+    renderable -> space = space;
+}
+
+SDL_Rect scaleRect(SDL_Rect rect, td_renderer renderer) {
+    float scaleFactor = renderer -> scaleFactor;
+
+    SDL_Rect scaled = {
+        rect.x * scaleFactor,
+        rect.y * scaleFactor,
+        rect.w * scaleFactor,
+        rect.h * scaleFactor
+    };
+
+    return scaled;
 }
 
 void drawRenderable(void *renderableData, void *rendererData) {
     td_renderable renderable = (td_renderable) renderableData;
     td_renderer renderer = (td_renderer) rendererData;
 
-    SDL_RenderCopyEx(renderer -> renderer, renderable -> texture, NULL, &renderable -> rect, 0, NULL, SDL_FLIP_NONE);
+    SDL_Rect drawArea = scaleRect(renderable -> rect, renderer);
+
+    SDL_RenderCopyEx(renderer -> renderer, renderable -> texture, NULL, &drawArea, 0, NULL, SDL_FLIP_NONE);
 }
 
 void renderFrame(td_renderer renderer) {

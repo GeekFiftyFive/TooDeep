@@ -4,8 +4,8 @@
 #include "Events/eventLoop.h"
 #include "Tests/testHelper.h"
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
 
 bool shouldRunTests(int argc, char *args[]) {
     for(int i = 0; i < argc; i++) {
