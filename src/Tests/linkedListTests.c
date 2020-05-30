@@ -5,6 +5,16 @@
 
 #define EXPECTED_STRING "A -> B -> C"
 
+void testCallback(void *nodeData, void *accData) {
+    // Dereference data
+    int toAdd = *((int *) nodeData);
+    int acc = *((int *) accData);
+    acc += toAdd;
+
+    // Set new accumulator value
+    *((int *) accData) = acc;
+}
+
 int runLinkedListTests() {
     int failedTests = 0;
 
@@ -28,6 +38,12 @@ int runLinkedListTests() {
     char *stringList = listToString(list);
     failedTests += assertString(EXPECTED_STRING, stringList, "listToString");
     free(stringList);
+
+    // Ensure that forEach function gets called on each list element
+    int acc = 0;
+    listForEach(list, testCallback, &acc);
+    failedTests += assert(a + b + c, acc, "listForEach");
+    
 
     // Destroy the list
     destroyLinkedList(list);
