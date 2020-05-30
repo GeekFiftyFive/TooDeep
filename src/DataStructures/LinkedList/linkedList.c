@@ -44,7 +44,8 @@ void appendWithFree(td_linkedList list, void *data, char *key, void *freeFunc) {
         td_listNode tail = list -> tail;
         tail -> next = node;
         node -> prev = tail;
-        node -> next = list -> head; 
+        node -> next = list -> head;
+        list -> head -> prev = node;
     }
 
     list -> tail = node;
@@ -83,10 +84,14 @@ char *listToString(td_linkedList list) {
     int accLength = 0;
     td_listNode current = list -> head;
 
+    printf("Begin list\n");
+
     do {
         accLength += strlen(current -> key);
         current = current -> next;
     } while(current != list -> head);
+
+    printf("Accumulated string length");
 
     char *out = malloc(accLength + 4 * list -> length);
     size_t offset = 0;
@@ -100,6 +105,8 @@ char *listToString(td_linkedList list) {
             current = current -> next;
         }
     } while(current != list -> head);
+
+    printf("Finished building string\n");
 
     return out;
 }

@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "linkedListTests.h"
 #include "testHelper.h"
 #include "../DataStructures/LinkedList/linkedList.h"
@@ -24,7 +25,9 @@ int runLinkedListTests() {
     failedTests += assert(c, *((int *) getFromList(list, "C")), "Fetch 'C' from list");
 
     // Ensure that they are in the correct order
-    //failedTests += assertString(EXPECTED_STRING, listToString(list), "listToString");
+    char *stringList = listToString(list);
+    failedTests += assertString(EXPECTED_STRING, stringList, "listToString");
+    free(stringList);
 
     // Destroy the list
     destroyLinkedList(list);
