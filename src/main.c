@@ -1,10 +1,11 @@
 #include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
-#include <cjson/cJSON.h>
 #include "Renderer/renderer.h"
 #include "Events/eventLoop.h"
 #include "Tests/testHelper.h"
 #include "IO/fileIO.h"
+#include "JSON/jsonParser.h"
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
@@ -23,7 +24,10 @@ int main(int argc, char *args[]) {
     // TODO: Pull target file from the command arguments
     char *configFile = readFile("examples/spaceship/td.json");
 
-    printf("%s\n", configFile);
+    if(configFile) {
+        jsonParse(configFile);
+        free(configFile);
+    }
 
     td_renderer renderer = initRenderer(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -34,8 +38,6 @@ int main(int argc, char *args[]) {
     startEventLoop(renderer);
 
     destroyRenderer(renderer);
-
-    if(configFile) free(configFile);
 
     quit();
 
