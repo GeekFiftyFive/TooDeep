@@ -10,10 +10,13 @@ struct td_renderer {
     SDL_Window *window;
     SDL_Renderer *renderer;
     td_linkedList renderQueue;
+    int width;
+    int height;
 };
 
 struct td_renderable {
     SDL_Texture *texture;
+    SDL_Rect rect;
     int num;
 };
 
@@ -72,6 +75,10 @@ td_renderer initRenderer(int width, int height) {
     renderer -> renderer = sdlRenderer;
 
     renderer -> renderQueue = createLinkedList();
+
+    renderer -> width = width;
+
+    renderer -> height = height;
 
     return renderer;
 }
@@ -134,6 +141,11 @@ td_renderable createRendereable(const char *path, td_renderer renderer) {
 
     renderable -> num = queueLength + 1;
 
+    SDL_QueryTexture(renderable -> texture, NULL, NULL, &renderable -> rect.w, &renderable -> rect.h);
+
+    renderable -> rect.x = 0;
+    renderable -> rect.y = 0;
+
     return renderable;
 }
 
@@ -141,13 +153,7 @@ void drawRenderable(void *renderableData, void *rendererData) {
     td_renderable renderable = (td_renderable) renderableData;
     td_renderer renderer = (td_renderer) rendererData;
 
-    //TODO: Set the positioning properly
-    SDL_Rect rect;
-    rect.x = 0;
-    rect.y = 0;
-    rect.w = 256;
-    rect.h = 256;
-    SDL_RenderCopyEx(renderer -> renderer, renderable -> texture, NULL, &rect, 0, NULL, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer -> renderer, renderable -> texture, NULL, &renderable -> rect, 0, NULL, SDL_FLIP_NONE);
 }
 
 void renderFrame(td_renderer renderer) {
