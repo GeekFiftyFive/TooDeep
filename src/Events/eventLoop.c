@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include "eventLoop.h"
 
 void startEventLoop(td_renderer renderer) {
@@ -14,5 +15,6 @@ void startEventLoop(td_renderer renderer) {
 }
 
 void quit() {
+    IMG_Quit();
     SDL_Quit();
 }
