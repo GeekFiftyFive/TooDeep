@@ -16,6 +16,6 @@ json jsonParse(char *jsonData) {
 }
 
 void freeJson(json content) {
-    free(content -> parsed);
+    cJSON_Delete(content -> parsed);
     free(content);
 }

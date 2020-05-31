@@ -54,3 +54,4 @@ dkms.conf
 # Custom
 obj/
 tooDeep
+.DS_Store

@@ -96,7 +96,7 @@ char *listToString(td_linkedList list) {
         current = current -> next;
     } while(current != list -> head);
 
-    char *out = malloc(accLength + 4 * (list -> length - 1) + 1);
+    char *out = malloc(accLength + 4 * (list -> length - 1) + 2);
     size_t offset = 0;
 
     do {
