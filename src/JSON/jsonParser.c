@@ -1,12 +1,61 @@
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include "jsonParser.h"
 
-json jsonParse(char *jsonData) {
-    json parsed = cJSON_Parse(jsonData);
+#define delim "."
+
+td_json jsonParse(char *jsonData) {
+    td_json parsed = cJSON_Parse(jsonData);
+
+    if (!parsed) {
+        const char *error_ptr = cJSON_GetErrorPtr();
+        if (!error_ptr) {
+            fprintf(stderr, "Error before: %s\n", error_ptr);
+            cJSON_Delete(parsed);
+            return NULL;
+        }
+    }
 
     return parsed;
 }
 
-void freeJson(json content) {
+td_json getJSONObject(td_json json, char *field, td_jsonError *error) {
+    if(error) *(error) = NO_ERROR;
+
+    char *fieldCopy = malloc(strlen(field) + 1);
+    strcpy(fieldCopy, field);
+    char *token = strtok(fieldCopy, delim);
+
+    while(token) {
+        if(!json) {
+            if(error) *(error) = ERROR;
+            free(fieldCopy);
+            return NULL;
+        }
+        json = cJSON_GetObjectItemCaseSensitive(json, token);
+        token = strtok(NULL, delim);
+    }
+
+    if(!json && error) *(error) = ERROR;
+
+    free(fieldCopy);
+    return json; 
+}
+
+int getJSONInt(td_json json, char *field, td_jsonError *error) {
+    if(error) *(error) = NO_ERROR;
+    td_json obj = getJSONObject(json, field, error);
+
+    if(!cJSON_IsNumber(obj)) {
+        fprintf(stderr, "WARN: object at %s is not a number!\n", field);
+        if(error) *(error) = ERROR;
+        return INT32_MAX;
+    } else {
+        return obj -> valueint;
+    }
+}
+
+void freeJson(td_json content) {
     cJSON_Delete(content);
 }

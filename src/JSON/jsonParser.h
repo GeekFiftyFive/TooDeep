@@ -2,10 +2,16 @@
 #define JSON_PARSER
 #include <cjson/cJSON.h>
 
-typedef cJSON *json;
+typedef enum {NO_ERROR, ERROR} td_jsonError;
 
-json jsonParse(char *);
+typedef cJSON *td_json;
 
-void freeJson(json);
+td_json jsonParse(char *);
+
+td_json getJSONObject(td_json json, char *field, td_jsonError *error);
+
+int getJSONInt(td_json json, char *field, td_jsonError *error);
+
+void freeJson(td_json);
 
 #endif

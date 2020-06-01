@@ -23,16 +23,23 @@ int main(int argc, char *args[]) {
 
     // TODO: Pull target file from the command arguments
     char *configFile = readFile("examples/spaceship/td.json");
-    json config;
+    td_json config;
+
+    int width = SCREEN_WIDTH, height = SCREEN_HEIGHT;
 
     if(configFile) {
         config = jsonParse(configFile);
+        if(config) {
+            width = getJSONInt(config, "userConfig.resolution.w", NULL);
+            height = getJSONInt(config, "userConfig.resolution.h", NULL);
+            printf("width: %d, height: %d\n", width, height);
+        }
         free(configFile);
     } else {
         fprintf(stderr, "Could not load config file!\n");
     }
 
-    td_renderer renderer = initRenderer(SCREEN_WIDTH, SCREEN_HEIGHT);
+    td_renderer renderer = initRenderer(width, height);
 
     td_renderable testRenderable = createRendereable("examples/spaceship/assets/rocket.png", renderer);
     
