@@ -1,7 +1,8 @@
 #ifndef JSON_PARSER
 #define JSON_PARSER
+#include <cjson/cJSON.h>
 
-typedef struct json *json;
+typedef cJSON *json;
 
 json jsonParse(char *);
 
