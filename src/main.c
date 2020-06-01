@@ -32,7 +32,6 @@ int main(int argc, char *args[]) {
         if(config) {
             width = getJSONInt(config, "userConfig.resolution.w", NULL);
             height = getJSONInt(config, "userConfig.resolution.h", NULL);
-            printf("width: %d, height: %d\n", width, height);
         }
         free(configFile);
     } else {
