@@ -2,11 +2,13 @@
 #include <string.h>
 #include "testHelper.h"
 #include "linkedListTests.h"
+#include "jsonTests.h"
 
 int runTests() {
     int testFailures = 0;
 
     testFailures += runLinkedListTests();
+    testFailures += runJsonTests();
 
     if(testFailures) {
         fprintf(stderr, "%d tests failed!\n", testFailures);
