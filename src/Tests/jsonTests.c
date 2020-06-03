@@ -14,7 +14,13 @@ int runJsonTests() {
     int failedTests = 0;
 
     // Get an int value from JSON
-    failedTests += assert(42, getJSONInt(json, "block_1.value_1", NULL), "getJSONInt no error");
+    td_jsonError error;
+    failedTests += assert(42, getJSONInt(json, "block_1.value_1", &error), "getJSONInt no error");
+    failedTests += assert(NO_ERROR, error, "Non error response for valid fetch");
+
+    // Ensure error value is populated
+    getJSONInt(json, "invalid_field", &error);
+    failedTests += assert(ERROR, error, "Error value is populated");
 
     return 0;
 }
