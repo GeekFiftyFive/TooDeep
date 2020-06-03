@@ -22,7 +22,7 @@ int main(int argc, char *args[]) {
     if(shouldRunTests(argc, args)) return runTests();
 
     // TODO: Pull target file from the command arguments
-    char *configFile = readFile("examples/spaceship/td.json");
+    char *configFile = readFile("examples/spaceship/td-user-config.json");
     td_json config;
 
     int width = SCREEN_WIDTH, height = SCREEN_HEIGHT;
