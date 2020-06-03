@@ -18,6 +18,10 @@ int runJsonTests() {
     failedTests += assert(42, getJSONInt(json, "block_1.value_1", &error), "getJSONInt no error");
     failedTests += assert(NO_ERROR, error, "Non error response for valid fetch");
 
+    // Get JSON object from JSON
+    td_json subObject = getJSONObject(json, "block_1", NULL);
+    failedTests += assert(42, getJSONInt(subObject, "value_1", NULL), "Get value from sub object");
+
     // Ensure error value is populated
 
     // Avoid spamming logs
