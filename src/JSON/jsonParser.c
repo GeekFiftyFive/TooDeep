@@ -5,6 +5,8 @@
 
 #define delim "."
 
+bool printWarnings = true;
+
 td_json jsonParse(char *jsonData) {
     td_json parsed = cJSON_Parse(jsonData);
 
@@ -48,12 +50,16 @@ int getJSONInt(td_json json, char *field, td_jsonError *error) {
     td_json obj = getJSONObject(json, field, error);
 
     if(!cJSON_IsNumber(obj)) {
-        fprintf(stderr, "WARN: object at %s is not a number!\n", field);
+        if(printWarnings) fprintf(stderr, "WARN: object at %s is not a number!\n", field);
         if(error) *(error) = ERROR;
         return INT32_MAX;
     } else {
         return obj -> valueint;
     }
+}
+
+void printJsonWarnings(bool enabled) {
+    printWarnings = enabled;
 }
 
 void freeJson(td_json content) {

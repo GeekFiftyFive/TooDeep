@@ -19,8 +19,14 @@ int runJsonTests() {
     failedTests += assert(NO_ERROR, error, "Non error response for valid fetch");
 
     // Ensure error value is populated
+
+    // Avoid spamming logs
+    printJsonWarnings(false);
+
     getJSONInt(json, "invalid_field", &error);
     failedTests += assert(ERROR, error, "Error value is populated");
+
+    printJsonWarnings(true);
 
     return 0;
 }
