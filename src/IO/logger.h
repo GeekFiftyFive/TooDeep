@@ -1,16 +1,22 @@
 #ifndef LOGGER
 #define LOGGER
 
+#include <stdbool.h>
+
+typedef enum {INFO, WARN, ERR} td_logLevel;
+
 typedef struct td_logger *td_logger;
 
-td_logger createLogger(const char* sourceFile);
+td_logger createLogger(const char*);
 
-void logInfo(td_logger logger, const char *format, ...);
+void logInfo(td_logger, const char *, ...);
 
-void logWarn(td_logger logger, const char *format, ...);
+void logWarn(td_logger, const char *, ...);
 
-void logError(td_logger logger, const char *format, ...);
+void logError(td_logger, const char *, ...);
 
-void destroyLogger(td_logger logger);
+void setLevelEnabled(td_logger, td_logLevel, bool);
+
+void destroyLogger(td_logger);
 
 #endif

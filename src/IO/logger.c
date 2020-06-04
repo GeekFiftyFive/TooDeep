@@ -3,10 +3,13 @@
 #include <stdlib.h>
 #include "logger.h"
 
+#define LOG_LEVELS 3
+
 struct td_logger {
     const char *sourceFile;
     FILE *out;
     FILE *err;
+    bool levelsEnabled[LOG_LEVELS];
 };
 
 /**
@@ -18,11 +21,16 @@ td_logger createLogger(const char* sourceFile) {
     logger -> sourceFile = sourceFile;
     logger -> out = stdout;
     logger -> err = stderr;
+    
+    for(int i = 0; i < LOG_LEVELS; i++) {
+        logger -> levelsEnabled[i] = true;
+    }
 
     return logger;
 }
 
 void logInfo(td_logger logger, const char *format, ...) {
+    if(!logger -> levelsEnabled[INFO]) return;
     va_list args;
 
     va_start(args, format);
@@ -32,6 +40,7 @@ void logInfo(td_logger logger, const char *format, ...) {
 }
 
 void logWarn(td_logger logger, const char *format, ...) {
+    if(!logger -> levelsEnabled[WARN]) return;
     va_list args;
 
     va_start(args, format);
@@ -41,12 +50,17 @@ void logWarn(td_logger logger, const char *format, ...) {
 }
 
 void logError(td_logger logger, const char *format, ...) {
+    if(!logger -> levelsEnabled[ERR]) return;
     va_list args;
 
     va_start(args, format);
     fprintf(logger -> err, "ERROR: ");
     vfprintf(logger -> err, format, args);
     va_end(args);
+}
+
+void setLevelEnabled(td_logger logger, td_logLevel level, bool enabled) {
+    logger -> levelsEnabled[level] = enabled;
 }
 
 void destroyLogger(td_logger logger) {
