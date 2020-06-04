@@ -5,6 +5,7 @@
 #include "Events/eventLoop.h"
 #include "Tests/testHelper.h"
 #include "IO/fileIO.h"
+#include "IO/logger.h"
 #include "JSON/jsonParser.h"
 
 #define SCREEN_WIDTH 1280

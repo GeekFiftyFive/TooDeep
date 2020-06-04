@@ -2,8 +2,8 @@ ARGS = -std=c99 -Wall -O2
 
 LIBS = -lSDL2 -lSDL2_image -lm -lcJSON
 
-tooDeep: obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o obj/fileIO.o obj/jsonParser.o obj/jsonTests.o
-			cc $(ARGS) $(LIBS) -o tooDeep obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o obj/fileIO.o obj/jsonParser.o obj/jsonTests.o
+tooDeep: obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o obj/fileIO.o obj/jsonParser.o obj/jsonTests.o obj/logger.o
+			cc $(ARGS) $(LIBS) -o tooDeep obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o obj/fileIO.o obj/jsonParser.o obj/jsonTests.o obj/logger.o
 
 obj/main.o: src/main.c
 			cc -c src/main.c -o obj/main.o
@@ -28,6 +28,9 @@ obj/linkedList.o: src/DataStructures/LinkedList/linkedList.c src/DataStructures/
 
 obj/fileIO.o: src/IO/fileIO.c src/IO/fileIO.h
 			cc -c src/IO/fileIO.c -o obj/fileIO.o
+
+obj/logger.o: src/IO/logger.c src/IO/logger.h
+			cc -c src/IO/logger.c -o obj/logger.o
 
 obj/jsonParser.o: src/JSON/jsonParser.c src/JSON/jsonParser.h
 			cc -c src/JSON/jsonParser.c -o obj/jsonParser.o
