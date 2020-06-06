@@ -22,7 +22,7 @@ td_json jsonParse(char *jsonData) {
 }
 
 td_json getJSONObject(td_json json, char *field, td_jsonError *error) {
-    if(error) *(error) = NO_ERROR;
+    if(error) *(error) = JSON_NO_ERROR;
 
     char *fieldCopy = malloc(strlen(field) + 1);
     strcpy(fieldCopy, field);
@@ -30,7 +30,7 @@ td_json getJSONObject(td_json json, char *field, td_jsonError *error) {
 
     while(token) {
         if(!json) {
-            if(error) *(error) = ERROR;
+            if(error) *(error) = JSON_ERROR;
             free(fieldCopy);
             return NULL;
         }
@@ -38,19 +38,19 @@ td_json getJSONObject(td_json json, char *field, td_jsonError *error) {
         token = strtok(NULL, delim);
     }
 
-    if(!json && error) *(error) = ERROR;
+    if(!json && error) *(error) = JSON_ERROR;
 
     free(fieldCopy);
     return json; 
 }
 
 int getJSONInt(td_json json, char *field, td_jsonError *error) {
-    if(error) *(error) = NO_ERROR;
+    if(error) *(error) = JSON_NO_ERROR;
     td_json obj = getJSONObject(json, field, error);
 
     if(!cJSON_IsNumber(obj)) {
         logWarn("object at %s is not a number!\n", field);
-        if(error) *(error) = ERROR;
+        if(error) *(error) = JSON_ERROR;
         return INT32_MAX;
     } else {
         return obj -> valueint;
