@@ -3,20 +3,14 @@
 
 #include <stdbool.h>
 
-typedef enum {INFO, WARN, ERR} td_logLevel;
+typedef enum {LOG_INFO, LOG_WARN, LOG_ERROR} td_logLevel;
 
-typedef struct td_logger *td_logger;
+void logInfo(const char *, ...);
 
-td_logger createLogger(const char*);
+void logWarn(const char *, ...);
 
-void logInfo(td_logger, const char *, ...);
+void logError(const char *, ...);
 
-void logWarn(td_logger, const char *, ...);
-
-void logError(td_logger, const char *, ...);
-
-void setLevelEnabled(td_logger, td_logLevel, bool);
-
-void destroyLogger(td_logger);
+void setLevelEnabled(td_logLevel, bool);
 
 #endif
