@@ -52,9 +52,23 @@ int getJSONInt(td_json json, char *field, td_jsonError *error) {
         logWarn("object at %s is not a number!\n", field);
         if(error) *(error) = JSON_ERROR;
         return INT32_MAX;
-    } else {
-        return obj -> valueint;
     }
+
+    return obj -> valueint;
+}
+
+char *getJSONString(td_json json, char *field, td_jsonError *error) {
+    if(error) *(error) = JSON_NO_ERROR;
+
+    td_json obj = getJSONObject(json, field, error);
+
+    if(!cJSON_IsString(obj)) {
+        logWarn("object at %s is not a string!\n", field);
+        if(error) *(error) = JSON_ERROR;
+        return NULL;
+    }
+
+    return obj -> valuestring;
 }
 
 void freeJson(td_json content) {

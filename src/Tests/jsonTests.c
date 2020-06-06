@@ -6,7 +6,8 @@
 
 #define TEST_JSON "{\
                         \"block_1\": {\
-                            \"value_1\": 42\
+                            \"value_1\": 42,\
+                            \"value_2\": \"test string\"\
                         }\
                     }"
 
@@ -17,11 +18,15 @@ int runJsonTests() {
     // Get an int value from JSON
     td_jsonError error;
     failedTests += assert(42, getJSONInt(json, "block_1.value_1", &error), "getJSONInt no error");
-    failedTests += assert(JSON_NO_ERROR, error, "Non error response for valid fetch");
+    failedTests += assert(JSON_NO_ERROR, error, "Non error response for valid int fetch");
 
     // Get JSON object from JSON
     td_json subObject = getJSONObject(json, "block_1", NULL);
     failedTests += assert(42, getJSONInt(subObject, "value_1", NULL), "Get value from sub object");
+
+    // Get String value from JSON
+    failedTests += assertString("test string", getJSONString(json, "block_1.value_2", &error), "getJSONString no error");
+    failedTests += assert(JSON_NO_ERROR, error, "Non error response for valid string fetch");
 
     // Ensure error value is populated
 
@@ -33,5 +38,5 @@ int runJsonTests() {
 
     setLevelEnabled(LOG_WARN, true);
 
-    return 0;
+    return failedTests;
 }

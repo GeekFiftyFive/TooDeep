@@ -9,11 +9,11 @@ typedef cJSON *td_json;
 
 td_json jsonParse(char *);
 
-td_json getJSONObject(td_json json, char *field, td_jsonError *error);
+td_json getJSONObject(td_json, char *, td_jsonError *);
 
-int getJSONInt(td_json json, char *field, td_jsonError *error);
+int getJSONInt(td_json, char *, td_jsonError *);
 
-char *getJSONString(td_json json, char *field, td_jsonError *error);
+char *getJSONString(td_json, char *, td_jsonError *);
 
 void freeJson(td_json);
 
