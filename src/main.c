@@ -36,7 +36,7 @@ int main(int argc, char *args[]) {
         }
         free(configFile);
     } else {
-        fprintf(stderr, "Could not load config file!\n");
+        logError("Could not load config file!\n");
     }
 
     td_renderer renderer = initRenderer(width, height);

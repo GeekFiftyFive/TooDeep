@@ -5,6 +5,7 @@
 #include <math.h>
 #include "renderer.h"
 #include "../DataStructures/LinkedList/linkedList.h"
+#include "../IO/logger.h"
 
 #define BASE_WIDTH 1920
 
@@ -30,14 +31,14 @@ td_renderer initRenderer(int width, int height) {
     int err = SDL_Init(SDL_INIT_VIDEO);
 
     if(err) {
-        fprintf(stderr, "Error initialising SDL: %s\n", SDL_GetError());
+        logError("Error initialising SDL: %s\n", SDL_GetError());
         return NULL;
     }
 
     int imgFlags = IMG_INIT_PNG;
     if( !( IMG_Init( imgFlags ) & imgFlags ) )
     {
-        printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
+        logError("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
         return NULL;
     }
 
@@ -59,7 +60,7 @@ td_renderer initRenderer(int width, int height) {
                                 SDL_WINDOW_SHOWN );
 
     if(!window) {
-        fprintf(stderr, "Unable to initialise the window: %s\n", SDL_GetError());
+        logError("Unable to initialise the window: %s\n", SDL_GetError());
         return NULL;
     }
 
@@ -67,7 +68,7 @@ td_renderer initRenderer(int width, int height) {
     sdlRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
     if(!sdlRenderer) {
-        fprintf(stderr, "Unable to initialise the renderer: %s\n", SDL_GetError());
+        logError("Unable to initialise the renderer: %s\n", SDL_GetError());
     }
 
     td_renderer renderer = malloc(sizeof(struct td_renderer));
@@ -92,7 +93,7 @@ SDL_Texture *loadTexture(const char *path, td_renderer renderer){
     SDL_Surface *loadedSurface = IMG_Load( path );
     if( loadedSurface == NULL )
     {
-        fprintf(stderr, "Unable to load image %s! SDL_image Error: %s\n", path, IMG_GetError() );
+        logError("Unable to load image %s! SDL_image Error: %s\n", path, IMG_GetError() );
         failure = true;
     }
     else
@@ -101,7 +102,7 @@ SDL_Texture *loadTexture(const char *path, td_renderer renderer){
         newTexture = SDL_CreateTextureFromSurface( renderer -> renderer, loadedSurface );
         if( newTexture == NULL )
         {
-            fprintf(stderr, "Unable to create texture from %s! SDL Error: %s\n", path, SDL_GetError() );
+            logError("Unable to create texture from %s! SDL Error: %s\n", path, SDL_GetError() );
             failure = true;
         }
         //Get rid of old loaded surface

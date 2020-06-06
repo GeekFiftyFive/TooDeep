@@ -2,6 +2,7 @@
 #include "jsonTests.h"
 #include "testHelper.h"
 #include "../JSON/jsonParser.h"
+#include "../IO/logger.h"
 
 #define TEST_JSON "{\
                         \"block_1\": {\
@@ -25,12 +26,12 @@ int runJsonTests() {
     // Ensure error value is populated
 
     // Avoid spamming logs
-    printJsonWarnings(false);
+    setLevelEnabled(LOG_WARN, false);    
 
     getJSONInt(json, "invalid_field", &error);
     failedTests += assert(ERROR, error, "Error value is populated");
 
-    printJsonWarnings(true);
+    setLevelEnabled(LOG_WARN, true);
 
     return 0;
 }

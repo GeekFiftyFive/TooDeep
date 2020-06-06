@@ -13,8 +13,6 @@ td_json getJSONObject(td_json json, char *field, td_jsonError *error);
 
 int getJSONInt(td_json json, char *field, td_jsonError *error);
 
-void printJsonWarnings(bool);
-
 void freeJson(td_json);
 
 #endif
