@@ -15,9 +15,18 @@
                             },\
                             {\
                                 \"val\": 2\
+                            },\
+                            {\
+                                \"val\": 3\
                             }\
                         ]\
                     }"
+
+void jsonTestCallback(td_json json, void *data) {
+    int *intData = (int *) data;
+    int value = getJSONInt(json, "val", NULL);
+    *(intData) += value;
+}
 
 int runJsonTests() {
     td_json json = jsonParse(TEST_JSON);
@@ -35,6 +44,11 @@ int runJsonTests() {
     // Get String value from JSON
     failedTests += assertString("test string", getJSONString(json, "block_1.value_2", &error), "getJSONString no error");
     failedTests += assert(JSON_NO_ERROR, error, "Non error response for valid string fetch");
+
+    // Call callback function on all elements of a JSON array
+    int testData = 0;
+    jsonArrayForEach(json, "array", jsonTestCallback, &testData);
+    failedTests += assert(6, testData, "callback function called for all elements of a JSON array");
 
     // Ensure error value is populated
 
