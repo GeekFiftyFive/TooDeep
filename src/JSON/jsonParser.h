@@ -15,6 +15,8 @@ int getJSONInt(td_json, char *, td_jsonError *);
 
 char *getJSONString(td_json, char *, td_jsonError *);
 
+void jsonArrayForEach(td_json, char *, void (*callback)(td_json, void *), void *);
+
 void freeJson(td_json);
 
 #endif
