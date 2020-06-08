@@ -72,9 +72,19 @@ char *getJSONString(td_json json, char *field, td_jsonError *error) {
 }
 
 void jsonArrayForEach(td_json json, char *field, void (*callback)(td_json, void *), void *data) {
-    // TODO: Iterate over the JSON array found at field and call callback
-    // with the data stored in each array element as well as the supplied
-    // data
+    td_json obj = getJSONObject(json, field, NULL);
+
+    if(!cJSON_IsArray(obj)) {
+        logWarn("object at %s is not an array!\n", field);
+        return;
+    }
+
+    int size = cJSON_GetArraySize(obj);
+
+    for(int i = 0; i < size; i++) {
+        td_json item = cJSON_GetArrayItem(obj, i);
+        callback(item, data);
+    }    
 }
 
 void freeJson(td_json content) {
