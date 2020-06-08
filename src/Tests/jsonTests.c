@@ -8,7 +8,15 @@
                         \"block_1\": {\
                             \"value_1\": 42,\
                             \"value_2\": \"test string\"\
-                        }\
+                        },\
+                        \"array\": [\
+                            {\
+                                \"val\": 1\
+                            },\
+                            {\
+                                \"val\": 2\
+                            }\
+                        ]\
                     }"
 
 int runJsonTests() {
