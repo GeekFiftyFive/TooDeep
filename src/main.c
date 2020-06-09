@@ -24,22 +24,40 @@ int main(int argc, char *args[]) {
 
     // TODO: Pull target file from the command arguments
     char *configFile = readFile("examples/spaceship/td-user-config.json");
+    char *manifestFile = readFile("examples/spaceship/td-game.json");
     td_json config;
-
-    int width = SCREEN_WIDTH, height = SCREEN_HEIGHT;
+    td_json manifest;
 
     if(configFile) {
         config = jsonParse(configFile);
-        if(config) {
-            width = getJSONInt(config, "userConfig.resolution.w", NULL);
-            height = getJSONInt(config, "userConfig.resolution.h", NULL);
+        if(!config) {
+            logError("Could not parse config file!\n");
+            return 1;
         }
         free(configFile);
     } else {
         logError("Could not load config file!\n");
+        return 1;
     }
 
-    td_renderer renderer = initRenderer(width, height);
+    int width = getJSONInt(config, "userConfig.resolution.w", NULL);
+    int height = getJSONInt(config, "userConfig.resolution.h", NULL);
+
+    if(manifestFile) {
+        manifest = jsonParse(manifestFile);
+        if(!manifest) {
+            logError("Could not parse manifest!\n");
+            return 2;
+        }
+        free(manifestFile);
+    } else {
+        logError("Could not load manifest!\n");
+        return 2;
+    }
+
+    char *title = getJSONString(manifest, "meta.title", NULL);
+
+    td_renderer renderer = initRenderer(title, width, height);
 
     td_renderable testRenderable = createRendereable("examples/spaceship/assets/rocket.png", renderer);
     

@@ -7,7 +7,7 @@ typedef struct td_renderer *td_renderer;
 
 typedef struct td_renderable *td_renderable;
 
-td_renderer initRenderer(int,int);
+td_renderer initRenderer(char *, int,int);
 
 td_renderable createRendereable(const char*, td_renderer);
 

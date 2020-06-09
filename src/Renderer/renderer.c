@@ -27,7 +27,7 @@ struct td_renderable {
     Initialises the main window and returns the renderer struct.
     SDL must have bee initialised before this can be called.
 */
-td_renderer initRenderer(int width, int height) {
+td_renderer initRenderer(char *title, int width, int height) {
     int err = SDL_Init(SDL_INIT_VIDEO);
 
     if(err) {
@@ -52,7 +52,7 @@ td_renderer initRenderer(int width, int height) {
     SDL_Surface *screen = NULL;
 
     //Create the window
-    window = SDL_CreateWindow( "TooDeep", 
+    window = SDL_CreateWindow(  title, 
                                 SDL_WINDOWPOS_UNDEFINED,
                                 SDL_WINDOWPOS_UNDEFINED,
                                 width,
