@@ -57,6 +57,19 @@ int getJSONInt(td_json json, char *field, td_jsonError *error) {
     return obj -> valueint;
 }
 
+double getJSONDouble(td_json json, char *field, td_jsonError *error) {
+    if(error) *(error) = JSON_NO_ERROR;
+    td_json obj = getJSONObject(json, field, error);
+
+    if(!cJSON_IsNumber(obj)) {
+        logWarn("object at %s is not a number!\n", field);
+        if(error) *(error) = JSON_ERROR;
+        return (double) INT32_MAX;
+    }
+
+    return obj -> valuedouble;
+}
+
 char *getJSONString(td_json json, char *field, td_jsonError *error) {
     if(error) *(error) = JSON_NO_ERROR;
 

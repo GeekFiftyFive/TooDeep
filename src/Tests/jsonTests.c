@@ -7,7 +7,10 @@
 #define TEST_JSON "{\
                         \"block_1\": {\
                             \"value_1\": 42,\
-                            \"value_2\": \"test string\"\
+                            \"value_2\": \"test string\",\
+                            \"block_2\": {\
+                                \"double\": 3.1415\
+                            }\
                         },\
                         \"array\": [\
                             {\
@@ -44,6 +47,10 @@ int runJsonTests() {
     // Get String value from JSON
     failedTests += assertString("test string", getJSONString(json, "block_1.value_2", &error), "getJSONString no error");
     failedTests += assert(JSON_NO_ERROR, error, "Non error response for valid string fetch");
+
+    // Get a double value from JSON
+    failedTests += assert(3.1415, getJSONDouble(json, "block_1.block_2.double", &error), "getJSONDouble no error");
+    failedTests += assert(JSON_NO_ERROR, error, "Non error response for valid double fetch");
 
     // Call callback function on all elements of a JSON array
     int testData = 0;
