@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include "Renderer/renderer.h"
 #include "Events/eventLoop.h"
 #include "Tests/testHelper.h"
@@ -10,6 +11,9 @@
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
+
+#define USER_CONFIG_NAME "/td-user-config.json"
+#define MANIFEST_NAME "/td-game.json"
 
 bool shouldRunTests(int argc, char *args[]) {
     for(int i = 0; i < argc; i++) {
@@ -21,10 +25,20 @@ bool shouldRunTests(int argc, char *args[]) {
 
 int main(int argc, char *args[]) {
     if(shouldRunTests(argc, args)) return runTests();
+    else if(argc < 2) {
+        printf("Usage: tooDeep <game directory>\n");
+        return 0;
+    }
+
+    char *configDir = malloc(strlen(args[1]) + strlen(USER_CONFIG_NAME) + 1);
+    char *manifestDir = malloc(strlen(args[1]) + strlen(MANIFEST_NAME) + 1);
+
+    sprintf(configDir, "%s%s", args[1], USER_CONFIG_NAME);
+    sprintf(manifestDir, "%s%s", args[1], MANIFEST_NAME);
 
     // TODO: Pull target file from the command arguments
-    char *configFile = readFile("examples/spaceship/td-user-config.json");
-    char *manifestFile = readFile("examples/spaceship/td-game.json");
+    char *configFile = readFile(configDir);
+    char *manifestFile = readFile(manifestDir);
     td_json config;
     td_json manifest;
 
@@ -68,6 +82,10 @@ int main(int argc, char *args[]) {
     destroyRenderer(renderer);
 
     freeJson(config);
+
+    free(configDir);
+
+    free(manifestDir);
 
     quit();
 
