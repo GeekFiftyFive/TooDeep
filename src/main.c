@@ -30,15 +30,11 @@ int main(int argc, char *args[]) {
         return 0;
     }
 
-    char *configDir = malloc(strlen(args[1]) + strlen(USER_CONFIG_NAME) + 1);
-    char *manifestDir = malloc(strlen(args[1]) + strlen(MANIFEST_NAME) + 1);
-
-    sprintf(configDir, "%s%s", args[1], USER_CONFIG_NAME);
-    sprintf(manifestDir, "%s%s", args[1], MANIFEST_NAME);
+    setBasePath(args[1]);
 
     // TODO: Pull target file from the command arguments
-    char *configFile = readFile(configDir);
-    char *manifestFile = readFile(manifestDir);
+    char *configFile = readFile(USER_CONFIG_NAME);
+    char *manifestFile = readFile(MANIFEST_NAME);
     td_json config;
     td_json manifest;
 
@@ -82,10 +78,6 @@ int main(int argc, char *args[]) {
     destroyRenderer(renderer);
 
     freeJson(config);
-
-    free(configDir);
-
-    free(manifestDir);
 
     quit();
 

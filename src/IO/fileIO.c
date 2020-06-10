@@ -1,11 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "fileIO.h"
 
+char *basePath = "/";
+
 char *readFile(const char *path) {
+    char *fullPath = malloc(strlen(path) + strlen(basePath) + 1);
+    sprintf(fullPath, "%s%s", basePath, path);
+
     char *buffer = 0;
     long length;
-    FILE *f = fopen(path, "rb");
+    FILE *f = fopen(fullPath, "rb");
 
     if (f) {
         fseek(f, 0, SEEK_END);
@@ -17,6 +23,11 @@ char *readFile(const char *path) {
     }
 
     buffer[length] = '\0';
+    free(fullPath);
 
     return buffer;
+}
+
+void setBasePath(char *newBasePath) {
+    basePath = newBasePath;
 }

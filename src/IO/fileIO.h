@@ -3,4 +3,6 @@
 
 char *readFile(const char *path);
 
+void setBasePath(char *);
+
 #endif
