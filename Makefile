@@ -2,8 +2,8 @@ ARGS = -std=c99 -Wall -O2
 
 LIBS = -lSDL2 -lSDL2_image -lm -lcJSON
 
-tooDeep: obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o obj/fileIO.o obj/jsonParser.o obj/jsonTests.o obj/logger.o
-			cc $(ARGS) $(LIBS) -o tooDeep obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o obj/fileIO.o obj/jsonParser.o obj/jsonTests.o obj/logger.o
+tooDeep: obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/hashMap.o obj/testHelper.o obj/linkedListTests.o obj/fileIO.o obj/jsonParser.o obj/jsonTests.o obj/logger.o
+			cc $(ARGS) $(LIBS) -o tooDeep obj/main.o obj/renderer.o obj/eventLoop.o obj/hashMap.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o obj/fileIO.o obj/jsonParser.o obj/jsonTests.o obj/logger.o
 
 obj/main.o: src/main.c
 			cc -c src/main.c -o obj/main.o
@@ -25,6 +25,9 @@ obj/jsonTests.o: src/Tests/jsonTests.c src/Tests/jsonTests.h
 
 obj/linkedList.o: src/DataStructures/LinkedList/linkedList.c src/DataStructures/LinkedList/linkedList.h
 			cc -c src/DataStructures/LinkedList/linkedList.c -o obj/linkedList.o
+
+obj/hashMap.o: src/DataStructures/HashMap/hashMap.c src/DataStructures/HashMap/hashMap.h
+			cc -c src/DataStructures/HashMap/hashMap.c -o obj/hashMap.o
 
 obj/fileIO.o: src/IO/fileIO.c src/IO/fileIO.h
 			cc -c src/IO/fileIO.c -o obj/fileIO.o
