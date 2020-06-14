@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "hashMap.h"
-#include "linkedList.h"
+#include "../LinkedList/linkedList.h"
 
 #define DEFAULT_LOAD_FACTOR 0.8
 
@@ -24,4 +24,8 @@ void insertIntoHashMap(td_hashMap map, char *key, void *data) {
 
 void *getFromHashMap(td_hashMap map, char *key) {
     return NULL;
+}
+
+void destroyHashMap(td_hashMap map) {
+
 }
