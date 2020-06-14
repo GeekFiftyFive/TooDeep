@@ -15,6 +15,7 @@ int runTests() {
 
     if(testFailures) {
         logError("%d tests failed!\n", testFailures);
+        return testFailures;
     } else {
         logInfo("All tests passed!\n");
     }
