@@ -7,7 +7,7 @@ td_hashMap createHashMap(int);
 
 td_hashMap createHashMapWithLoadFactor(int, float);
 
-void insertIntoHashMap(td_hashMap, char *, void *);
+void insertIntoHashMap(td_hashMap, char *, void *, void *);
 
 void *getFromHashMap(td_hashMap, char *);
 
