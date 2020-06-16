@@ -69,12 +69,12 @@ void *getFromList(td_linkedList list, char *key) {
     return NULL;
 }
 
-void listForEach(td_linkedList list, void (*callback)(void *, void*), void *data) {
+void listForEach(td_linkedList list, void (*callback)(void *, void*, char*), void *data) {
     if(list -> length == 0) return;
     td_listNode current = list -> head;
 
     do {
-        callback(current -> data, data);
+        callback(current -> data, data, current -> key);
         current = current -> next;
     } while(current != list -> head);
 }
@@ -96,7 +96,7 @@ char *listToString(td_linkedList list) {
         current = current -> next;
     } while(current != list -> head);
 
-    char *out = malloc(accLength + 4 * (list -> length - 1) + 2);
+    char *out = malloc(accLength + 4 * (list -> length - 1) + 1);
     size_t offset = 0;
 
     do {

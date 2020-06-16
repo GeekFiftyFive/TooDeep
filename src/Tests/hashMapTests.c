@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "hashMapTests.h"
 #include "../DataStructures/HashMap/hashMap.h"
 #include "testHelper.h"
@@ -22,8 +23,6 @@ int runHashMapTests() {
     insertIntoHashMap(map, "C", &c, NULL);
     insertIntoHashMap(map, "D", &d, NULL);
     insertIntoHashMap(map, "E", &e, NULL);
-
-    printHashMap(map);
 
     // Assert that the values can be retrieved
     failedTests += assert(a, *((int *) getFromHashMap(map, "A")), "Retrieve value A from HashMap");

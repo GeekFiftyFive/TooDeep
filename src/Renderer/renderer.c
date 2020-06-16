@@ -48,9 +48,6 @@ td_renderer initRenderer(char *title, int width, int height) {
     // The main renderer
     SDL_Renderer *sdlRenderer = NULL;
 
-    // The Window Surface
-    SDL_Surface *screen = NULL;
-
     //Create the window
     window = SDL_CreateWindow(  title, 
                                 SDL_WINDOWPOS_UNDEFINED,

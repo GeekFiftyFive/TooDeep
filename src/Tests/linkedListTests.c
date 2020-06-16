@@ -5,7 +5,7 @@
 
 #define EXPECTED_STRING "A -> B -> C"
 
-void testCallback(void *nodeData, void *accData) {
+void testCallback(void *nodeData, void *accData, char *key) {
     // Dereference data
     int toAdd = *((int *) nodeData);
     int acc = *((int *) accData);

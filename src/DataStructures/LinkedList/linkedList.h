@@ -11,7 +11,7 @@ void append(td_linkedList, void *, char *);
 
 void *getFromList(td_linkedList, char *);
 
-void listForEach(td_linkedList, void (*callback)(void *, void *), void *);
+void listForEach(td_linkedList, void (*callback)(void *, void *, char *), void *);
 
 char *listToString(td_linkedList);
 

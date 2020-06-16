@@ -68,8 +68,6 @@ int main(int argc, char *args[]) {
     char *title = getJSONString(manifest, "meta.title", NULL);
 
     td_renderer renderer = initRenderer(title, width, height);
-
-    td_renderable testRenderable = createRendereable("examples/spaceship/assets/rocket.png", renderer);
     
     if(!renderer) return 1;
 

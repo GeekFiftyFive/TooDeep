@@ -10,7 +10,7 @@ char *readFile(const char *path) {
     sprintf(fullPath, "%s%s", basePath, path);
 
     char *buffer = 0;
-    long length;
+    long length = 0;
     FILE *f = fopen(fullPath, "rb");
 
     if (f) {
