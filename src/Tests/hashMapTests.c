@@ -23,6 +23,8 @@ int runHashMapTests() {
     insertIntoHashMap(map, "D", &d, NULL);
     insertIntoHashMap(map, "E", &e, NULL);
 
+    printHashMap(map);
+
     // Assert that the values can be retrieved
     failedTests += assert(a, *((int *) getFromHashMap(map, "A")), "Retrieve value A from HashMap");
     failedTests += assert(b, *((int *) getFromHashMap(map, "B")), "Retrieve value B from HashMap");

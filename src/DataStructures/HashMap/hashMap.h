@@ -11,6 +11,8 @@ void insertIntoHashMap(td_hashMap, char *, void *, void *);
 
 void *getFromHashMap(td_hashMap, char *);
 
+void printHashMap(td_hashMap);
+
 void destroyHashMap(td_hashMap);
 
 #endif
