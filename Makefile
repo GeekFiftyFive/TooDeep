@@ -2,8 +2,8 @@ ARGS = -std=c99 -Wall -O2 -g
 
 LIBS = -lSDL2 -lSDL2_image -lm -lcjson
 
-tooDeep: obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/hashMap.o obj/testHelper.o obj/linkedListTests.o obj/hashMapTests.o obj/fileIO.o obj/jsonParser.o obj/jsonTests.o obj/logger.o
-			cc $(ARGS) -o tooDeep obj/main.o obj/renderer.o obj/eventLoop.o obj/hashMap.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o obj/hashMapTests.o obj/fileIO.o obj/jsonParser.o obj/jsonTests.o obj/logger.o $(LIBS)
+tooDeep: obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/hashMap.o obj/testHelper.o obj/linkedListTests.o obj/hashMapTests.o obj/fileIO.o obj/resourceLoader.o obj/jsonParser.o obj/jsonTests.o obj/logger.o
+			cc $(ARGS) -o tooDeep obj/main.o obj/renderer.o obj/eventLoop.o obj/hashMap.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o obj/hashMapTests.o obj/fileIO.o obj/resourceLoader.o obj/jsonParser.o obj/jsonTests.o obj/logger.o $(LIBS)
 
 obj/main.o: src/main.c
 			cc $(ARGS) -c src/main.c -o obj/main.o
@@ -34,6 +34,9 @@ obj/hashMap.o: src/DataStructures/HashMap/hashMap.c src/DataStructures/HashMap/h
 
 obj/fileIO.o: src/IO/fileIO.c src/IO/fileIO.h
 			cc $(ARGS) -c src/IO/fileIO.c -o obj/fileIO.o
+
+obj/resourceLoader.o: src/IO/resourceLoader.c src/IO/resourceLoader.h
+			cc $(ARGS) -c src/IO/resourceLoader.c -o obj/resourceLoader.o
 
 obj/logger.o: src/IO/logger.c src/IO/logger.h
 			cc $(ARGS) -c src/IO/logger.c -o obj/logger.o
