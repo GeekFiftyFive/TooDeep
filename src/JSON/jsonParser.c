@@ -51,7 +51,7 @@ int getJSONInt(td_json json, char *field, td_jsonError *error) {
     if(!cJSON_IsNumber(obj)) {
         logWarn("object at %s is not a number!\n", field);
         if(error) *(error) = JSON_ERROR;
-        return INT32_MAX;
+        return 0;
     }
 
     return obj -> valueint;
@@ -64,7 +64,7 @@ double getJSONDouble(td_json json, char *field, td_jsonError *error) {
     if(!cJSON_IsNumber(obj)) {
         logWarn("object at %s is not a number!\n", field);
         if(error) *(error) = JSON_ERROR;
-        return (double) INT32_MAX;
+        return (double) 0;
     }
 
     return obj -> valuedouble;
