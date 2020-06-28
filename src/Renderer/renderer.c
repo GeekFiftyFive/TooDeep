@@ -36,8 +36,7 @@ td_renderer initRenderer(char *title, int width, int height) {
     }
 
     int imgFlags = IMG_INIT_PNG;
-    if( !( IMG_Init( imgFlags ) & imgFlags ) )
-    {
+    if( !( IMG_Init( imgFlags ) & imgFlags ) ) {
         logError("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
         return NULL;
     }
@@ -88,17 +87,13 @@ SDL_Texture *loadTexture(const char *path, td_renderer renderer){
 
     //Load image at specified path
     SDL_Surface *loadedSurface = IMG_Load( path );
-    if( loadedSurface == NULL )
-    {
+    if( loadedSurface == NULL ) {
         logError("Unable to load image %s! SDL_image Error: %s\n", path, IMG_GetError() );
         failure = true;
-    }
-    else
-    {
+    } else {
         //Create texture from surface pixels
         newTexture = SDL_CreateTextureFromSurface( renderer -> renderer, loadedSurface );
-        if( newTexture == NULL )
-        {
+        if( newTexture == NULL ) {
             logError("Unable to create texture from %s! SDL Error: %s\n", path, SDL_GetError() );
             failure = true;
         }
