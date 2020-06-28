@@ -38,6 +38,8 @@ char *concatPath(td_resourceLoader rl, char *path) {
     return fullPath;
 }
 
+// TODO: Attempt to generalise this using macros
+
 char *loadPlaintextResource(td_resourceLoader rl, char *path) {
     char *plaintext = (char*) getFromHashMap(rl -> resources, path);
 
