@@ -3,6 +3,7 @@
 #include <SDL2/SDL_image.h>
 #include "resourceLoader.h"
 #include "../DataStructures/HashMap/hashMap.h"
+#include "./fileIO.h"
 
 struct td_resourceLoader {
     td_hashMap resources;
@@ -12,11 +13,11 @@ struct td_resourceLoader {
 };
 
 char *plaintextLoader(char *path) {
-    return NULL;
+    return readFile(path);
 }
 
 SDL_Surface *surfaceLoader(char *path) {
-    return NULL;
+    return IMG_Load(path);
 }
 
 td_resourceLoader createResourceLoader(char *basePath) {
