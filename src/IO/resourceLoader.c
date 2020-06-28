@@ -7,6 +7,8 @@
 struct td_resourceLoader {
     td_hashMap resources;
     char *basePath;
+    void (*plaintextLoader)(char *path);
+    void (*surfaceLoader)(char *path);
 };
 
 td_resourceLoader createResourceLoader(char *basePath) {
@@ -17,7 +19,7 @@ char *loadPlaintextResource(td_resourceLoader rl, char *path) {
     return NULL;
 }
 
-SDL_Texture *loadTextureResource(td_resourceLoader rl, char *path) {
+SDL_Surface *loadSurfaceResource(td_resourceLoader rl, char *path) {
     return NULL;
 }
 

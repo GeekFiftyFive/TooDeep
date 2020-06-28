@@ -7,7 +7,7 @@ td_resourceLoader createResourceLoader(char *);
 
 char *loadPlaintextResource(td_resourceLoader, char*);
 
-SDL_Texture *loadTextureResource(td_resourceLoader, char *);
+SDL_Surface *loadSurfaceResource(td_resourceLoader, char *);
 
 void destroyResourceLoader(td_resourceLoader);
 
