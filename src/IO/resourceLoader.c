@@ -1,7 +1,9 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "resourceLoader.h"
+#include "./logger.h"
 #include "../DataStructures/HashMap/hashMap.h"
 #include "./fileIO.h"
 
@@ -31,12 +33,39 @@ td_resourceLoader createResourceLoader(char *basePath) {
     return resourceLoader;
 }
 
+char *concatPath(td_resourceLoader rl, char *path) {
+    char *fullPath = malloc(strlen(path) + strlen(rl -> basePath) + 1);
+    sprintf(fullPath, "%s%s", rl -> basePath, path);
+    return fullPath;
+}
+
 char *loadPlaintextResource(td_resourceLoader rl, char *path) {
-    return NULL;
+    char *plaintext = (char*) getFromHashMap(rl -> resources, path);
+
+    if(plaintext) return plaintext;
+
+    char *fullPath = concatPath(rl, path);
+
+    plaintext = rl -> plaintextLoader(fullPath);
+    insertIntoHashMap(rl -> resources, path, plaintext, free);
+
+    free(fullPath);
+
+    return plaintext;
 }
 
 SDL_Surface *loadSurfaceResource(td_resourceLoader rl, char *path) {
-    return NULL;
+    SDL_Surface *surface = (SDL_Surface*) getFromHashMap(rl -> resources, path);
+
+    if(surface) return surface;
+
+    char *fullPath = concatPath(rl, path);
+
+    surface = rl -> surfaceLoader(fullPath);
+    insertIntoHashMap(rl -> resources, path, surface, SDL_FreeSurface);
+
+    free(fullPath);
+    return surface;
 }
 
 void setPlaintextLoader(td_resourceLoader rl, char *(*loader)(char *)) {
