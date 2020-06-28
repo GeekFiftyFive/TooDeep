@@ -31,6 +31,9 @@ int runHashMapTests() {
     failedTests += assert(d, *((int *) getFromHashMap(map, "D")), "Retrieve value D from HashMap");
     failedTests += assert(e, *((int *) getFromHashMap(map, "E")), "Retrieve value E from HashMap");
 
+    // Assert that NULL is returned for a non-existant value
+    failedTests += assert(NULL, getFromHashMap(map, "INVALID"), "Retrieve a non existant value from HashMap");
+
     // Destroy the HashMap
     destroyHashMap(map);
 
