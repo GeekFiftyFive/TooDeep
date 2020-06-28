@@ -13,11 +13,11 @@ td_resourceLoader createResourceLoader(char *basePath) {
     return NULL;
 }
 
-char *loadPlaintext(td_resourceLoader rl, char *path) {
+char *loadPlaintextResource(td_resourceLoader rl, char *path) {
     return NULL;
 }
 
-SDL_Texture *loadTexture(td_resourceLoader rl, char *path) {
+SDL_Texture *loadTextureResource(td_resourceLoader rl, char *path) {
     
 }
 
