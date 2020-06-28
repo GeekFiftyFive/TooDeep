@@ -18,7 +18,7 @@ char *loadPlaintextResource(td_resourceLoader rl, char *path) {
 }
 
 SDL_Texture *loadTextureResource(td_resourceLoader rl, char *path) {
-    
+    return NULL;
 }
 
 void destroyResourceLoader(td_resourceLoader rl) {
