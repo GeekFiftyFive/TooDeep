@@ -162,7 +162,7 @@ SDL_Rect scaleRect(SDL_Rect rect, td_renderer renderer) {
     return scaled;
 }
 
-void drawRenderable(void *renderableData, void *rendererData) {
+void drawRenderable(void *renderableData, void *rendererData, char *key) {
     td_renderable renderable = (td_renderable) renderableData;
     td_renderer renderer = (td_renderer) rendererData;
 
