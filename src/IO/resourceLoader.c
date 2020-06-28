@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "resourceLoader.h"
 #include "logger.h"
@@ -82,6 +81,7 @@ void resetLoaders(td_resourceLoader rl) {
 }
 
 void destroyResourceLoader(td_resourceLoader rl) {
-    destroyHashMap(rl -> resources);
+    // FIXME: Find and fix bug in hash map destroy method
+    //destroyHashMap(rl -> resources);
     free(rl);
 }

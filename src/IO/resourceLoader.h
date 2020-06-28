@@ -1,6 +1,8 @@
 #ifndef RESOURCE_LOADER
 #define RESOURCE_LOADER
 
+#include <SDL2/SDL.h>
+
 typedef struct td_resourceLoader *td_resourceLoader;
 
 td_resourceLoader createResourceLoader(char *);
