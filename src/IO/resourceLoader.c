@@ -52,5 +52,6 @@ void resetLoaders(td_resourceLoader rl) {
 }
 
 void destroyResourceLoader(td_resourceLoader rl) {
-
+    destroyHashMap(rl -> resources);
+    free(rl);
 }
