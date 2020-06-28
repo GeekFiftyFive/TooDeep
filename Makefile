@@ -2,8 +2,8 @@ ARGS = -std=c99 -Wall -O2 -g
 
 LIBS = -lSDL2 -lSDL2_image -lm -lcjson
 
-tooDeep: obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/hashMap.o obj/testHelper.o obj/linkedListTests.o obj/hashMapTests.o obj/fileIO.o obj/resourceLoader.o obj/jsonParser.o obj/jsonTests.o obj/logger.o
-			cc $(ARGS) -o tooDeep obj/main.o obj/renderer.o obj/eventLoop.o obj/hashMap.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o obj/hashMapTests.o obj/fileIO.o obj/resourceLoader.o obj/jsonParser.o obj/jsonTests.o obj/logger.o $(LIBS)
+tooDeep: obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/hashMap.o obj/testHelper.o obj/linkedListTests.o obj/hashMapTests.o  obj/resourceLoaderTests.o obj/fileIO.o obj/resourceLoader.o obj/jsonParser.o obj/jsonTests.o obj/logger.o
+			cc $(ARGS) -o tooDeep obj/main.o obj/renderer.o obj/eventLoop.o obj/hashMap.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o obj/hashMapTests.o obj/resourceLoaderTests.o obj/fileIO.o obj/resourceLoader.o obj/jsonParser.o obj/jsonTests.o obj/logger.o $(LIBS)
 
 obj/main.o: src/main.c
 			cc $(ARGS) -c src/main.c -o obj/main.o
@@ -25,6 +25,9 @@ obj/jsonTests.o: src/Tests/jsonTests.c src/Tests/jsonTests.h
 
 obj/hashMapTests.o: src/Tests/hashMapTests.c src/Tests/hashMapTests.h
 			cc $(ARGS) -c src/Tests/hashMapTests.c -o obj/hashMapTests.o
+
+obj/resourceLoaderTests.o: src/Tests/resourceLoaderTests.c src/Tests/resourceLoaderTests.h
+			cc $(ARGS) -c src/Tests/resourceLoaderTests.c -o obj/resourceLoaderTests.o
 
 obj/linkedList.o: src/DataStructures/LinkedList/linkedList.c src/DataStructures/LinkedList/linkedList.h
 			cc $(ARGS) -c src/DataStructures/LinkedList/linkedList.c -o obj/linkedList.o

@@ -4,6 +4,7 @@
 #include "linkedListTests.h"
 #include "jsonTests.h"
 #include "hashMapTests.h"
+#include "resourceLoaderTests.h"
 #include "../IO/logger.h"
 
 int runTests() {
@@ -12,6 +13,7 @@ int runTests() {
     testFailures += runLinkedListTests();
     testFailures += runJsonTests();
     testFailures += runHashMapTests();
+    testFailures += runResourceLoaderTests();
 
     if(testFailures) {
         logError("%d tests failed!\n", testFailures);

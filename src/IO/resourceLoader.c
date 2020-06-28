@@ -3,9 +3,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "resourceLoader.h"
-#include "./logger.h"
+#include "logger.h"
 #include "../DataStructures/HashMap/hashMap.h"
-#include "./fileIO.h"
+#include "fileIO.h"
 
 struct td_resourceLoader {
     td_hashMap resources;
