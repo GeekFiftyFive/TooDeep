@@ -76,6 +76,7 @@ td_renderer initRenderer(char *title, int width, int height) {
 
     return renderer;
 }
+
 /*
 Private helper function to load textures from a path
 */
@@ -106,6 +107,27 @@ SDL_Texture *loadTexture(const char *path, td_renderer renderer){
 }
 
 /*
+Private helper function to create a texture from a surface
+*/
+SDL_Texture *surfaceToTexture(td_renderer renderer, SDL_Surface *surface) {
+    if(!surface) return NULL;
+
+    //The final texture
+    SDL_Texture *newTexture = NULL;
+    //Checks if something went wrong
+    bool failure = false;
+
+    //Create texture from surface pixels
+    newTexture = SDL_CreateTextureFromSurface( renderer -> renderer, surface );
+    if( newTexture == NULL ) {
+        failure = true;
+    }
+
+    if(failure) return NULL;
+    else return newTexture;
+}
+
+/*
 Function to be called when the render queue is destroyed in order to
 free up renderables
 */
@@ -113,6 +135,31 @@ void renderableFreeFunc(void* renderableData) {
     td_renderable renderable = (td_renderable) renderableData;
     SDL_DestroyTexture(renderable -> texture);
     free(renderable);
+}
+
+td_renderable createRendereableFromSurface(td_renderer renderer, SDL_Surface *surface) {
+    td_renderable renderable = malloc(sizeof(struct td_renderable));
+
+    renderable -> texture = surfaceToTexture(renderer, surface);
+
+    int queueLength = listLength(renderer -> renderQueue);
+
+    // Create a unique key
+    char *key = malloc((int) ceil(log10(queueLength + 1)) + 1);
+
+    sprintf(key, "%d", queueLength + 1);
+
+    appendWithFree(renderer -> renderQueue, renderable, key, renderableFreeFunc);
+
+    renderable -> num = queueLength + 1;
+
+    SDL_QueryTexture(renderable -> texture, NULL, NULL, &renderable -> rect.w, &renderable -> rect.h);
+
+    renderable -> rect.x = 0;
+    renderable -> rect.y = 0;
+    renderable -> space = WORLD_SPACE;
+
+    return renderable;
 }
 
 td_renderable createRendereable(const char *path, td_renderer renderer) {
