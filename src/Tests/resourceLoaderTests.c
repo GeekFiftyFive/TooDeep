@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "../IO/resourceLoader.h"
 #include "resourceLoaderTests.h"
 #include "testHelper.h"
@@ -7,11 +8,15 @@
 #define FINAL_TEXT "This is the final plaintext"
 
 char *initialPlaintextLoader(char *path) {
-    return INIT_TEXT;
+    char *text = malloc(strlen(INIT_TEXT) + 1);
+    strcpy(text, INIT_TEXT);
+    return text;
 }
 
 char *finalPlaintextLoader(char *path) {
-    return FINAL_TEXT;
+    char *text = malloc(strlen(FINAL_TEXT) + 1);
+    strcpy(text, FINAL_TEXT);
+    return text;
 }
 
 int runResourceLoaderTests() {

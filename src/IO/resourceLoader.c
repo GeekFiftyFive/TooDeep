@@ -81,7 +81,6 @@ void resetLoaders(td_resourceLoader rl) {
 }
 
 void destroyResourceLoader(td_resourceLoader rl) {
-    // FIXME: Find and fix bug in hash map destroy method
-    //destroyHashMap(rl -> resources);
+    destroyHashMap(rl -> resources);
     free(rl);
 }
