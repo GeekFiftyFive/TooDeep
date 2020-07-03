@@ -78,35 +78,6 @@ td_renderer initRenderer(char *title, int width, int height) {
 }
 
 /*
-Private helper function to load textures from a path
-*/
-SDL_Texture *loadTexture(const char *path, td_renderer renderer){
-    //The final texture
-    SDL_Texture *newTexture = NULL;
-    //Checks if something went wrong
-    bool failure = false;
-
-    //Load image at specified path
-    SDL_Surface *loadedSurface = IMG_Load( path );
-    if( loadedSurface == NULL ) {
-        logError("Unable to load image %s! SDL_image Error: %s\n", path, IMG_GetError() );
-        failure = true;
-    } else {
-        //Create texture from surface pixels
-        newTexture = SDL_CreateTextureFromSurface( renderer -> renderer, loadedSurface );
-        if( newTexture == NULL ) {
-            logError("Unable to create texture from %s! SDL Error: %s\n", path, SDL_GetError() );
-            failure = true;
-        }
-        //Get rid of old loaded surface
-        SDL_FreeSurface( loadedSurface );
-    }
-
-    if(failure) return NULL;
-    else return newTexture;
-}
-
-/*
 Private helper function to create a texture from a surface
 */
 SDL_Texture *surfaceToTexture(td_renderer renderer, SDL_Surface *surface) {
@@ -141,31 +112,6 @@ td_renderable createRendereableFromSurface(td_renderer renderer, SDL_Surface *su
     td_renderable renderable = malloc(sizeof(struct td_renderable));
 
     renderable -> texture = surfaceToTexture(renderer, surface);
-
-    int queueLength = listLength(renderer -> renderQueue);
-
-    // Create a unique key
-    char *key = malloc((int) ceil(log10(queueLength + 1)) + 1);
-
-    sprintf(key, "%d", queueLength + 1);
-
-    appendWithFree(renderer -> renderQueue, renderable, key, renderableFreeFunc);
-
-    renderable -> num = queueLength + 1;
-
-    SDL_QueryTexture(renderable -> texture, NULL, NULL, &renderable -> rect.w, &renderable -> rect.h);
-
-    renderable -> rect.x = 0;
-    renderable -> rect.y = 0;
-    renderable -> space = WORLD_SPACE;
-
-    return renderable;
-}
-
-td_renderable createRendereable(const char *path, td_renderer renderer) {
-    td_renderable renderable = malloc(sizeof(struct td_renderable));
-
-    renderable -> texture = loadTexture(path, renderer);
 
     int queueLength = listLength(renderer -> renderQueue);
 
