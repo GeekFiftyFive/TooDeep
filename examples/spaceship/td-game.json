@@ -2,9 +2,5 @@
     "meta": {
         "title": "Spaceship"
     },
-    "assets": {
-        "images": [
-            "rocket.png"
-        ]
-    }
+    "start_scene": "Scene 1"
 }
