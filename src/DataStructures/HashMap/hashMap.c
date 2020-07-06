@@ -46,7 +46,7 @@ int hash(char *key) {
         hashAddress = key[i] + (hashAddress << 6) + (hashAddress << 16) - hashAddress;
     }
 
-    return hashAddress;
+    return hashAddress > 0 ? hashAddress : -hashAddress;
 }
 
 void addToNewTable(void *nodeData, void *accData, char *key) {

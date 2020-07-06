@@ -8,6 +8,7 @@
 #include "IO/fileIO.h"
 #include "IO/logger.h"
 #include "JSON/jsonParser.h"
+#include "IO/gameLoader.h"
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
@@ -30,40 +31,18 @@ int main(int argc, char *args[]) {
         return 0;
     }
 
-    setBasePath(args[1]);
+    td_game game = loadGameFromDirectory(args[1]);
 
-    // TODO: Pull target file from the command arguments
-    char *configFile = readFile(USER_CONFIG_NAME);
-    char *manifestFile = readFile(MANIFEST_NAME);
-    td_json config;
-    td_json manifest;
-
-    if(configFile) {
-        config = jsonParse(configFile);
-        if(!config) {
-            logError("Could not parse config file!\n");
-            return 1;
-        }
-        free(configFile);
-    } else {
-        logError("Could not load config file!\n");
+    if(!game) {
+        logError("Failed to start!\n");
         return 1;
     }
 
+    td_json config = getConfig(game);
+    td_json manifest = getManifest(game);
+
     int width = getJSONInt(config, "userConfig.resolution.w", NULL);
     int height = getJSONInt(config, "userConfig.resolution.h", NULL);
-
-    if(manifestFile) {
-        manifest = jsonParse(manifestFile);
-        if(!manifest) {
-            logError("Could not parse manifest!\n");
-            return 2;
-        }
-        free(manifestFile);
-    } else {
-        logError("Could not load manifest!\n");
-        return 2;
-    }
 
     char *title = getJSONString(manifest, "meta.title", NULL);
 
@@ -75,7 +54,7 @@ int main(int argc, char *args[]) {
 
     destroyRenderer(renderer);
 
-    freeJson(config);
+    destroyGame(game);
 
     quit();
 
