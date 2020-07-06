@@ -3,7 +3,7 @@
 #include <SDL2/SDL_image.h>
 #include "eventLoop.h"
 
-void startEventLoop(td_renderer renderer) {
+void startEventLoop(td_renderer renderer, td_game game) {
     bool quit = false;
     SDL_Event e;
 

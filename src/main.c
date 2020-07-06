@@ -50,7 +50,7 @@ int main(int argc, char *args[]) {
     
     if(!renderer) return 1;
 
-    startEventLoop(renderer);
+    startEventLoop(renderer, game);
 
     destroyRenderer(renderer);
 
