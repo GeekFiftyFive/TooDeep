@@ -41,7 +41,6 @@ td_game loadGameFromDirectory(char *path) {
     game -> manifest = jsonParse(manifest);
 
     game -> scenes = createHashMap(10);
-    free(config);
 
     return game;
 }
