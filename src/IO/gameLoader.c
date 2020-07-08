@@ -50,8 +50,12 @@ td_game loadGameFromDirectory(char *path) {
     game -> scenes = createHashMap(10);
     game -> entities = createHashMap(10);
 
+    char *scenePath = concatPath(path, SCENES_PATH);
+
     // TODO: Scan scenes and entities folders for files and load them
-    iterateOverDir(concatPath(path, SCENES_PATH), true, addJsonToHashmapCallback, game -> scenes);
+    iterateOverDir(scenePath, true, addJsonToHashmapCallback, game -> scenes);
+
+    free(scenePath);
 
     return game;
 }
