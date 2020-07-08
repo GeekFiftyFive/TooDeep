@@ -30,7 +30,7 @@ int iterateOverDir(char *path, void (*callback)(char *, void *), void *data) {
 
     dp = opendir(path);
     if(dp) {
-        while(ep = readdir(dp)) {
+        while((ep = readdir(dp))) {
             count++;
             callback(ep -> d_name, data);
         }
@@ -38,4 +38,10 @@ int iterateOverDir(char *path, void (*callback)(char *, void *), void *data) {
     }
 
     return count;
+}
+
+char *concatPath(char *basePath, char *path) {
+    char *fullPath = malloc(strlen(path) + strlen(basePath) + 1);
+    sprintf(fullPath, "%s/%s", basePath, path);
+    return fullPath;
 }

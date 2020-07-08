@@ -32,19 +32,13 @@ td_resourceLoader createResourceLoader(char *basePath) {
     return resourceLoader;
 }
 
-char *concatPath(td_resourceLoader rl, char *path) {
-    char *fullPath = malloc(strlen(path) + strlen(rl -> basePath) + 1);
-    sprintf(fullPath, "%s/%s", rl -> basePath, path);
-    return fullPath;
-}
-
 // TODO: Attempt to generalise this using macros
 char *loadPlaintextResource(td_resourceLoader rl, char *path) {
     char *plaintext = (char*) getFromHashMap(rl -> resources, path);
     
     if(plaintext) return plaintext;
 
-    char *fullPath = concatPath(rl, path);
+    char *fullPath = concatPath(rl -> basePath, path);
 
     plaintext = rl -> plaintextLoader(fullPath);
 
@@ -60,7 +54,7 @@ SDL_Surface *loadSurfaceResource(td_resourceLoader rl, char *path) {
 
     if(surface) return surface;
 
-    char *fullPath = concatPath(rl, path);
+    char *fullPath = concatPath(rl -> basePath, path);
 
     surface = rl -> surfaceLoader(fullPath);
     insertIntoHashMap(rl -> resources, path, surface, SDL_FreeSurface);
