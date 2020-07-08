@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <SDL2/SDL_image.h>
+#include <stdbool.h>
 #include "resourceLoader.h"
 #include "logger.h"
 #include "../DataStructures/HashMap/hashMap.h"
@@ -33,20 +34,31 @@ td_resourceLoader createResourceLoader(char *basePath) {
 }
 
 // TODO: Attempt to generalise this using macros
-char *loadPlaintextResource(td_resourceLoader rl, char *path) {
-    char *plaintext = (char*) getFromHashMap(rl -> resources, path);
+static char *loadPlaintextResourceOpt(td_resourceLoader rl, char *path, bool staticRes) {
+    char *fullPath = staticRes ? path : concatPath(rl -> basePath, path);
+    char *plaintext = (char*) getFromHashMap(rl -> resources, fullPath);
     
     if(plaintext) return plaintext;
 
-    char *fullPath = concatPath(rl -> basePath, path);
-
     plaintext = rl -> plaintextLoader(fullPath);
 
-    insertIntoHashMap(rl -> resources, path, plaintext, free);
+    if(!plaintext) {
+        free(fullPath);
+        logError("Error loading file: %s\n", fullPath);
+        return NULL;
+    }
 
-    free(fullPath);
+    insertIntoHashMap(rl -> resources, fullPath, plaintext, free);
 
     return plaintext;
+}
+
+char *loadStaticPlaintextResource(td_resourceLoader rl, char *path) {
+    return loadPlaintextResourceOpt(rl, path, true);
+}
+
+char *loadPlaintextResource(td_resourceLoader rl, char *path) {
+    return loadPlaintextResourceOpt(rl, path, false);
 }
 
 SDL_Surface *loadSurfaceResource(td_resourceLoader rl, char *path) {

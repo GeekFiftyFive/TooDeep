@@ -7,6 +7,8 @@ typedef struct td_resourceLoader *td_resourceLoader;
 
 td_resourceLoader createResourceLoader(char *);
 
+char *loadStaticPlaintextResource(td_resourceLoader, char *);
+
 char *loadPlaintextResource(td_resourceLoader, char *);
 
 SDL_Surface *loadSurfaceResource(td_resourceLoader, char *);

@@ -8,6 +8,7 @@
 #define USER_CONFIG_NAME "td-user-config.json"
 #define MANIFEST_NAME "td-game.json"
 #define SCENES_PATH "scenes"
+#define ENTITIES_PATH "entities"
 
 struct td_game {
     td_resourceLoader loader;
@@ -17,8 +18,19 @@ struct td_game {
     td_json manifest;
 };
 
-void addJsonToHashmapCallback(char *path, void *data) {
-    puts(path);
+struct callbackData {
+    td_hashMap map;
+    td_resourceLoader loader;
+};
+
+void addJsonToHashmapCallback(char *path, void *rawData) {
+    struct callbackData *data = (struct callbackData*) rawData;
+    char *json = loadStaticPlaintextResource(data -> loader, path);
+    td_json parsed = jsonParse(json);
+    td_jsonError error = JSON_NO_ERROR;
+    char *name = getJSONString(parsed, "name", &error);
+    if(error) logError("Malformed JSON! Must contain name!\n");
+    else insertIntoHashMap(data -> map, name, parsed, freeJson);
 }
 
 td_game loadGameFromDirectory(char *path) {
@@ -51,11 +63,15 @@ td_game loadGameFromDirectory(char *path) {
     game -> entities = createHashMap(10);
 
     char *scenePath = concatPath(path, SCENES_PATH);
+    struct callbackData mapData = {game -> scenes, game -> loader};
+    iterateOverDir(scenePath, true, addJsonToHashmapCallback, &mapData);
 
-    // TODO: Scan scenes and entities folders for files and load them
-    iterateOverDir(scenePath, true, addJsonToHashmapCallback, game -> scenes);
+    char *entityPath = concatPath(path, ENTITIES_PATH);
+    mapData.map = game -> entities;
+    iterateOverDir(entityPath, true, addJsonToHashmapCallback, &mapData);
 
     free(scenePath);
+    free(entityPath);
 
     return game;
 }

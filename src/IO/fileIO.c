@@ -44,14 +44,14 @@ int iterateOverDir(char *path, bool recurse, void (*callback)(char *, void *), v
     dp = opendir(path);
     if(dp) {
         while((ep = readdir(dp))) {
+            char *fullPath = concatPath(path, ep -> d_name);
             if(!isDirectory(ep)) {
                 count++;
-                callback(ep -> d_name, data);
+                callback(fullPath, data);
             } else if(recurse && !isRelative(ep)) {
-                char *fullPath = concatPath(path, ep -> d_name);
                 iterateOverDir(fullPath, true, callback, data);
-                free(fullPath);
             }
+            free(fullPath);
         }
         closedir(dp);
     }
