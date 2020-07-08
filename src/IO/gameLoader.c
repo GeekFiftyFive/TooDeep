@@ -10,6 +10,7 @@
 struct td_game {
     td_resourceLoader loader;
     td_hashMap scenes;
+    td_hashMap entities;
     td_json config;
     td_json manifest;
 };
@@ -41,6 +42,7 @@ td_game loadGameFromDirectory(char *path) {
     game -> manifest = jsonParse(manifest);
 
     game -> scenes = createHashMap(10);
+    game -> entities = createHashMap(10);
 
     return game;
 }
@@ -56,6 +58,7 @@ td_json getManifest(td_game game) {
 void destroyGame(td_game game) {
     destroyResourceLoader(game -> loader);
     destroyHashMap(game -> scenes);
+    destroyHashMap(game -> entities);
     freeJson(game -> config);
     freeJson(game -> manifest);
     free(game);
