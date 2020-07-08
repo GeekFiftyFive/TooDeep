@@ -1,6 +1,12 @@
 {
     "title": "Scene 1",
-    "assets": [
-        "rocket.png"
+    "entities": [
+        {
+            "entity": "rocket",
+            "start_pos": {
+                "x": 0,
+                "y": 0
+            }
+        }
     ]
 }
