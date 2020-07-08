@@ -1,3 +1,7 @@
 {
-    "name": "rocket"
+    "name": "rocket",
+    "start_look": {
+        "type": "texture",
+        "asset": "rocket.png"
+    }
 }
