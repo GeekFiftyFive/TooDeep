@@ -3,4 +3,6 @@
 
 char *readFile(const char *path);
 
+int iterateOverDir(char *path, void (*callback)(char *, void *), void *data);
+
 #endif

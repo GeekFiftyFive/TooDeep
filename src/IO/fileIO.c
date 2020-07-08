@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <dirent.h>
 #include "fileIO.h"
 
 char *readFile(const char *path) {
@@ -20,4 +21,21 @@ char *readFile(const char *path) {
     buffer[length] = '\0';
 
     return buffer;
+}
+
+int iterateOverDir(char *path, void (*callback)(char *, void *), void *data) {
+    DIR *dp;
+    struct dirent *ep;
+    int count = 0;
+
+    dp = opendir(path);
+    if(dp) {
+        while(ep = readdir(dp)) {
+            count++;
+            callback(ep -> d_name, data);
+        }
+        closedir(dp);
+    }
+
+    return count;
 }
