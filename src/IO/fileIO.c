@@ -4,6 +4,11 @@
 #include <dirent.h>
 #include "fileIO.h"
 
+// Workaround for bogus Intellisense error
+#ifdef __INTELLISENSE__
+#define DT_DIR 4
+#endif
+
 char *readFile(const char *path) {
     char *buffer = 0;
     long length = 0;
@@ -23,7 +28,15 @@ char *readFile(const char *path) {
     return buffer;
 }
 
-int iterateOverDir(char *path, void (*callback)(char *, void *), void *data) {
+static bool isDirectory(struct dirent *ep) {
+    return ep -> d_type == DT_DIR;
+}
+
+static bool isRelative(struct dirent *ep) {
+    return !strcmp(".", ep -> d_name) || !strcmp("..", ep -> d_name);
+}
+
+int iterateOverDir(char *path, bool recurse, void (*callback)(char *, void *), void *data) {
     DIR *dp;
     struct dirent *ep;
     int count = 0;
@@ -31,8 +44,10 @@ int iterateOverDir(char *path, void (*callback)(char *, void *), void *data) {
     dp = opendir(path);
     if(dp) {
         while((ep = readdir(dp))) {
-            count++;
-            callback(ep -> d_name, data);
+            if((!isDirectory(ep) || recurse) && !isRelative(ep)) {
+                count++;
+                callback(ep -> d_name, data);
+            }
         }
         closedir(dp);
     }

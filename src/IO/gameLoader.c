@@ -1,11 +1,13 @@
 #include <stdlib.h>
 #include "gameLoader.h"
 #include "resourceLoader.h"
+#include "fileIO.h"
 #include "../DataStructures/HashMap/hashMap.h"
 #include "logger.h"
 
 #define USER_CONFIG_NAME "td-user-config.json"
 #define MANIFEST_NAME "td-game.json"
+#define SCENES_PATH "scenes"
 
 struct td_game {
     td_resourceLoader loader;
@@ -14,6 +16,10 @@ struct td_game {
     td_json config;
     td_json manifest;
 };
+
+void addJsonToHashmapCallback(char *path, void *data) {
+    puts(path);
+}
 
 td_game loadGameFromDirectory(char *path) {
     td_game game = malloc(sizeof(struct td_game));
@@ -43,6 +49,9 @@ td_game loadGameFromDirectory(char *path) {
 
     game -> scenes = createHashMap(10);
     game -> entities = createHashMap(10);
+
+    // TODO: Scan scenes and entities folders for files and load them
+    iterateOverDir(concatPath(path, SCENES_PATH), true, addJsonToHashmapCallback, game -> scenes);
 
     return game;
 }

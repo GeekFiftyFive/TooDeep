@@ -1,4 +1,4 @@
-ARGS = -std=c99 -Wall -O2 -g
+ARGS = -std=c99 -Wall -O2 -g -D_DEFAULT_SOURCE=__STRICT_ANSI__
 
 LIBS = -lSDL2 -lSDL2_image -lm -lcjson
 

@@ -1,10 +1,12 @@
 #ifndef FILE_IO
 #define FILE_IO
 
-char *readFile(const char *path);
+#include <stdbool.h>
 
-int iterateOverDir(char *path, void (*callback)(char *, void *), void *data);
+char *readFile(const char *);
 
-char *concatPath(char *basePath, char* path);
+int iterateOverDir(char *, bool, void (*callback)(char *, void *), void *);
+
+char *concatPath(char *, char*);
 
 #endif
