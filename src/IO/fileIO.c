@@ -60,7 +60,7 @@ int iterateOverDir(char *path, bool recurse, void (*callback)(char *, void *), v
 }
 
 char *concatPath(char *basePath, char *path) {
-    char *fullPath = malloc(strlen(path) + strlen(basePath) + 1);
+    char *fullPath = malloc(strlen(path) + strlen(basePath) + 2);
     sprintf(fullPath, "%s/%s", basePath, path);
     return fullPath;
 }
