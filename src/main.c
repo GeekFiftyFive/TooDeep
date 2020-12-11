@@ -13,9 +13,6 @@
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
 
-#define USER_CONFIG_NAME "/td-user-config.json"
-#define MANIFEST_NAME "/td-game.json"
-
 bool shouldRunTests(int argc, char *args[]) {
     for(int i = 0; i < argc; i++) {
         if(strcmp(args[i], "-run-tests") == 0) return true;
