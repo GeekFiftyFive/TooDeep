@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "../../IO/gameLoader.h"
 #include "../../DataStructures/LinkedList/linkedList.h"
 
 struct td_scene {

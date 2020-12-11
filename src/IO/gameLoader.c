@@ -3,6 +3,7 @@
 #include "resourceLoader.h"
 #include "fileIO.h"
 #include "../DataStructures/HashMap/hashMap.h"
+#include "../State/Scene/scene.h"
 #include "logger.h"
 
 #define USER_CONFIG_NAME "td-user-config.json"
@@ -16,6 +17,7 @@ struct td_game {
     td_hashMap entities;
     td_json config;
     td_json manifest;
+    td_scene currentScene;
 };
 
 struct callbackData {
@@ -69,6 +71,15 @@ td_game loadGameFromDirectory(char *path) {
     char *entityPath = concatPath(path, ENTITIES_PATH);
     mapData.map = game -> entities;
     iterateOverDir(entityPath, true, addJsonToHashmapCallback, &mapData);
+
+    td_jsonError err;
+    char *startSceneName = getJSONString(game -> manifest, "start_scene", &err);
+
+    if(err == JSON_ERROR) {
+        logError("start_scene not defined in manifest\n");
+    } else {
+        buildScene(game, startSceneName);
+    }
 
     free(scenePath);
     free(entityPath);

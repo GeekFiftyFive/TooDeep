@@ -5,6 +5,8 @@
 
 typedef struct td_game *td_game;
 
+typedef struct td_world *td_world;
+
 td_game loadGameFromDirectory(char *);
 
 td_json getConfig(td_game);
