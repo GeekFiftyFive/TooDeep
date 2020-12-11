@@ -13,6 +13,8 @@ td_json getConfig(td_game);
 
 td_json getManifest(td_game);
 
+td_json getScene(td_game, const char*);
+
 void destroyGame(td_game);
 
 #endif

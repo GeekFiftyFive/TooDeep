@@ -5,6 +5,8 @@
 
 typedef struct td_scene *td_scene;
 
-td_scene buildScene(td_game game, char *sceneName);
+td_scene buildScene(td_game, char *);
+
+void destroyScene(td_scene);
 
 #endif

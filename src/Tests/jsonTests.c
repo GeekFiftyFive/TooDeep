@@ -48,6 +48,11 @@ int runJsonTests() {
     failedTests += assertString("test string", getJSONString(json, "block_1.value_2", &error), "getJSONString no error");
     failedTests += assert(JSON_NO_ERROR, error, "Non error response for valid string fetch");
 
+    // Get String value when no field given
+    td_json stringObject = getJSONObject(json, "block_1.value_2", &error);
+    failedTests += assertString("test string", getJSONString(stringObject, NULL, &error), "getJSONString empty field no error");
+    failedTests += assert(JSON_NO_ERROR, error, "Non error response for valid string fetch");
+
     // Get a double value from JSON
     failedTests += assert(3.1415, getJSONDouble(json, "block_1.block_2.double", &error), "getJSONDouble no error");
     failedTests += assert(JSON_NO_ERROR, error, "Non error response for valid double fetch");

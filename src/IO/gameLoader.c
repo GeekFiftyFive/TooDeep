@@ -73,12 +73,13 @@ td_game loadGameFromDirectory(char *path) {
     iterateOverDir(entityPath, true, addJsonToHashmapCallback, &mapData);
 
     td_jsonError err;
+    game -> currentScene = NULL;
     char *startSceneName = getJSONString(game -> manifest, "start_scene", &err);
 
     if(err == JSON_ERROR) {
         logError("start_scene not defined in manifest\n");
     } else {
-        buildScene(game, startSceneName);
+        game -> currentScene = buildScene(game, startSceneName);
     }
 
     free(scenePath);
@@ -95,10 +96,15 @@ td_json getManifest(td_game game) {
     return game -> manifest;
 }
 
+td_json getScene(td_game game, const char* sceneName) {
+    return (td_json) getFromHashMap(game -> scenes, sceneName);
+}
+
 void destroyGame(td_game game) {
     destroyResourceLoader(game -> loader);
     destroyHashMap(game -> scenes);
     destroyHashMap(game -> entities);
+    destroyScene(game -> currentScene);
     freeJson(game -> config);
     freeJson(game -> manifest);
     free(game);

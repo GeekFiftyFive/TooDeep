@@ -73,7 +73,7 @@ double getJSONDouble(td_json json, char *field, td_jsonError *error) {
 char *getJSONString(td_json json, char *field, td_jsonError *error) {
     if(error) *(error) = JSON_NO_ERROR;
 
-    td_json obj = getJSONObject(json, field, error);
+    td_json obj = field ? getJSONObject(json, field, error) : json;
 
     if(!cJSON_IsString(obj)) {
         logWarn("object at %s is not a string!\n", field);
@@ -98,6 +98,17 @@ void jsonArrayForEach(td_json json, char *field, void (*callback)(td_json, void 
         td_json item = cJSON_GetArrayItem(obj, i);
         callback(item, data);
     }    
+}
+
+int getJSONArrayLength(td_json json, char* field) {
+    td_json obj = getJSONObject(json, field, NULL);
+
+    if(!cJSON_IsArray(obj)) {
+        logWarn("object at %s is not an array!\n", field);
+        return;
+    }
+
+    return cJSON_GetArraySize(obj);
 }
 
 void freeJson(td_json content) {
