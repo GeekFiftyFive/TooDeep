@@ -2,8 +2,8 @@ ARGS = -std=c99 -Wall -O2 -g -D_DEFAULT_SOURCE=__STRICT_ANSI__
 
 LIBS = -lSDL2 -lSDL2_image -lm -lcjson
 
-tooDeep: obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/hashMap.o obj/testHelper.o obj/linkedListTests.o obj/hashMapTests.o  obj/resourceLoaderTests.o obj/fileIO.o obj/resourceLoader.o obj/jsonParser.o obj/jsonTests.o obj/logger.o obj/gameLoader.o obj/scene.o
-			cc $(ARGS) -o tooDeep obj/main.o obj/renderer.o obj/eventLoop.o obj/hashMap.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o obj/hashMapTests.o obj/resourceLoaderTests.o obj/fileIO.o obj/resourceLoader.o obj/jsonParser.o obj/jsonTests.o obj/logger.o obj/gameLoader.o obj/scene.o $(LIBS)
+tooDeep: obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/hashMap.o obj/testHelper.o obj/linkedListTests.o obj/hashMapTests.o  obj/resourceLoaderTests.o obj/fileIO.o obj/resourceLoader.o obj/jsonParser.o obj/jsonTests.o obj/logger.o obj/gameLoader.o obj/scene.o obj/entity.o
+			cc $(ARGS) -o tooDeep obj/main.o obj/renderer.o obj/eventLoop.o obj/hashMap.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o obj/hashMapTests.o obj/resourceLoaderTests.o obj/fileIO.o obj/resourceLoader.o obj/jsonParser.o obj/jsonTests.o obj/logger.o obj/gameLoader.o obj/scene.o obj/entity.o $(LIBS)
 
 obj/main.o: src/main.c
 			cc $(ARGS) -c src/main.c -o obj/main.o
@@ -52,6 +52,9 @@ obj/gameLoader.o: src/IO/gameLoader.c src/IO/gameLoader.h
 
 obj/scene.o: src/State/Scene/scene.c src/State/Scene/scene.h
 			cc $(ARGS) -c src/State/Scene/scene.c -o obj/scene.o
+
+obj/entity.o: src/State/Entity/entity.c src/State/Entity/entity.h
+			cc $(ARGS) -c src/State/Entity/entity.c -o obj/entity.o
 
 clean:
 	rm -rf obj/* && rm tooDeep
