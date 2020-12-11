@@ -125,11 +125,11 @@ void destroyLinkedList(td_linkedList list) {
     do {
         if(current -> freeFunc) {
             current -> freeFunc(current -> data);
-            free(current -> key);
-            td_listNode next = current -> next;
-            free(current);
-            current = next;
         }
+        free(current -> key);
+        td_listNode next = current -> next;
+        free(current);
+        current = next;
     } while(current != list -> head);
 
     free(list);
