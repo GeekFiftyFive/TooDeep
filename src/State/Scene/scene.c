@@ -13,6 +13,7 @@ struct callbackData {
     int index;
     td_linkedList *layers;
     td_hashMap layerIndexes;
+    td_game game;
 };
 
 void layerCallback(td_json json, void *data) {
@@ -45,7 +46,7 @@ td_scene buildScene(td_game game, char *sceneName) {
     td_linkedList *layers = malloc(sizeof(td_linkedList) * layerCount);
     td_hashMap layerIndexes = createHashMap(layerCount);
 
-    struct callbackData layerData = { 0, layers, layerIndexes };
+    struct callbackData layerData = { 0, layers, layerIndexes, game };
 
     jsonArrayForEach(sceneJson, "layers", layerCallback, &layerData);
     jsonArrayForEach(sceneJson, "entities", entityCallback, &layerData);
