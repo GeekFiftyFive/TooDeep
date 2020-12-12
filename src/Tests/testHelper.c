@@ -5,6 +5,7 @@
 #include "jsonTests.h"
 #include "hashMapTests.h"
 #include "resourceLoaderTests.h"
+#include "tupleTests.h"
 #include "../IO/logger.h"
 
 int runTests() {
@@ -14,6 +15,7 @@ int runTests() {
     testFailures += runJsonTests();
     testFailures += runHashMapTests();
     testFailures += runResourceLoaderTests();
+    testFailures += runTupleTests();
 
     if(testFailures) {
         logError("%d tests failed!\n", testFailures);
