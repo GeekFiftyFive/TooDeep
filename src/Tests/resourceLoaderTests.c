@@ -27,14 +27,14 @@ int runResourceLoaderTests() {
     setPlaintextLoader(rl, initialPlaintextLoader);
 
     char *actual = loadPlaintextResource(rl, "");
-    assertString(INIT_TEXT, actual, "The initial text should be loaded");
+    failedTests += assertString(INIT_TEXT, actual, "The initial text should be loaded");
 
     setPlaintextLoader(rl, finalPlaintextLoader);
     actual = loadPlaintextResource(rl, "");
-    assertString(INIT_TEXT, actual, "The initial text should still be loaded");
+    failedTests += assertString(INIT_TEXT, actual, "The initial text should still be loaded");
 
     actual = loadPlaintextResource(rl, "new");
-    assertString(FINAL_TEXT, actual, "The new text should now be loaded");
+    failedTests += assertString(FINAL_TEXT, actual, "The new text should now be loaded");
 
     destroyResourceLoader(rl);
 
