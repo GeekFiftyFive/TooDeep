@@ -105,7 +105,7 @@ int getJSONArrayLength(td_json json, char* field) {
 
     if(!cJSON_IsArray(obj)) {
         logWarn("object at %s is not an array!\n", field);
-        return;
+        return 0;
     }
 
     return cJSON_GetArraySize(obj);
