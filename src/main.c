@@ -59,7 +59,7 @@ int main(int argc, char *args[]) {
         return 1;
     }
 
-    startEventLoop(renderer, game);
+    startEventLoop(game);
 
     destroyResourceLoader(loader);
 

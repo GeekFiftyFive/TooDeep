@@ -12,6 +12,8 @@ typedef struct td_renderable *td_renderable;
 
 td_renderer initRenderer(char *, int,int);
 
+void appendToRenderQueue(td_renderer, td_renderable);
+
 td_renderable createRenderableFromSurface(td_renderer, SDL_Surface *);
 
 void setRenderSpace(td_renderable, td_renderSpace);

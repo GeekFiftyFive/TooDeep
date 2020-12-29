@@ -3,8 +3,9 @@
 #include "gameLoader.h"
 #include "fileIO.h"
 #include "../DataStructures/HashMap/hashMap.h"
-#include "../State/Scene/scene.h"
 #include "logger.h"
+#include "../State/Scene/scene.h"
+#include "../State/Entity/entity.h"
 
 #define MANIFEST_NAME "td-game.json"
 #define SCENES_PATH "scenes"
@@ -80,6 +81,16 @@ td_game loadGameFromDirectory(char *path, td_renderer renderer) {
     free(entityPath);
 
     return game;
+}
+
+static void copyCallback(void *elementData, void *callbackData, char *key) {
+    td_entity entity = (td_entity) elementData;
+    td_renderer renderer = (td_renderer) callbackData;
+    appendToRenderQueue(renderer, getRenderable(entity));
+}
+
+void copySceneToRenderQueue(td_game game) {
+    listForEach(getEntities(game -> currentScene), copyCallback, game -> renderer);
 }
 
 td_json getManifest(td_game game) {

@@ -11,6 +11,8 @@ typedef struct td_world *td_world;
 
 td_game loadGameFromDirectory(char *, td_renderer);
 
+void copySceneToRenderQueue(td_game game);
+
 td_json getManifest(td_game);
 
 td_json getScene(td_game, char*);

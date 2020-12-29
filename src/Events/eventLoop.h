@@ -4,7 +4,7 @@
 #include "../Renderer/renderer.h"
 #include "../IO/gameLoader.h"
 
-void startEventLoop(td_renderer, td_game);
+void startEventLoop(td_game);
 
 void quit();
 

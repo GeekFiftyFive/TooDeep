@@ -4,7 +4,6 @@
 #include "../../IO/logger.h"
 #include "../../IO/gameLoader.h"
 #include "../../IO/resourceLoader.h"
-#include "../../DataStructures/LinkedList/linkedList.h"
 #include "../../DataStructures/HashMap/hashMap.h"
 #include "../Entity/entity.h"
 
@@ -87,6 +86,10 @@ td_scene buildScene(td_game game, char *sceneName) {
     free(layers);
 
     return scene;
+}
+
+td_linkedList getEntities(td_scene scene) {
+    return scene -> entities;
 }
 
 void destroyScene(td_scene scene) {

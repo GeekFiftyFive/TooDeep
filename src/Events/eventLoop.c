@@ -1,16 +1,25 @@
 #include <stdbool.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "eventLoop.h"
+#include "../IO/gameLoader.h"
+#include "../State/Entity/entity.h"
 
-void startEventLoop(td_renderer renderer, td_game game) {
+void addToRenderQueue(void *elementData, void *callbackData, char *key) {
+    td_entity entity = (td_entity) elementData;
+    td_renderer renderer = (td_renderer) callbackData;
+    appendToRenderQueue(renderer, getRenderable(entity));
+}
+
+void startEventLoop(td_game game) {
     bool quit = false;
     SDL_Event e;
+
+    copySceneToRenderQueue(game);
 
     while(!quit) {
         SDL_PollEvent(&e);
         quit = e.type == SDL_QUIT;
-        renderFrame(renderer);
+        renderFrame(getRenderer(game));
     }
 }
 

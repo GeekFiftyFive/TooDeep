@@ -11,6 +11,10 @@ td_entity createEntity(td_renderable renderable) {
     return entity;
 }
 
+td_renderable getRenderable(td_entity entity) {
+    return entity -> renderable;
+}
+
 void destroyEntity(td_entity entity) {
     // TODO: Implement
 }
