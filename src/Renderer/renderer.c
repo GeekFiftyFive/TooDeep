@@ -3,6 +3,7 @@
 #include <math.h>
 #include "renderer.h"
 #include "../DataStructures/LinkedList/linkedList.h"
+#include "../DataStructures/Tuple/tuple.h"
 #include "../IO/logger.h"
 
 #define BASE_WIDTH 1920
@@ -16,7 +17,8 @@ struct td_renderer {
 
 struct td_renderable {
     SDL_Texture *texture;
-    SDL_Rect rect;
+    td_tuple pos;
+    td_tuple size;
     td_renderSpace space;
 };
 
@@ -121,11 +123,15 @@ td_renderable createRenderableFromSurface(td_renderer renderer, SDL_Surface *sur
 
     renderable -> texture = surfaceToTexture(renderer, surface);
 
-    SDL_QueryTexture(renderable -> texture, NULL, NULL, &renderable -> rect.w, &renderable -> rect.h);
+    int w, h;
 
-    renderable -> rect.x = 0;
-    renderable -> rect.y = 0;
-    renderable -> space = WORLD_SPACE;
+    SDL_QueryTexture(renderable -> texture, NULL, NULL, &w, &h);
+
+    renderable -> pos.x  = 0.0;
+    renderable -> pos.y  = 0.0;
+    renderable -> size.x = (float) w;
+    renderable -> size.y = (float) h;
+    renderable -> space  = WORLD_SPACE;
 
     return renderable;
 }
@@ -134,14 +140,14 @@ void setRenderSpace(td_renderable renderable, td_renderSpace space) {
     renderable -> space = space;
 }
 
-SDL_Rect scaleRect(SDL_Rect rect, td_renderer renderer) {
+SDL_Rect scaleRect(td_tuple pos, td_tuple size, td_renderer renderer) {
     float scaleFactor = renderer -> scaleFactor;
 
     SDL_Rect scaled = {
-        rect.x * scaleFactor,
-        rect.y * scaleFactor,
-        rect.w * scaleFactor,
-        rect.h * scaleFactor
+        pos.x * scaleFactor,
+        pos.y * scaleFactor,
+        size.x * scaleFactor,
+        size.y * scaleFactor
     };
 
     return scaled;
@@ -151,7 +157,7 @@ void drawRenderable(void *renderableData, void *rendererData, char *key) {
     td_renderable renderable = (td_renderable) renderableData;
     td_renderer renderer = (td_renderer) rendererData;
 
-    SDL_Rect drawArea = scaleRect(renderable -> rect, renderer);
+    SDL_Rect drawArea = scaleRect(renderable -> pos, renderable -> size, renderer);
 
     SDL_RenderCopyEx(renderer -> renderer, renderable -> texture, NULL, &drawArea, 0, NULL, SDL_FLIP_NONE);
 }
