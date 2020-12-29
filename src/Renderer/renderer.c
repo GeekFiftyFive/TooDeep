@@ -1,6 +1,4 @@
 #include <stdio.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <stdbool.h>
 #include <math.h>
 #include "renderer.h"
@@ -20,7 +18,6 @@ struct td_renderable {
     SDL_Texture *texture;
     SDL_Rect rect;
     td_renderSpace space;
-    int num;
 };
 
 /*
@@ -108,11 +105,7 @@ void renderableFreeFunc(void* renderableData) {
     free(renderable);
 }
 
-td_renderable createRendereableFromSurface(td_renderer renderer, SDL_Surface *surface) {
-    td_renderable renderable = malloc(sizeof(struct td_renderable));
-
-    renderable -> texture = surfaceToTexture(renderer, surface);
-
+void appendToRenderQueue(td_renderer renderer, td_renderable renderable) {
     int queueLength = listLength(renderer -> renderQueue);
 
     // Create a unique key
@@ -121,8 +114,12 @@ td_renderable createRendereableFromSurface(td_renderer renderer, SDL_Surface *su
     sprintf(key, "%d", queueLength + 1);
 
     appendWithFree(renderer -> renderQueue, renderable, key, renderableFreeFunc);
+}
 
-    renderable -> num = queueLength + 1;
+td_renderable createRenderableFromSurface(td_renderer renderer, SDL_Surface *surface) {
+    td_renderable renderable = malloc(sizeof(struct td_renderable));
+
+    renderable -> texture = surfaceToTexture(renderer, surface);
 
     SDL_QueryTexture(renderable -> texture, NULL, NULL, &renderable -> rect.w, &renderable -> rect.h);
 

@@ -5,9 +5,13 @@ typedef struct td_linkedList *td_linkedList;
 
 td_linkedList createLinkedList();
 
-void appendWithFree(td_linkedList, void *, char *, void *freeFunc);
+void appendWithFree(td_linkedList, void *, char *, void *);
 
 void append(td_linkedList, void *, char *);
+
+void appendList(td_linkedList, td_linkedList);
+
+void dangerouslyAddFreeFunc(td_linkedList, void *);
 
 void *getFromList(td_linkedList, char *);
 

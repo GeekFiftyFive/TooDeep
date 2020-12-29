@@ -6,7 +6,9 @@
             "entity_type": "rocket",
             "start_pos": {
                 "x": 0,
-                "y": 0,
+                "y": 0
+            },
+            "render_info": {
                 "space": "world_space",
                 "layer": "entities"
             }

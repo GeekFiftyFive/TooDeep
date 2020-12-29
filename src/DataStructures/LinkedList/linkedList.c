@@ -56,6 +56,25 @@ void append(td_linkedList list, void *data, char *key) {
     appendWithFree(list, data, key, NULL);
 }
 
+void appendListCallback(void *elementData, void *callbackData, char *elementKey) {
+    td_linkedList dest = (td_linkedList) callbackData;
+    append(dest, elementData, elementKey);
+}
+
+void appendList(td_linkedList dest, td_linkedList src) {
+    listForEach(src, appendListCallback, dest);
+}
+
+void dangerouslyAddFreeFunc(td_linkedList list, void *freeFunc) {
+    if(list -> length == 0) return;
+    td_listNode current = list -> head;
+
+    do {
+        current -> freeFunc = freeFunc;
+        current = current -> next;
+    } while(current != list -> head);
+}
+
 void *getFromList(td_linkedList list, char *key) {
     if(!list -> head) return NULL;
 

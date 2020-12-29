@@ -2,8 +2,13 @@
 #include <string.h>
 #include "scene.h"
 #include "../../IO/logger.h"
+#include "../../IO/gameLoader.h"
+#include "../../IO/resourceLoader.h"
 #include "../../DataStructures/LinkedList/linkedList.h"
 #include "../../DataStructures/HashMap/hashMap.h"
+#include "../Entity/entity.h"
+
+#define ASSET_DIR "/assets/"
 
 struct td_scene {
     td_linkedList entities;
@@ -34,8 +39,22 @@ void layerCallback(td_json json, void *data) {
     dataCast -> index++;
 }
 
+// TODO: JSON error handling
 void entityCallback(td_json json, void *data) {
     struct callbackData *dataCast = (struct callbackData*) data;
+    char *entityType = getJSONString(json, "entity_type", NULL);
+    td_json entityJSON = getEntity(dataCast -> game, entityType);
+    char *assetName = getJSONString(entityJSON, "start_look.asset", NULL);
+    char *fullAssetName = malloc(strlen(assetName) + strlen(ASSET_DIR) + 1);
+    sprintf(fullAssetName, "%s%s", ASSET_DIR, assetName);
+    SDL_Surface *startLook =  loadSurfaceResource(getResourceLoader(dataCast -> game), fullAssetName);
+    free(fullAssetName);
+    td_renderable renderable = createRenderableFromSurface(getRenderer(dataCast -> game), startLook);
+    td_entity entity = createEntity(renderable);
+    char *layerName = getJSONString(json, "render_info.layer", NULL); 
+    int *layerIndex = getFromHashMap(dataCast -> layerIndexes, layerName);
+    td_linkedList layer = dataCast -> layers[*layerIndex];
+    appendWithFree(layer, entity, newEntityID(dataCast -> game), destroyEntity);
 }
 
 td_scene buildScene(td_game game, char *sceneName) {
@@ -51,9 +70,17 @@ td_scene buildScene(td_game game, char *sceneName) {
     jsonArrayForEach(sceneJson, "layers", layerCallback, &layerData);
     jsonArrayForEach(sceneJson, "entities", entityCallback, &layerData);
 
+    td_linkedList entities = createLinkedList();
+
     for(int i = 0; i < layerCount; i++) {
+        appendList(entities, layers[i]);
         destroyLinkedList(layers[i]);
     }
+
+    // TODO: Find a more graceful way of doing this
+    dangerouslyAddFreeFunc(entities, destroyEntity);
+
+    scene -> entities = entities;
 
     destroyHashMap(layerIndexes);
 

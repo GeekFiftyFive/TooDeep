@@ -6,7 +6,7 @@
 
 typedef struct td_entity *td_entity;
 
-td_entity createEntity(td_renderable, td_tuple, td_tuple);
+td_entity createEntity(td_renderable);
 
 void destroyEntity(td_entity);
 

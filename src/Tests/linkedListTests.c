@@ -4,6 +4,7 @@
 #include "../DataStructures/LinkedList/linkedList.h"
 
 #define EXPECTED_STRING "A -> B -> C"
+#define CONCAT_EXPECTED_STRING "A -> B -> C -> D -> E -> F"
 
 void testCallback(void *nodeData, void *accData, char *key) {
     // Dereference data
@@ -34,9 +35,25 @@ int runLinkedListTests() {
     failedTests += assert(b, *((int *) getFromList(list, "B")), "Fetch 'B' from list");
     failedTests += assert(c, *((int *) getFromList(list, "C")), "Fetch 'C' from list");
 
+    td_linkedList concatinated = createLinkedList();
+    td_linkedList secondaryList = createLinkedList();
+
+    // Create more data
+    int d = 5, e = 6, f = 7;
+
+    append(secondaryList, &d, "D");
+    append(secondaryList, &e, "E");
+    append(secondaryList, &f, "F");
+
+    appendList(concatinated, list);
+    appendList(concatinated, secondaryList);
+
     // Ensure that they are in the correct order
     char *stringList = listToString(list);
     failedTests += assertString(EXPECTED_STRING, stringList, "listToString");
+
+    stringList = listToString(concatinated);
+    failedTests += assertString(CONCAT_EXPECTED_STRING, stringList, "appendList");
     free(stringList);
 
     // Ensure that forEach function gets called on each list element
@@ -47,8 +64,10 @@ int runLinkedListTests() {
     // Test the length of the list
     failedTests += assert(3, listLength(list), "listLength");
 
-    // Destroy the list
+    // Destroy the lists
     destroyLinkedList(list);
+    destroyLinkedList(concatinated);
+    destroyLinkedList(secondaryList);
 
     return failedTests;
 }

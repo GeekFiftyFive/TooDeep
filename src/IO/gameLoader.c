@@ -1,23 +1,23 @@
 #include <stdlib.h>
+#include <string.h>
 #include "gameLoader.h"
-#include "resourceLoader.h"
 #include "fileIO.h"
 #include "../DataStructures/HashMap/hashMap.h"
 #include "../State/Scene/scene.h"
 #include "logger.h"
 
-#define USER_CONFIG_NAME "td-user-config.json"
 #define MANIFEST_NAME "td-game.json"
 #define SCENES_PATH "scenes"
 #define ENTITIES_PATH "entities"
 
 struct td_game {
     td_resourceLoader loader;
+    td_renderer renderer;
     td_hashMap scenes;
     td_hashMap entities;
-    td_json config;
     td_json manifest;
     td_scene currentScene;
+    uint entityCount;
 };
 
 struct callbackData {
@@ -31,24 +31,18 @@ void addJsonToHashmapCallback(char *path, void *rawData) {
     td_json parsed = jsonParse(json);
     td_jsonError error = JSON_NO_ERROR;
     char *name = getJSONString(parsed, "name", &error);
+    char *nameCpy = (char *) malloc(strlen(name) + 1);
+    strcpy(nameCpy, name);
     if(error) logError("Malformed JSON! Must contain name!\n");
-    else insertIntoHashMap(data -> map, name, parsed, freeJson);
+    else insertIntoHashMap(data -> map, nameCpy, parsed, freeJson);
 }
 
-td_game loadGameFromDirectory(char *path) {
+td_game loadGameFromDirectory(char *path, td_renderer renderer) {
     td_game game = malloc(sizeof(struct td_game));
 
     game -> loader = createResourceLoader(path);
-    char *config = loadPlaintextResource(game -> loader, USER_CONFIG_NAME);
-
-    if(!config) {
-        logError("Cannot load config file\n");
-        destroyResourceLoader(game -> loader);
-        free(game);
-        return NULL;
-    }
-
-    game -> config = jsonParse(config);
+    game -> renderer = renderer;
+    game -> entityCount = 0;
 
     char *manifest = loadPlaintextResource(game -> loader, MANIFEST_NAME);
 
@@ -88,16 +82,31 @@ td_game loadGameFromDirectory(char *path) {
     return game;
 }
 
-td_json getConfig(td_game game) {
-    return game -> config;
-}
-
 td_json getManifest(td_game game) {
     return game -> manifest;
 }
 
-td_json getScene(td_game game, const char* sceneName) {
+td_json getScene(td_game game, char* sceneName) {
     return (td_json) getFromHashMap(game -> scenes, sceneName);
+}
+
+td_json getEntity(td_game game, char* entityName) {
+    return (td_json) getFromHashMap(game -> entities, entityName);
+}
+
+td_resourceLoader getResourceLoader(td_game game) {
+    return game -> loader;
+}
+
+td_renderer getRenderer(td_game game) {
+    return game -> renderer;
+}
+
+char *newEntityID(td_game game) {
+    char *id = malloc((int) ceil(log10(game -> entityCount + 1)) + 1);
+    sprintf(id, "%u", game -> entityCount);
+    game -> entityCount++;
+    return id;
 }
 
 void destroyGame(td_game game) {
@@ -105,7 +114,6 @@ void destroyGame(td_game game) {
     destroyHashMap(game -> scenes);
     destroyHashMap(game -> entities);
     destroyScene(game -> currentScene);
-    freeJson(game -> config);
     freeJson(game -> manifest);
     free(game);
 }
