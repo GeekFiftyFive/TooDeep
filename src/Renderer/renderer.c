@@ -5,6 +5,7 @@
 #include "../DataStructures/LinkedList/linkedList.h"
 #include "../DataStructures/Tuple/tuple.h"
 #include "../IO/logger.h"
+#include "../Utils/stringUtils.h"
 
 #define BASE_WIDTH 1920
 
@@ -97,25 +98,13 @@ SDL_Texture *surfaceToTexture(td_renderer renderer, SDL_Surface *surface) {
     else return newTexture;
 }
 
-/*
-Function to be called when the render queue is destroyed in order to
-free up renderables
-*/
-void renderableFreeFunc(void* renderableData) {
-    td_renderable renderable = (td_renderable) renderableData;
-    SDL_DestroyTexture(renderable -> texture);
-    free(renderable);
-}
-
 void appendToRenderQueue(td_renderer renderer, td_renderable renderable) {
     int queueLength = listLength(renderer -> renderQueue);
 
     // Create a unique key
-    char *key = malloc((int) ceil(log10(queueLength + 1)) + 1);
+    char *key = stringifyInt(queueLength + 1);
 
-    sprintf(key, "%d", queueLength + 1);
-
-    appendWithFree(renderer -> renderQueue, renderable, key, renderableFreeFunc);
+    append(renderer -> renderQueue, renderable, key);
 }
 
 td_renderable createRenderableFromSurface(td_renderer renderer, SDL_Surface *surface) {
@@ -179,4 +168,9 @@ void destroyRenderer(td_renderer renderer) {
     SDL_DestroyRenderer(renderer -> renderer);
     destroyLinkedList(renderer -> renderQueue);
     free(renderer);
+}
+
+void destroyRenderable(td_renderable renderable) {
+    SDL_DestroyTexture(renderable -> texture);
+    free(renderable);
 }

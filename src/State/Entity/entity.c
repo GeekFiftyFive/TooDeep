@@ -16,5 +16,6 @@ td_renderable getRenderable(td_entity entity) {
 }
 
 void destroyEntity(td_entity entity) {
-    // TODO: Implement
+    //destroyRenderable(entity -> renderable);
+    //free(entity);
 }

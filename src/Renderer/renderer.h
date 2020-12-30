@@ -22,4 +22,6 @@ void renderFrame(td_renderer);
 
 void destroyRenderer(td_renderer);
 
+void destroyRenderable(td_renderable);
+
 #endif

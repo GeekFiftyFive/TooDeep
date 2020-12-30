@@ -4,12 +4,6 @@
 #include "../IO/gameLoader.h"
 #include "../State/Entity/entity.h"
 
-void addToRenderQueue(void *elementData, void *callbackData, char *key) {
-    td_entity entity = (td_entity) elementData;
-    td_renderer renderer = (td_renderer) callbackData;
-    appendToRenderQueue(renderer, getRenderable(entity));
-}
-
 void startEventLoop(td_game game) {
     bool quit = false;
     SDL_Event e;

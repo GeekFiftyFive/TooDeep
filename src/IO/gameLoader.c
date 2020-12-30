@@ -6,6 +6,7 @@
 #include "logger.h"
 #include "../State/Scene/scene.h"
 #include "../State/Entity/entity.h"
+#include "../Utils/stringUtils.h"
 
 #define MANIFEST_NAME "td-game.json"
 #define SCENES_PATH "scenes"
@@ -18,7 +19,7 @@ struct td_game {
     td_hashMap entities;
     td_json manifest;
     td_scene currentScene;
-    uint entityCount;
+    int entityCount;
 };
 
 struct callbackData {
@@ -114,8 +115,7 @@ td_renderer getRenderer(td_game game) {
 }
 
 char *newEntityID(td_game game) {
-    char *id = malloc((int) ceil(log10(game -> entityCount + 1)) + 1);
-    sprintf(id, "%u", game -> entityCount);
+    char *id = stringifyInt(game -> entityCount);
     game -> entityCount++;
     return id;
 }
