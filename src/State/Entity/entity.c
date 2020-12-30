@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "entity.h"
 
 struct td_entity {
@@ -16,6 +17,6 @@ td_renderable getRenderable(td_entity entity) {
 }
 
 void destroyEntity(td_entity entity) {
-    //destroyRenderable(entity -> renderable);
-    //free(entity);
+    destroyRenderable(entity -> renderable);
+    free(entity);
 }

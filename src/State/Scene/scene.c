@@ -53,7 +53,7 @@ void entityCallback(td_json json, void *data) {
     char *layerName = getJSONString(json, "render_info.layer", NULL); 
     int *layerIndex = getFromHashMap(dataCast -> layerIndexes, layerName);
     td_linkedList layer = dataCast -> layers[*layerIndex];
-    appendWithFree(layer, entity, newEntityID(dataCast -> game), destroyEntity);
+    append(layer, entity, newEntityID(dataCast -> game));
 }
 
 td_scene buildScene(td_game game, char *sceneName) {
@@ -93,5 +93,5 @@ td_linkedList getEntities(td_scene scene) {
 }
 
 void destroyScene(td_scene scene) {
-    //TODO: Implement
+    destroyLinkedList(scene -> entities);
 }
