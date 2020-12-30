@@ -2,9 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
 #include "Renderer/renderer.h"
 #include "Events/eventLoop.h"
 #include "Tests/testHelper.h"

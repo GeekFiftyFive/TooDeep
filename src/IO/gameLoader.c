@@ -1,9 +1,12 @@
 #include <stdlib.h>
 #include <string.h>
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
 #include "gameLoader.h"
 #include "fileIO.h"
-#include "../DataStructures/HashMap/hashMap.h"
 #include "logger.h"
+#include "../DataStructures/HashMap/hashMap.h"
 #include "../State/Scene/scene.h"
 #include "../State/Entity/entity.h"
 #include "../Utils/stringUtils.h"
@@ -20,6 +23,7 @@ struct td_game {
     td_json manifest;
     td_scene currentScene;
     int entityCount;
+    lua_State *state;
 };
 
 struct callbackData {
@@ -78,6 +82,9 @@ td_game loadGameFromDirectory(char *path, td_renderer renderer) {
         game -> currentScene = buildScene(game, startSceneName);
     }
 
+    game -> state = luaL_newstate();
+    luaL_openlibs(game -> state);
+
     free(scenePath);
     free(entityPath);
 
@@ -125,6 +132,7 @@ void destroyGame(td_game game) {
     destroyHashMap(game -> scenes);
     destroyHashMap(game -> entities);
     destroyScene(game -> currentScene);
+    lua_close(game -> state);
     freeJson(game -> manifest);
     free(game);
 }
