@@ -125,6 +125,10 @@ td_renderable createRenderableFromSurface(td_renderer renderer, SDL_Surface *sur
     return renderable;
 }
 
+void setRenderablePosition(td_renderable renderable, td_tuple pos) {
+    renderable -> pos = pos;
+}
+
 void setRenderSpace(td_renderable renderable, td_renderSpace space) {
     renderable -> space = space;
 }

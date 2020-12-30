@@ -41,14 +41,28 @@ void layerCallback(td_json json, void *data) {
 // TODO: JSON error handling
 void entityCallback(td_json json, void *data) {
     struct callbackData *dataCast = (struct callbackData*) data;
+
+    // Get entity type
     char *entityType = getJSONString(json, "entity_type", NULL);
     td_json entityJSON = getEntity(dataCast -> game, entityType);
+
+    // Get asset name
     char *assetName = getJSONString(entityJSON, "start_look.asset", NULL);
     char *fullAssetName = malloc(strlen(assetName) + strlen(ASSET_DIR) + 1);
     sprintf(fullAssetName, "%s%s", ASSET_DIR, assetName);
+
+    // Load asset using asset name and create renderable
     SDL_Surface *startLook =  loadSurfaceResource(getResourceLoader(dataCast -> game), fullAssetName);
     free(fullAssetName);
     td_renderable renderable = createRenderableFromSurface(getRenderer(dataCast -> game), startLook);
+
+    // Get world position of entity
+    float x = (float) getJSONDouble(json, "start_pos.x", NULL);
+    float y = (float) getJSONDouble(json, "start_pos.y", NULL);
+    td_tuple pos = { x, y };
+    setRenderablePosition(renderable, pos);
+
+    // Create entity and add it to layer
     td_entity entity = createEntity(renderable);
     char *layerName = getJSONString(json, "render_info.layer", NULL); 
     int *layerIndex = getFromHashMap(dataCast -> layerIndexes, layerName);
