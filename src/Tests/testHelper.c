@@ -6,6 +6,7 @@
 #include "hashMapTests.h"
 #include "resourceLoaderTests.h"
 #include "tupleTests.h"
+#include "stringUtilsTests.h"
 #include "../IO/logger.h"
 
 int runTests() {
@@ -16,6 +17,7 @@ int runTests() {
     testFailures += runHashMapTests();
     testFailures += runResourceLoaderTests();
     testFailures += runTupleTests();
+    testFailures += runStringUtilsTests();
 
     if(testFailures) {
         logError("%d tests failed!\n", testFailures);
