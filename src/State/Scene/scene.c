@@ -5,12 +5,16 @@
 #include "../../IO/gameLoader.h"
 #include "../../IO/resourceLoader.h"
 #include "../../DataStructures/HashMap/hashMap.h"
-#include "../Entity/entity.h"
+#include "../../Scripting/luaFunctions.h"
 
 #define ASSET_DIR "/assets/"
+#define SCRIPT_DIR "/scripts/"
+
+td_scene currentScene = NULL;
 
 struct td_scene {
     td_linkedList entities;
+    td_hashMap behaviors;
 };
 
 struct callbackData {
@@ -18,6 +22,7 @@ struct callbackData {
     td_linkedList *layers;
     td_hashMap layerIndexes;
     td_game game;
+    td_hashMap behaviors;
 };
 
 void layerCallback(td_json json, void *data) {
@@ -38,7 +43,7 @@ void layerCallback(td_json json, void *data) {
     dataCast -> index++;
 }
 
-// TODO: JSON error handling
+// TODO: JSON error handling, refactor
 void entityCallback(td_json json, void *data) {
     struct callbackData *dataCast = (struct callbackData*) data;
 
@@ -62,12 +67,19 @@ void entityCallback(td_json json, void *data) {
     td_tuple pos = { x, y };
     setRenderablePosition(renderable, pos);
 
+    // Get entity behavior
+    char *scriptName = getJSONString(entityJSON, "behavior.on_update.script", NULL);
+    char *fullScriptName = malloc(strlen(scriptName) + strlen(SCRIPT_DIR) + 1);
+    sprintf(fullScriptName, "%s%s", SCRIPT_DIR, scriptName);
+    char *script = loadPlaintextResource(getResourceLoader(dataCast -> game), fullScriptName);
+    insertIntoHashMap(dataCast -> behaviors, fullScriptName, script, NULL);
+
     // Create entity and add it to layer
-    td_entity entity = createEntity(renderable);
+    td_entity entity = createEntity(newEntityID(dataCast -> game), renderable);
     char *layerName = getJSONString(json, "render_info.layer", NULL); 
     int *layerIndex = getFromHashMap(dataCast -> layerIndexes, layerName);
     td_linkedList layer = dataCast -> layers[*layerIndex];
-    append(layer, entity, newEntityID(dataCast -> game));
+    append(layer, entity, getEntityID(entity));
 }
 
 td_scene buildScene(td_game game, char *sceneName) {
@@ -77,8 +89,9 @@ td_scene buildScene(td_game game, char *sceneName) {
     int layerCount = getJSONArrayLength(sceneJson, "layers");
     td_linkedList *layers = malloc(sizeof(td_linkedList) * layerCount);
     td_hashMap layerIndexes = createHashMap(layerCount);
+    td_hashMap behaviors = createHashMap(10);
 
-    struct callbackData layerData = { 0, layers, layerIndexes, game };
+    struct callbackData layerData = { 0, layers, layerIndexes, game, behaviors };
 
     jsonArrayForEach(sceneJson, "layers", layerCallback, &layerData);
     jsonArrayForEach(sceneJson, "entities", entityCallback, &layerData);
@@ -94,12 +107,35 @@ td_scene buildScene(td_game game, char *sceneName) {
     dangerouslyAddFreeFunc(entities, destroyEntity);
 
     scene -> entities = entities;
+    scene -> behaviors = behaviors;
 
     destroyHashMap(layerIndexes);
 
     free(layers);
 
     return scene;
+}
+
+void executeBehaviorCallback(void *entryData, void *callbackData, char *key) {
+    lua_State *state = (lua_State*) callbackData;
+    executeScript(state, (char *) entryData);
+}
+
+void executeBehaviors(lua_State *state, td_scene scene) {
+    td_linkedList behaviors = getHashesMatching(scene -> behaviors, "on_update");
+    listForEach(behaviors, executeBehaviorCallback, state);
+}
+
+void setCurrentScene(td_scene scene) {
+    currentScene = scene;
+}
+
+td_scene getCurrentScene() {
+    return currentScene;
+}
+
+td_entity getEntityByID(td_scene scene, char *ID) {
+    return getFromList(scene -> entities, ID);
 }
 
 td_linkedList getEntities(td_scene scene) {

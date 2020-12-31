@@ -3,5 +3,10 @@
     "start_look": {
         "type": "texture",
         "asset": "rocket.png"
+    },
+    "behavior": {
+        "on_update": {
+            "script": "move.lua"
+        }
     }
 }

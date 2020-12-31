@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <string.h>
-#include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
 #include "gameLoader.h"
@@ -10,6 +9,7 @@
 #include "../State/Scene/scene.h"
 #include "../State/Entity/entity.h"
 #include "../Utils/stringUtils.h"
+#include "../Scripting/luaFunctions.h"
 
 #define MANIFEST_NAME "td-game.json"
 #define SCENES_PATH "scenes"
@@ -21,7 +21,6 @@ struct td_game {
     td_hashMap scenes;
     td_hashMap entities;
     td_json manifest;
-    td_scene currentScene;
     int entityCount;
     lua_State *state;
 };
@@ -73,17 +72,18 @@ td_game loadGameFromDirectory(char *path, td_renderer renderer) {
     iterateOverDir(entityPath, true, addJsonToHashmapCallback, &mapData);
 
     td_jsonError err;
-    game -> currentScene = NULL;
     char *startSceneName = getJSONString(game -> manifest, "start_scene", &err);
 
     if(err == JSON_ERROR) {
         logError("start_scene not defined in manifest\n");
     } else {
-        game -> currentScene = buildScene(game, startSceneName);
+        setCurrentScene(buildScene(game, startSceneName));
     }
 
     game -> state = luaL_newstate();
     luaL_openlibs(game -> state);
+
+    registerCFunctions(game -> state);
 
     free(scenePath);
     free(entityPath);
@@ -98,7 +98,11 @@ static void copyCallback(void *elementData, void *callbackData, char *key) {
 }
 
 void copySceneToRenderQueue(td_game game) {
-    listForEach(getEntities(game -> currentScene), copyCallback, game -> renderer);
+    listForEach(getEntities(getCurrentScene()), copyCallback, game -> renderer);
+}
+
+lua_State *getState(td_game game) {
+    return game -> state;
 }
 
 td_json getManifest(td_game game) {
@@ -131,7 +135,7 @@ void destroyGame(td_game game) {
     destroyResourceLoader(game -> loader);
     destroyHashMap(game -> scenes);
     destroyHashMap(game -> entities);
-    destroyScene(game -> currentScene);
+    destroyScene(getCurrentScene());
     lua_close(game -> state);
     freeJson(game -> manifest);
     free(game);

@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include "hashMap.h"
-#include "../LinkedList/linkedList.h"
 #include "../../IO/logger.h"
 
 #define DEFAULT_LOAD_FACTOR 0.8
@@ -85,6 +84,11 @@ void insertIntoHashMap(td_hashMap map, char *key, void *data, void *freeFunc) {
 void *getFromHashMap(td_hashMap map, char *key) {
     int location = hash(key) % map -> size;
     return getFromList(map -> entries[location], key);
+}
+
+td_linkedList getHashesMatching(td_hashMap map, char *key) {
+    int location = hash(key) % map -> size;
+    return map -> entries[location];
 }
 
 void printHashMap(td_hashMap map) {

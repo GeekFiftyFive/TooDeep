@@ -128,6 +128,10 @@ void setRenderablePosition(td_renderable renderable, td_tuple pos) {
     renderable -> pos = pos;
 }
 
+void updateRenderablePosition(td_renderable renderable, td_tuple delta) {
+    renderable -> pos = addTuple(renderable -> pos, delta);
+}
+
 void setRenderSpace(td_renderable renderable, td_renderSpace space) {
     renderable -> space = space;
 }

@@ -19,6 +19,8 @@ td_renderable createRenderableFromSurface(td_renderer, SDL_Surface *);
 
 void setRenderablePosition(td_renderable, td_tuple);
 
+void updateRenderablePosition(td_renderable renderable, td_tuple delta);
+
 void setRenderSpace(td_renderable, td_renderSpace);
 
 void renderFrame(td_renderer);
