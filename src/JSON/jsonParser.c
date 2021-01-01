@@ -24,6 +24,8 @@ td_json jsonParse(char *jsonData) {
 td_json getJSONObject(td_json json, char *field, td_jsonError *error) {
     if(error) *(error) = JSON_NO_ERROR;
 
+    if(!field) return json;
+
     char *fieldCopy = malloc(strlen(field) + 1);
     strcpy(fieldCopy, field);
     char *token = strtok(fieldCopy, delim);
@@ -49,7 +51,7 @@ int getJSONInt(td_json json, char *field, td_jsonError *error) {
     td_json obj = getJSONObject(json, field, error);
 
     if(!cJSON_IsNumber(obj)) {
-        logWarn("object at %s is not a number!\n", field);
+        logWarn("field at %s is not a number!\n", field);
         if(error) *(error) = JSON_ERROR;
         return 0;
     }
@@ -62,7 +64,7 @@ double getJSONDouble(td_json json, char *field, td_jsonError *error) {
     td_json obj = getJSONObject(json, field, error);
 
     if(!cJSON_IsNumber(obj)) {
-        logWarn("object at %s is not a number!\n", field);
+        logWarn("field at %s is not a number!\n", field);
         if(error) *(error) = JSON_ERROR;
         return (double) 0;
     }
@@ -76,7 +78,7 @@ char *getJSONString(td_json json, char *field, td_jsonError *error) {
     td_json obj = field ? getJSONObject(json, field, error) : json;
 
     if(!cJSON_IsString(obj)) {
-        logWarn("object at %s is not a string!\n", field);
+        logWarn("field at %s is not a string!\n", field);
         if(error) *(error) = JSON_ERROR;
         return NULL;
     }
@@ -88,7 +90,7 @@ void jsonArrayForEach(td_json json, char *field, void (*callback)(td_json, void 
     td_json obj = getJSONObject(json, field, NULL);
 
     if(!cJSON_IsArray(obj)) {
-        logWarn("object at %s is not an array!\n", field);
+        logWarn("field at %s is not an array!\n", field);
         return;
     }
 
@@ -100,11 +102,46 @@ void jsonArrayForEach(td_json json, char *field, void (*callback)(td_json, void 
     }    
 }
 
+void jsonObjectForEach(td_json json, char *field, void (*callback)(td_json, void *), void *data) {
+    td_json obj = getJSONObject(json, field, NULL);
+
+    if(!cJSON_IsObject(obj)) {
+        logWarn("field at %s is not an object!\n", field);
+        return;
+    }
+    
+    td_json child = obj -> child;
+
+    while(child) {
+        callback(child, data);
+        child = child -> next;
+    }
+}
+
+td_jsonType getJSONType(td_json json) {
+    switch(json -> type) {
+        case cJSON_True:
+        case cJSON_False:
+            return JSON_BOOL;
+        case cJSON_String:
+            return JSON_STRING;
+        case cJSON_Number:
+            return JSON_NUMBER;
+        default:
+            logWarn("Could not convert cJSON type to td_jsonType");
+            return JSON_OTHER;
+    }
+}
+
+char *getFieldName(td_json json) {
+    return json -> string;
+}
+
 int getJSONArrayLength(td_json json, char* field) {
     td_json obj = getJSONObject(json, field, NULL);
 
     if(!cJSON_IsArray(obj)) {
-        logWarn("object at %s is not an array!\n", field);
+        logWarn("field at %s is not an array!\n", field);
         return 0;
     }
 

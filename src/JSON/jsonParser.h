@@ -5,6 +5,8 @@
 
 typedef enum {JSON_NO_ERROR, JSON_ERROR} td_jsonError;
 
+typedef enum {JSON_NUMBER, JSON_BOOL, JSON_STRING, JSON_OTHER} td_jsonType;
+
 typedef cJSON *td_json;
 
 td_json jsonParse(char *);
@@ -18,6 +20,12 @@ double getJSONDouble(td_json, char *, td_jsonError *);
 char *getJSONString(td_json, char *, td_jsonError *);
 
 void jsonArrayForEach(td_json, char *, void (*callback)(td_json, void *), void *);
+
+void jsonObjectForEach(td_json, char *, void (*callback)(td_json, void *), void *);
+
+td_jsonType getJSONType(td_json);
+
+char *getFieldName(td_json);
 
 int getJSONArrayLength(td_json, char *);
 

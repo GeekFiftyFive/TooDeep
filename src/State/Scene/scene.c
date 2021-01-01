@@ -41,6 +41,41 @@ void layerCallback(td_json json, void *data) {
     dataCast -> index++;
 }
 
+void registerVariableCallback(td_json json, void *data) {
+    td_script script = (td_script) data;
+    td_jsonType jsonType = getJSONType(json);
+    td_script_val_type variableType;
+    td_script_val val;
+
+    switch(jsonType) {
+        case JSON_NUMBER: {
+            // TODO: This is hacky, make it prettier >8-)
+            double doubleVal = getJSONDouble(json, NULL, NULL);
+            int intVal = getJSONInt(json, NULL, NULL);
+            if((double) intVal == doubleVal) {
+                variableType = INT;
+                val.intVal = intVal;
+            } else {
+                variableType = FLOAT;
+                val.floatVal = (float) doubleVal;
+            }
+            break;
+        }
+        case JSON_BOOL:
+            variableType = BOOL;
+            // FIX-ME Implement method for getting boolean value from JSON and use it here
+            val.booleanVal = true;
+            break;
+        case JSON_STRING:
+        default:
+            logError("Could not convert JSON type to script variable type");
+            variableType = INT;
+            val.intVal = 0;
+    }
+
+    registerVariable(script, getFieldName(json), variableType, val);
+}
+
 // TODO: JSON error handling, refactor
 void entityCallback(td_json json, void *data) {
     struct callbackData *dataCast = (struct callbackData*) data;
@@ -71,6 +106,7 @@ void entityCallback(td_json json, void *data) {
     sprintf(fullScriptName, "%s%s", SCRIPT_DIR, scriptName);
     char *scriptContent = loadPlaintextResource(getResourceLoader(dataCast -> game), fullScriptName);
     td_script script = createScript(scriptContent);
+    jsonObjectForEach(entityJSON, "behavior.on_update.variables", registerVariableCallback, script);
     insertIntoHashMap(dataCast -> behaviors, fullScriptName, script, destroyScript);
 
     // Create entity and add it to layer
