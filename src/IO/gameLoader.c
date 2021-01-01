@@ -19,6 +19,7 @@ struct td_game {
     td_resourceLoader loader;
     td_renderer renderer;
     td_hashMap scenes;
+    td_scene currentScene;
     td_hashMap entities;
     td_json manifest;
     int entityCount;
@@ -77,13 +78,13 @@ td_game loadGameFromDirectory(char *path, td_renderer renderer) {
     if(err == JSON_ERROR) {
         logError("start_scene not defined in manifest\n");
     } else {
-        setCurrentScene(buildScene(game, startSceneName));
+        game -> currentScene = buildScene(game, startSceneName);
     }
 
     game -> state = luaL_newstate();
     luaL_openlibs(game -> state);
 
-    registerCFunctions(game -> state);
+    registerCFunctions(game -> state, game -> currentScene);
 
     free(scenePath);
     free(entityPath);
@@ -98,7 +99,11 @@ static void copyCallback(void *elementData, void *callbackData, char *key) {
 }
 
 void copySceneToRenderQueue(td_game game) {
-    listForEach(getEntities(getCurrentScene()), copyCallback, game -> renderer);
+    listForEach(getEntities(game -> currentScene), copyCallback, game -> renderer);
+}
+
+void executeTick(td_game game) {
+    executeBehaviors(game -> state, game -> currentScene);
 }
 
 lua_State *getState(td_game game) {
@@ -135,7 +140,7 @@ void destroyGame(td_game game) {
     destroyResourceLoader(game -> loader);
     destroyHashMap(game -> scenes);
     destroyHashMap(game -> entities);
-    destroyScene(getCurrentScene());
+    destroyScene(game -> currentScene);
     lua_close(game -> state);
     freeJson(game -> manifest);
     free(game);

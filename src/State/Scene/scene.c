@@ -10,8 +10,6 @@
 #define ASSET_DIR "/assets/"
 #define SCRIPT_DIR "/scripts/"
 
-td_scene currentScene = NULL;
-
 struct td_scene {
     td_linkedList entities;
     td_hashMap behaviors;
@@ -124,14 +122,6 @@ void executeBehaviorCallback(void *entryData, void *callbackData, char *key) {
 void executeBehaviors(lua_State *state, td_scene scene) {
     td_linkedList behaviors = getHashesMatching(scene -> behaviors, "on_update");
     listForEach(behaviors, executeBehaviorCallback, state);
-}
-
-void setCurrentScene(td_scene scene) {
-    currentScene = scene;
-}
-
-td_scene getCurrentScene() {
-    return currentScene;
 }
 
 td_entity getEntityByID(td_scene scene, char *ID) {

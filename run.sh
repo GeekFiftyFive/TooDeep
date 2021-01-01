@@ -3,7 +3,7 @@ set -e
 echo Setting Up
 mkdir -p obj
 echo Compiling
-make
+make -j$(nproc)
 echo Running unit tests
 ./tooDeep -run-tests
 echo Launching game

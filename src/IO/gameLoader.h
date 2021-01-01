@@ -8,11 +8,11 @@
 
 typedef struct td_game *td_game;
 
-typedef struct td_world *td_world;
-
 td_game loadGameFromDirectory(char *, td_renderer);
 
 void copySceneToRenderQueue(td_game);
+
+void executeTick(td_game);
 
 lua_State *getState(td_game);
 

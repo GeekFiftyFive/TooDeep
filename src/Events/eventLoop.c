@@ -3,7 +3,6 @@
 #include <SDL2/SDL_image.h>
 #include "../IO/gameLoader.h"
 #include "../State/Entity/entity.h"
-#include "../State/Scene/scene.h"
 
 void startEventLoop(td_game game) {
     bool quit = false;
@@ -14,7 +13,7 @@ void startEventLoop(td_game game) {
     while(!quit) {
         SDL_PollEvent(&e);
         quit = e.type == SDL_QUIT;
-        executeBehaviors(getState(game), getCurrentScene());
+        executeTick(game);
         renderFrame(getRenderer(game));
     }
 }
