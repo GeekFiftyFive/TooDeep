@@ -6,7 +6,10 @@
     },
     "behavior": {
         "on_update": {
-            "script": "move.lua"
+            "script": "move.lua",
+            "variables": {
+                "x": 0.5
+            }
         }
     }
 }

@@ -2,9 +2,38 @@
 #include <lauxlib.h>
 #include "luaFunctions.h"
 #include "../State/Entity/entity.h"
+#include "../DataStructures/HashMap/hashMap.h"
 
-void executeScript(lua_State *state, char *script) {
-    if (luaL_loadstring(state, script) == LUA_OK) {
+typedef struct td_script_variable {
+    td_script_val_type type;
+    td_script_val value;
+} *td_script_variable;
+
+struct td_script {
+    char *content;
+    td_hashMap variables;
+};
+
+td_script createScript(char *content) {
+    td_script script = malloc(sizeof(struct td_script));
+    script -> content = content;
+    script -> variables = createHashMap(10);
+    return script;
+}
+
+void destroyScript(td_script script) {
+    destroyHashMap(script -> variables);
+}
+
+void registerVariable(td_script script, char *name, td_script_val_type type, td_script_val value) {
+    td_script_variable variable = malloc(sizeof(struct td_script_variable));
+    variable -> type = type;
+    variable -> value  = value;
+    insertIntoHashMap(script -> variables, name, variable, free);
+}
+
+void executeScript(lua_State *state, td_script script) {
+    if (luaL_loadstring(state, script -> content) == LUA_OK) {
         if (lua_pcall(state, 0, 1, 0) == LUA_OK) {
             lua_pop(state, lua_gettop(state));
         }

@@ -69,8 +69,9 @@ void entityCallback(td_json json, void *data) {
     char *scriptName = getJSONString(entityJSON, "behavior.on_update.script", NULL);
     char *fullScriptName = malloc(strlen(scriptName) + strlen(SCRIPT_DIR) + 1);
     sprintf(fullScriptName, "%s%s", SCRIPT_DIR, scriptName);
-    char *script = loadPlaintextResource(getResourceLoader(dataCast -> game), fullScriptName);
-    insertIntoHashMap(dataCast -> behaviors, fullScriptName, script, NULL);
+    char *scriptContent = loadPlaintextResource(getResourceLoader(dataCast -> game), fullScriptName);
+    td_script script = createScript(scriptContent);
+    insertIntoHashMap(dataCast -> behaviors, fullScriptName, script, destroyScript);
 
     // Create entity and add it to layer
     td_entity entity = createEntity(newEntityID(dataCast -> game), renderable);
@@ -116,7 +117,7 @@ td_scene buildScene(td_game game, char *sceneName) {
 
 void executeBehaviorCallback(void *entryData, void *callbackData, char *key) {
     lua_State *state = (lua_State*) callbackData;
-    executeScript(state, (char *) entryData);
+    executeScript(state, (td_script) entryData);
 }
 
 void executeBehaviors(lua_State *state, td_scene scene) {
