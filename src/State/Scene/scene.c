@@ -178,4 +178,6 @@ td_linkedList getEntities(td_scene scene) {
 
 void destroyScene(td_scene scene) {
     destroyLinkedList(scene -> entities);
+    destroyHashMap(scene -> behaviors);
+    free(scene);
 }
