@@ -66,9 +66,11 @@ void executeScript(lua_State *state, td_script script) {
 // TODO: Use lua C closure instead of global current scene
 int moveEntity(lua_State *state) {
     td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(1));
+    float x = luaL_checknumber(state, 1);
+    float y = luaL_checknumber(state, 2);
     td_entity entity = getEntityByID(scene, "0");
     td_renderable renderable = getRenderable(entity);
-    updateRenderablePosition(renderable, (td_tuple) { 0.5, 0 } );
+    updateRenderablePosition(renderable, (td_tuple) { x, y } );
     return 0;
 }
 

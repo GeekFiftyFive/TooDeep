@@ -1,2 +1,1 @@
-print(x)
-moveEntity()
+moveEntity(x, y)
