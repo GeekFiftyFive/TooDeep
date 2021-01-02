@@ -1,1 +1,1 @@
-moveEntity(x, y)
+moveEntity(entityID, x, y)

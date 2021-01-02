@@ -48,6 +48,10 @@ void pushVariableCallback(void *elementData, void *callbackData, char *key) {
             lua_pushnumber(state, variable -> value.floatVal);
             lua_setglobal(state, key);
             break;
+        case STRING:
+            lua_pushstring(state, variable -> value.stringVal);
+            lua_setglobal(state, key);
+            break;
         default:
             logError("Could not set up variable %s\n", key);
     }
@@ -66,9 +70,10 @@ void executeScript(lua_State *state, td_script script) {
 // TODO: Use lua C closure instead of global current scene
 int moveEntity(lua_State *state) {
     td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(1));
-    float x = luaL_checknumber(state, 1);
-    float y = luaL_checknumber(state, 2);
-    td_entity entity = getEntityByID(scene, "0");
+    const char *entityID = luaL_checkstring(state, 1);
+    float x = luaL_checknumber(state, 2);
+    float y = luaL_checknumber(state, 3);
+    td_entity entity = getEntityByID(scene, (char *) entityID);
     td_renderable renderable = getRenderable(entity);
     updateRenderablePosition(renderable, (td_tuple) { x, y } );
     return 0;

@@ -67,6 +67,9 @@ void registerVariableCallback(td_json json, void *data) {
             val.booleanVal = true;
             break;
         case JSON_STRING:
+            variableType = STRING;
+            val.stringVal = getJSONString(json, NULL, NULL);
+            break;
         default:
             logError("Could not convert JSON type to script variable type");
             variableType = INT;
@@ -110,7 +113,11 @@ void entityCallback(td_json json, void *data) {
     insertIntoHashMap(dataCast -> behaviors, fullScriptName, script, destroyScript);
 
     // Create entity and add it to layer
-    td_entity entity = createEntity(newEntityID(dataCast -> game), renderable);
+    char *entityID = newEntityID(dataCast -> game);
+    td_script_val entityIDVal;
+    entityIDVal.stringVal = entityID;
+    registerVariable(script, "entityID", STRING, entityIDVal);
+    td_entity entity = createEntity(entityID, renderable);
     char *layerName = getJSONString(json, "render_info.layer", NULL); 
     int *layerIndex = getFromHashMap(dataCast -> layerIndexes, layerName);
     td_linkedList layer = dataCast -> layers[*layerIndex];

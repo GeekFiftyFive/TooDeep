@@ -4,13 +4,13 @@
 #include <lua.h>
 #include "../State/Scene/scene.h"
 
-typedef enum { FLOAT, INT, BOOL } td_script_val_type;
+typedef enum { FLOAT, INT, BOOL, STRING } td_script_val_type;
 
-// TODO: String values (need to free them somehow)
 typedef union td_script_val {
     float floatVal;
     int intVal;
     bool booleanVal;
+    char *stringVal;
 } td_script_val;
 
 typedef struct td_script *td_script;
