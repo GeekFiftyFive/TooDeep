@@ -21,6 +21,7 @@ struct callbackData {
     td_hashMap layerIndexes;
     td_game game;
     td_hashMap behaviors;
+    char *entityID;
 };
 
 void layerCallback(td_json json, void *data) {
@@ -79,6 +80,24 @@ void registerVariableCallback(td_json json, void *data) {
     registerVariable(script, getFieldName(json), variableType, val);
 }
 
+void behaviourCallback(td_json json, void *data) {
+    char *fieldName = getFieldName(json);
+    struct callbackData *dataCast = (struct callbackData*) data;
+
+    if(strcmp(fieldName, "on_update") == 0) {
+        char *scriptName = getJSONString(json, "script", NULL);
+        char *fullScriptName = malloc(strlen(scriptName) + strlen(SCRIPT_DIR) + 1);
+        sprintf(fullScriptName, "%s%s", SCRIPT_DIR, scriptName);
+        char *scriptContent = loadPlaintextResource(getResourceLoader(dataCast -> game), fullScriptName);
+        td_script script = createScript(scriptContent);
+        jsonObjectForEach(json, "variables", registerVariableCallback, script);
+        td_script_val entityIDVal;
+        entityIDVal.stringVal = dataCast -> entityID;
+        registerVariable(script, "entityID", STRING, entityIDVal);
+        insertIntoHashMap(dataCast -> behaviors, fullScriptName, script, destroyScript);
+    }
+}
+
 // TODO: JSON error handling, refactor
 void entityCallback(td_json json, void *data) {
     struct callbackData *dataCast = (struct callbackData*) data;
@@ -104,19 +123,11 @@ void entityCallback(td_json json, void *data) {
     setRenderablePosition(renderable, pos);
 
     // Get entity behavior
-    char *scriptName = getJSONString(entityJSON, "behavior.on_update.script", NULL);
-    char *fullScriptName = malloc(strlen(scriptName) + strlen(SCRIPT_DIR) + 1);
-    sprintf(fullScriptName, "%s%s", SCRIPT_DIR, scriptName);
-    char *scriptContent = loadPlaintextResource(getResourceLoader(dataCast -> game), fullScriptName);
-    td_script script = createScript(scriptContent);
-    jsonObjectForEach(entityJSON, "behavior.on_update.variables", registerVariableCallback, script);
-    insertIntoHashMap(dataCast -> behaviors, fullScriptName, script, destroyScript);
+    char *entityID = newEntityID(dataCast -> game);
+    dataCast -> entityID = entityID;
+    jsonObjectForEach(entityJSON, "behavior", behaviourCallback, data);
 
     // Create entity and add it to layer
-    char *entityID = newEntityID(dataCast -> game);
-    td_script_val entityIDVal;
-    entityIDVal.stringVal = entityID;
-    registerVariable(script, "entityID", STRING, entityIDVal);
     td_entity entity = createEntity(entityID, renderable);
     char *layerName = getJSONString(json, "render_info.layer", NULL); 
     int *layerIndex = getFromHashMap(dataCast -> layerIndexes, layerName);
@@ -133,7 +144,7 @@ td_scene buildScene(td_game game, char *sceneName) {
     td_hashMap layerIndexes = createHashMap(layerCount);
     td_hashMap behaviors = createHashMap(10);
 
-    struct callbackData layerData = { 0, layers, layerIndexes, game, behaviors };
+    struct callbackData layerData = { 0, layers, layerIndexes, game, behaviors, NULL };
 
     jsonArrayForEach(sceneJson, "layers", layerCallback, &layerData);
     jsonArrayForEach(sceneJson, "entities", entityCallback, &layerData);
