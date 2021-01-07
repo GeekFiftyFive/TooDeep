@@ -84,18 +84,24 @@ void behaviourCallback(td_json json, void *data) {
     char *fieldName = getFieldName(json);
     struct callbackData *dataCast = (struct callbackData*) data;
 
-    if(strcmp(fieldName, "on_update") == 0) {
-        char *scriptName = getJSONString(json, "script", NULL);
-        char *fullScriptName = malloc(strlen(scriptName) + strlen(SCRIPT_DIR) + 1);
-        sprintf(fullScriptName, "%s%s", SCRIPT_DIR, scriptName);
-        char *scriptContent = loadPlaintextResource(getResourceLoader(dataCast -> game), fullScriptName);
-        td_script script = createScript(scriptContent);
-        jsonObjectForEach(json, "variables", registerVariableCallback, script);
-        td_script_val entityIDVal;
-        entityIDVal.stringVal = dataCast -> entityID;
-        registerVariable(script, "entityID", STRING, entityIDVal);
-        insertIntoHashMap(dataCast -> behaviors, fullScriptName, script, destroyScript);
+    char *scriptName = getJSONString(json, "script", NULL);
+    char *fullScriptName = malloc(strlen(scriptName) + strlen(SCRIPT_DIR) + 1);
+    sprintf(fullScriptName, "%s%s", SCRIPT_DIR, scriptName);
+    char *scriptContent = loadPlaintextResource(getResourceLoader(dataCast -> game), fullScriptName);
+    td_script script = createScript(scriptContent);
+    jsonObjectForEach(json, "variables", registerVariableCallback, script);
+    td_script_val entityIDVal;
+    entityIDVal.stringVal = dataCast -> entityID;
+    registerVariable(script, "entityID", STRING, entityIDVal);
+
+    td_linkedList actionList = getFromHashMap(dataCast -> behaviors, fieldName);
+
+    if(!actionList) {
+        actionList = createLinkedList();
+        insertIntoHashMap(dataCast -> behaviors, fieldName, actionList, destroyLinkedList);    
     }
+
+    appendWithFree(actionList, script, fullScriptName, destroyScript);
 }
 
 // TODO: JSON error handling, refactor
@@ -175,7 +181,7 @@ void executeBehaviorCallback(void *entryData, void *callbackData, char *key) {
 }
 
 void executeBehaviors(lua_State *state, td_scene scene) {
-    td_linkedList behaviors = getHashesMatching(scene -> behaviors, "on_update");
+    td_linkedList behaviors = (td_linkedList) getFromHashMap(scene -> behaviors, "on_update");
     listForEach(behaviors, executeBehaviorCallback, state);
 }
 
