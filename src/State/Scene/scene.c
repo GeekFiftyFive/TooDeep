@@ -4,7 +4,6 @@
 #include "../../IO/logger.h"
 #include "../../IO/gameLoader.h"
 #include "../../IO/resourceLoader.h"
-#include "../../DataStructures/HashMap/hashMap.h"
 #include "../../Scripting/luaFunctions.h"
 
 #define ASSET_DIR "/assets/"
@@ -141,6 +140,8 @@ void entityCallback(td_json json, void *data) {
     append(layer, entity, getEntityID(entity));
 }
 
+
+
 td_scene buildScene(td_game game, char *sceneName) {
     td_json sceneJson = getScene(game, sceneName);
     td_scene scene = malloc(sizeof(struct td_scene));
@@ -180,9 +181,42 @@ void executeBehaviorCallback(void *entryData, void *callbackData, char *key) {
     executeScript(state, (td_script) entryData);
 }
 
-void executeBehaviors(lua_State *state, td_scene scene) {
-    td_linkedList behaviors = (td_linkedList) getFromHashMap(scene -> behaviors, "on_update");
-    listForEach(behaviors, executeBehaviorCallback, state);
+// TODO: Move this to its own module
+const char *keySymToString(SDL_Keycode sym) {
+    switch(sym) {
+        case SDLK_LEFT:
+            return "left_arrow";
+        case SDLK_RIGHT:
+            return "right_arrow";
+        default:
+            return "";
+    }
+}
+
+void executeBehaviors(lua_State *state, td_scene scene, td_hashMap keymap, SDL_Event e) {
+    td_linkedList updateBehaviors = (td_linkedList) getFromHashMap(scene -> behaviors, "on_update");
+
+    // Handle keyboard events
+    // TODO: This should probably be moved to its own module
+    switch (e.type) {
+        case SDL_KEYDOWN: {
+            const char* keyname = keySymToString(e.key.keysym.sym);
+            char *action = (char *) getFromHashMap(keymap, (char *) keyname);
+            if(!action) {
+                break;
+            }
+            td_linkedList keyBehaviors = (td_linkedList) getFromHashMap(scene -> behaviors, action);
+            listForEach(keyBehaviors, executeBehaviorCallback, state);
+            break;
+        }
+        default:
+            break;
+    }
+
+    if(!updateBehaviors) {
+        return;
+    }
+    listForEach(updateBehaviors, executeBehaviorCallback, state);
 }
 
 td_entity getEntityByID(td_scene scene, char *ID) {

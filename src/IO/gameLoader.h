@@ -5,6 +5,7 @@
 #include "resourceLoader.h"
 #include "../JSON/jsonParser.h"
 #include "../Renderer/renderer.h"
+#include <SDL2/SDL.h>
 
 typedef struct td_game *td_game;
 
@@ -12,7 +13,7 @@ td_game loadGameFromDirectory(char *, td_renderer);
 
 void copySceneToRenderQueue(td_game);
 
-void executeTick(td_game);
+void executeTick(td_game, SDL_Event);
 
 lua_State *getState(td_game);
 

@@ -19,7 +19,7 @@ void startEventLoop(td_game game) {
     while(!quit) {
         SDL_PollEvent(&e);
         quit = e.type == SDL_QUIT;
-        executeTick(game);
+        executeTick(game, e);
         renderFrame(getRenderer(game));
         acc++;
         count += SDL_GetTicks() - prevTicks;

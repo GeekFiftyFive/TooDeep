@@ -5,11 +5,18 @@
         "asset": "rocket.png"
     },
     "behavior": {
-        "on_update": {
+        "move_left": {
+            "script": "move.lua",
+            "variables": {
+                "x": -0.5,
+                "y": 0.0
+            }
+        },
+        "move_right": {
             "script": "move.lua",
             "variables": {
                 "x": 0.5,
-                "y": 0.2
+                "y": 0.0
             }
         }
     }

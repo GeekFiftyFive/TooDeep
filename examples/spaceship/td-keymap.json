@@ -1,0 +1,10 @@
+{
+    "mapping": {
+        "left_arrow": {
+            "down": "move_left"
+        },
+        "right_arrow": {
+            "down": "move_right"
+        }
+    }
+}

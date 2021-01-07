@@ -24,6 +24,7 @@ struct td_game {
     td_json manifest;
     int entityCount;
     lua_State *state;
+    td_hashMap keymap;
 };
 
 struct callbackData {
@@ -41,6 +42,28 @@ void addJsonToHashmapCallback(char *path, void *rawData) {
     strcpy(nameCpy, name);
     if(error) logError("Malformed JSON! Must contain name!\n");
     else insertIntoHashMap(data -> map, nameCpy, parsed, freeJson);
+}
+
+void keymapCallback(td_json json, void *data) {
+    td_hashMap keymap = (td_hashMap) data;
+    char *fieldName = getFieldName(json);
+    char *action = getJSONString(json, "down", NULL);
+    char *actionCopy = malloc(strlen(action) + 1);
+    strcpy(actionCopy, action);
+    insertIntoHashMap(keymap, fieldName, actionCopy, free);
+}
+
+td_hashMap loadKeymap(td_resourceLoader loader) {
+    td_hashMap keymap = createHashMap(10);
+    char *json = loadPlaintextResource(loader, "td-keymap.json");
+    if(json) {
+        td_json keymapData = jsonParse(json);
+        jsonObjectForEach(keymapData, "mapping", keymapCallback, keymap);
+        freeJson(keymapData);
+    } else {
+        logWarn("Could not load td-keymap.json\n");
+    }
+    return keymap;
 }
 
 td_game loadGameFromDirectory(char *path, td_renderer renderer) {
@@ -63,6 +86,7 @@ td_game loadGameFromDirectory(char *path, td_renderer renderer) {
 
     game -> scenes = createHashMap(10);
     game -> entities = createHashMap(10);
+    game -> keymap = loadKeymap(game -> loader);
 
     char *scenePath = concatPath(path, SCENES_PATH);
     struct callbackData mapData = {game -> scenes, game -> loader};
@@ -102,8 +126,8 @@ void copySceneToRenderQueue(td_game game) {
     listForEach(getEntities(game -> currentScene), copyCallback, game -> renderer);
 }
 
-void executeTick(td_game game) {
-    executeBehaviors(game -> state, game -> currentScene);
+void executeTick(td_game game, SDL_Event e) {
+    executeBehaviors(game -> state, game -> currentScene, game -> keymap, e);
 }
 
 lua_State *getState(td_game game) {
@@ -140,6 +164,7 @@ void destroyGame(td_game game) {
     destroyResourceLoader(game -> loader);
     destroyHashMap(game -> scenes);
     destroyHashMap(game -> entities);
+    destroyHashMap(game -> keymap);
     destroyScene(game -> currentScene);
     lua_close(game -> state);
     freeJson(game -> manifest);
