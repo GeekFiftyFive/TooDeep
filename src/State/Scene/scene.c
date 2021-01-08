@@ -5,6 +5,7 @@
 #include "../../IO/gameLoader.h"
 #include "../../IO/resourceLoader.h"
 #include "../../Scripting/luaFunctions.h"
+#include "../../Events/keyboardEvents.h"
 
 #define ASSET_DIR "/assets/"
 #define SCRIPT_DIR "/scripts/"
@@ -181,17 +182,6 @@ void executeBehaviorCallback(void *entryData, void *callbackData, char *key) {
     executeScript(state, (td_script) entryData);
 }
 
-// TODO: Move this to its own module
-const char *keySymToString(SDL_Keycode sym) {
-    switch(sym) {
-        case SDLK_LEFT:
-            return "left_arrow";
-        case SDLK_RIGHT:
-            return "right_arrow";
-        default:
-            return "";
-    }
-}
 
 void executeBehaviors(lua_State *state, td_scene scene, td_hashMap keymap, SDL_Event e) {
     td_linkedList updateBehaviors = (td_linkedList) getFromHashMap(scene -> behaviors, "on_update");

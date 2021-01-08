@@ -6,8 +6,8 @@ ARGS = -std=c99 -Wall -O2 -g -D_DEFAULT_SOURCE=__STRICT_ANSI__ $(LUA_INC)
 
 LIBS = -lSDL2 -lSDL2_image -lm -lcjson $(LUA_LIB)
 
-tooDeep: obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/hashMap.o obj/testHelper.o obj/linkedListTests.o obj/hashMapTests.o  obj/resourceLoaderTests.o obj/fileIO.o obj/resourceLoader.o obj/jsonParser.o obj/jsonTests.o obj/logger.o obj/gameLoader.o obj/scene.o obj/entity.o obj/tuple.o obj/tupleTests.o  obj/stringUtilsTests.o obj/stringUtils.o obj/luaFunctions.o
-			cc $(ARGS) -o tooDeep obj/main.o obj/renderer.o obj/eventLoop.o obj/hashMap.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o obj/hashMapTests.o obj/resourceLoaderTests.o obj/fileIO.o obj/resourceLoader.o obj/jsonParser.o obj/jsonTests.o obj/logger.o obj/gameLoader.o obj/scene.o obj/entity.o obj/tuple.o obj/tupleTests.o obj/stringUtilsTests.o obj/stringUtils.o obj/luaFunctions.o $(LIBS)
+tooDeep: obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/hashMap.o obj/testHelper.o obj/linkedListTests.o obj/hashMapTests.o  obj/resourceLoaderTests.o obj/fileIO.o obj/resourceLoader.o obj/jsonParser.o obj/jsonTests.o obj/logger.o obj/gameLoader.o obj/scene.o obj/entity.o obj/tuple.o obj/tupleTests.o  obj/stringUtilsTests.o obj/stringUtils.o obj/luaFunctions.o obj/keyboardEvents.o
+			cc $(ARGS) -o tooDeep obj/main.o obj/renderer.o obj/eventLoop.o obj/hashMap.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o obj/hashMapTests.o obj/resourceLoaderTests.o obj/fileIO.o obj/resourceLoader.o obj/jsonParser.o obj/jsonTests.o obj/logger.o obj/gameLoader.o obj/scene.o obj/entity.o obj/tuple.o obj/tupleTests.o obj/stringUtilsTests.o obj/stringUtils.o obj/luaFunctions.o obj/keyboardEvents.o $(LIBS)
 
 obj/main.o: src/main.c
 			cc $(ARGS) -c src/main.c -o obj/main.o
@@ -74,6 +74,9 @@ obj/stringUtils.o: src/Utils/stringUtils.c src/Utils/stringUtils.h
 
 obj/luaFunctions.o: src/Scripting/luaFunctions.c src/Scripting/luaFunctions.h
 			cc $(ARGS) -c src/Scripting/luaFunctions.c -o obj/luaFunctions.o
+
+obj/keyboardEvents.o: src/Events/keyboardEvents.c src/Events/keyboardEvents.h
+			cc $(ARGS) -c src/Events/keyboardEvents.c -o obj/keyboardEvents.o
 
 clean:
 	rm -rf obj/* && rm tooDeep
