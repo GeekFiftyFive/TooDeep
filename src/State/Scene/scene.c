@@ -141,8 +141,6 @@ void entityCallback(td_json json, void *data) {
     append(layer, entity, getEntityID(entity));
 }
 
-
-
 td_scene buildScene(td_game game, char *sceneName) {
     td_json sceneJson = getScene(game, sceneName);
     td_scene scene = malloc(sizeof(struct td_scene));
@@ -182,12 +180,11 @@ void executeBehaviorCallback(void *entryData, void *callbackData, char *key) {
     executeScript(state, (td_script) entryData);
 }
 
-
 void executeBehaviors(lua_State *state, td_scene scene, td_hashMap keymap, SDL_Event e) {
     td_linkedList updateBehaviors = (td_linkedList) getFromHashMap(scene -> behaviors, "on_update");
 
     // Handle keyboard events
-    // TODO: This should probably be moved to its own module
+    // TODO: This should probably be moved to the keyboard events module
     switch (e.type) {
         case SDL_KEYDOWN: {
             const char* keyname = keySymToString(e.key.keysym.sym);
