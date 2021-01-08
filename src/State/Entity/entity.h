@@ -7,6 +7,10 @@ typedef struct td_entity *td_entity;
 
 td_entity createEntity(char *, td_renderable);
 
+void setEntityPosition(td_entity, td_tuple);
+
+td_tuple getEntityPosition(td_entity);
+
 td_renderable getRenderable(td_entity);
 
 char *getEntityID(td_entity);

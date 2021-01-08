@@ -74,8 +74,8 @@ int moveEntity(lua_State *state) {
     float x = luaL_checknumber(state, 2);
     float y = luaL_checknumber(state, 3);
     td_entity entity = getEntityByID(scene, (char *) entityID);
-    td_renderable renderable = getRenderable(entity);
-    updateRenderablePosition(renderable, (td_tuple) { x, y } );
+    td_tuple position = getEntityPosition(entity);
+    setEntityPosition(entity, addTuple(position, (td_tuple) { x, y }));
     return 0;
 }
 

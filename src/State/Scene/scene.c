@@ -126,7 +126,6 @@ void entityCallback(td_json json, void *data) {
     float x = (float) getJSONDouble(json, "start_pos.x", NULL);
     float y = (float) getJSONDouble(json, "start_pos.y", NULL);
     td_tuple pos = { x, y };
-    setRenderablePosition(renderable, pos);
 
     // Get entity behavior
     char *entityID = newEntityID(dataCast -> game);
@@ -135,6 +134,7 @@ void entityCallback(td_json json, void *data) {
 
     // Create entity and add it to layer
     td_entity entity = createEntity(entityID, renderable);
+    setEntityPosition(entity, pos);
     char *layerName = getJSONString(json, "render_info.layer", NULL); 
     int *layerIndex = getFromHashMap(dataCast -> layerIndexes, layerName);
     td_linkedList layer = dataCast -> layers[*layerIndex];
