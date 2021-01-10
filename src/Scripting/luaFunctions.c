@@ -67,7 +67,6 @@ void executeScript(lua_State *state, td_script script) {
     }
 }
 
-// TODO: Use lua C closure instead of global current scene
 int moveEntity(lua_State *state) {
     td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(1));
     const char *entityID = luaL_checkstring(state, 1);
@@ -76,11 +75,32 @@ int moveEntity(lua_State *state) {
     td_entity entity = getEntityByID(scene, (char *) entityID);
     td_tuple position = getEntityPosition(entity);
     setEntityPosition(entity, addTuple(position, (td_tuple) { x, y }));
-    return 0;
+    return 1;
 }
+
+int getVelocity(lua_State *state) {
+    td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(1));
+    const char *entityID = luaL_checkstring(state, 1);
+    td_entity entity = getEntityByID(scene, (char *) entityID);
+    td_tuple velocity = getEntityVelocity(entity);
+    lua_createtable(state, 0, 2);
+    lua_pushstring(state, "x");
+    lua_pushnumber(state, velocity.x);
+    lua_settable(state, -3);
+
+    lua_pushstring(state, "y");
+    lua_pushnumber(state, velocity.y);
+    lua_settable(state, -3);
+    return 1;
+}
+
 
 void registerCFunctions(lua_State *state, td_scene scene) {
     lua_pushlightuserdata(state, scene);
     lua_pushcclosure(state, moveEntity, 1);
     lua_setglobal(state, "moveEntity");
+
+    lua_pushlightuserdata(state, scene);
+    lua_pushcclosure(state, getVelocity, 1);
+    lua_setglobal(state, "getVelocity");
 }

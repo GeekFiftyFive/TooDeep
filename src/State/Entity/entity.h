@@ -9,7 +9,11 @@ td_entity createEntity(char *, td_renderable);
 
 void setEntityPosition(td_entity, td_tuple);
 
+void setEntityVelocity(td_entity, td_tuple);
+
 td_tuple getEntityPosition(td_entity);
+
+td_tuple getEntityVelocity(td_entity);
 
 td_renderable getRenderable(td_entity);
 

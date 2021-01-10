@@ -26,6 +26,14 @@ td_tuple getEntityPosition(td_entity entity) {
     return getPhysicsObjectPosition(entity -> physicsObject);
 }
 
+void setEntityVelocity(td_entity entity, td_tuple position) {
+    setPhysicsObjectVelocity(entity -> physicsObject, position);
+}
+
+td_tuple getEntityVelocity(td_entity entity) {
+    return getPhysicsObjectVelocity(entity -> physicsObject);
+}
+
 td_renderable getRenderable(td_entity entity) {
     return entity -> renderable;
 }

@@ -29,6 +29,10 @@ void setPhysicsObjectVelocity(td_physicsObject physicsObject, td_tuple velocity)
     physicsObject -> velocity = velocity;
 }
 
+td_tuple getPhysicsObjectVelocity(td_physicsObject physicsObject) {
+    return physicsObject -> velocity;
+}
+
 td_tuple updatePhysicsObject(td_physicsObject physicsObject, int delta) {
     td_tuple posDelta = multiplyTuple(delta, physicsObject -> velocity);
     physicsObject -> position = addTuple(physicsObject -> position, posDelta);
