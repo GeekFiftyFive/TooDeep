@@ -3,7 +3,7 @@
 #include "../IO/logger.h"
 
 // TODO: Allow this to be configured
-#define GRAVITY 0.5
+#define GRAVITY 0.02
 
 struct td_physicsObject {
     td_tuple position;
@@ -25,9 +25,17 @@ void setPhysicsObjectPosition(td_physicsObject physicsObject, td_tuple position)
     physicsObject -> position = position;
 }
 
+void setPhysicsObjectVelocity(td_physicsObject physicsObject, td_tuple velocity) {
+    physicsObject -> velocity = velocity;
+}
+
 td_tuple updatePhysicsObject(td_physicsObject physicsObject, int delta) {
     td_tuple posDelta = multiplyTuple(delta, physicsObject -> velocity);
     physicsObject -> position = addTuple(physicsObject -> position, posDelta);
+    physicsObject -> velocity = addTuple(
+        physicsObject -> velocity,
+        (td_tuple) { 0, GRAVITY * -delta }
+    );
     return physicsObject -> position;
 }
 

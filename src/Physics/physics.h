@@ -11,6 +11,8 @@ void setPhysicsObjectPosition(td_physicsObject, td_tuple);
 
 td_tuple getPhysicsObjectPosition(td_physicsObject);
 
+void setPhysicsObjectVelocity(td_physicsObject, td_tuple);
+
 td_tuple updatePhysicsObject(td_physicsObject, int);
 
 void destroyPhysicsObject(td_physicsObject);
