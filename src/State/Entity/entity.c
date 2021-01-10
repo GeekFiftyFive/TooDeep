@@ -34,6 +34,13 @@ char *getEntityID(td_entity entity) {
     return entity -> ID;
 }
 
+void entityPhysicsUpdate(void *data, void *callbackData, char *key) {
+    td_entity entity = (td_entity) data;
+    int delta = *((int*) callbackData);
+    td_tuple position = updatePhysicsObject(entity -> physicsObject, delta);
+    setRenderablePosition(entity -> renderable, position);
+}
+
 void destroyEntity(td_entity entity) {
     destroyRenderable(entity -> renderable);
     destroyPhysicsObject(entity -> physicsObject);

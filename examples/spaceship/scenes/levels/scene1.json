@@ -6,7 +6,7 @@
             "entity_type": "rocket",
             "start_pos": {
                 "x": 128.0,
-                "y": 128.0
+                "y": -128.0
             },
             "render_info": {
                 "space": "world_space",

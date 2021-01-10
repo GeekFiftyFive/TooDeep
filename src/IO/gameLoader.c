@@ -126,7 +126,8 @@ void copySceneToRenderQueue(td_game game) {
     listForEach(getEntities(game -> currentScene), copyCallback, game -> renderer);
 }
 
-void executeTick(td_game game, SDL_Event e) {
+void executeTick(td_game game, SDL_Event e, int delta) {
+    physicsUpdate(game -> currentScene, delta);
     executeBehaviors(game -> state, game -> currentScene, game -> keymap, e);
 }
 

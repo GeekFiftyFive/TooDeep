@@ -9,7 +9,6 @@ void startEventLoop(td_game game) {
     bool quit = false;
     SDL_Event e;
 
-    // FPS monitoring
     int acc = 0;
     int count = 0;
     int prevTicks = SDL_GetTicks();
@@ -19,8 +18,8 @@ void startEventLoop(td_game game) {
     while(!quit) {
         SDL_PollEvent(&e);
         quit = e.type == SDL_QUIT;
-        executeTick(game, e);
         renderFrame(getRenderer(game));
+        executeTick(game, e, SDL_GetTicks() - prevTicks);
         acc++;
         count += SDL_GetTicks() - prevTicks;
         prevTicks = SDL_GetTicks();

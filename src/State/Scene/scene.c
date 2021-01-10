@@ -50,7 +50,7 @@ void registerVariableCallback(td_json json, void *data) {
 
     switch(jsonType) {
         case JSON_NUMBER: {
-            // TODO: This is hacky, make it prettier >8-)
+            // TODO: This is hacky, make it prettier
             double doubleVal = getJSONDouble(json, NULL, NULL);
             int intVal = getJSONInt(json, NULL, NULL);
             if((double) intVal == doubleVal) {
@@ -78,6 +78,10 @@ void registerVariableCallback(td_json json, void *data) {
     }
 
     registerVariable(script, getFieldName(json), variableType, val);
+}
+
+void physicsUpdate(td_scene scene, int delta) {
+    listForEach(scene -> entities, entityPhysicsUpdate, &delta);
 }
 
 void behaviourCallback(td_json json, void *data) {

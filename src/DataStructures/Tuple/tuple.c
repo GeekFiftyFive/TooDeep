@@ -3,7 +3,7 @@
 #include "tuple.h"
 
 td_tuple productTuple(td_tuple a, td_tuple b) {
-    return (td_tuple) { a.x * b.x, b.x * b.y };
+    return (td_tuple) { a.x * b.x, a.y * b.y };
 }
 
 td_tuple multiplyTuple(float multiple, td_tuple tuple) {

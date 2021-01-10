@@ -141,7 +141,7 @@ SDL_Rect scaleRect(td_tuple pos, td_tuple size, td_renderer renderer) {
 
     SDL_Rect scaled = {
         pos.x * scaleFactor,
-        pos.y * scaleFactor,
+        pos.y * -scaleFactor,
         size.x * scaleFactor,
         size.y * scaleFactor
     };

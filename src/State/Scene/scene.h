@@ -11,6 +11,8 @@ typedef struct td_scene *td_scene;
 
 td_scene buildScene(td_game, char *);
 
+void physicsUpdate(td_scene, int);
+
 void executeBehaviors(lua_State *, td_scene, td_hashMap, SDL_Event);
 
 td_entity getEntityByID(td_scene, char *);

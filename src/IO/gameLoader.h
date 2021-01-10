@@ -13,7 +13,7 @@ td_game loadGameFromDirectory(char *, td_renderer);
 
 void copySceneToRenderQueue(td_game);
 
-void executeTick(td_game, SDL_Event);
+void executeTick(td_game, SDL_Event, int);
 
 lua_State *getState(td_game);
 

@@ -15,6 +15,8 @@ td_renderable getRenderable(td_entity);
 
 char *getEntityID(td_entity);
 
+void entityPhysicsUpdate(void *data, void *callbackData, char *key);
+
 void destroyEntity(td_entity);
 
 #endif

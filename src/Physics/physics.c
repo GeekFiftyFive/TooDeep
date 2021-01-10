@@ -1,5 +1,9 @@
 #include <stdlib.h>
 #include "physics.h"
+#include "../IO/logger.h"
+
+// TODO: Allow this to be configured
+#define GRAVITY 0.5
 
 struct td_physicsObject {
     td_tuple position;
@@ -19,6 +23,12 @@ td_tuple getPhysicsObjectPosition(td_physicsObject physicsObject) {
 
 void setPhysicsObjectPosition(td_physicsObject physicsObject, td_tuple position) {
     physicsObject -> position = position;
+}
+
+td_tuple updatePhysicsObject(td_physicsObject physicsObject, int delta) {
+    td_tuple posDelta = multiplyTuple(delta, physicsObject -> velocity);
+    physicsObject -> position = addTuple(physicsObject -> position, posDelta);
+    return physicsObject -> position;
 }
 
 void destroyPhysicsObject(td_physicsObject physicsObject) {
