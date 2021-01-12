@@ -68,7 +68,6 @@ void executeScript(lua_State *state, td_script script) {
 }
 
 int moveEntity(lua_State *state) {
-    td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(1));
     td_entity entity = (td_entity) lua_topointer(state, 1);
     float x = luaL_checknumber(state, 2);
     float y = luaL_checknumber(state, 3);
@@ -78,7 +77,6 @@ int moveEntity(lua_State *state) {
 }
 
 int getVelocity(lua_State *state) {
-    td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(1));
     td_entity entity = (td_entity) lua_topointer(state, 1);
     td_tuple velocity = getEntityVelocity(entity);
     lua_createtable(state, 0, 2);
@@ -106,11 +104,9 @@ void registerCFunctions(lua_State *state, td_scene scene) {
     lua_pushcclosure(state, luaGetEntity, 1);
     lua_setglobal(state, "getEntity");
 
-    lua_pushlightuserdata(state, scene);
-    lua_pushcclosure(state, moveEntity, 1);
+    lua_pushcfunction(state, moveEntity);
     lua_setglobal(state, "moveEntity");
 
-    lua_pushlightuserdata(state, scene);
-    lua_pushcclosure(state, getVelocity, 1);
+    lua_pushcfunction(state, getVelocity);
     lua_setglobal(state, "getVelocity");
 }
