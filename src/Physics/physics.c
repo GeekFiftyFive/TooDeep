@@ -3,7 +3,7 @@
 #include "../IO/logger.h"
 
 // TODO: Allow this to be configured
-#define GRAVITY 0.02
+#define GRAVITY 0.005
 
 struct td_physicsObject {
     td_tuple position;

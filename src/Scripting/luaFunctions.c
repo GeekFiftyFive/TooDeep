@@ -80,8 +80,7 @@ int moveEntity(lua_State *state) {
 
 int getVelocity(lua_State *state) {
     td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(1));
-    const char *entityID = luaL_checkstring(state, 1);
-    td_entity entity = getEntityByID(scene, (char *) entityID);
+    td_entity entity = (td_entity) lua_topointer(state, 1);
     td_tuple velocity = getEntityVelocity(entity);
     lua_createtable(state, 0, 2);
     lua_pushstring(state, "x");
@@ -94,8 +93,20 @@ int getVelocity(lua_State *state) {
     return 1;
 }
 
+int luaGetEntity(lua_State *state) {
+    td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(1));
+    const char *entityID = luaL_checkstring(state, 1);
+    td_entity entity = getEntityByID(scene, (char *) entityID);
+
+    lua_pushlightuserdata(state, entity);
+    return 1;
+}
 
 void registerCFunctions(lua_State *state, td_scene scene) {
+    lua_pushlightuserdata(state, scene);
+    lua_pushcclosure(state, luaGetEntity, 1);
+    lua_setglobal(state, "getEntity");
+
     lua_pushlightuserdata(state, scene);
     lua_pushcclosure(state, moveEntity, 1);
     lua_setglobal(state, "moveEntity");
