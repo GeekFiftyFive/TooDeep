@@ -69,10 +69,9 @@ void executeScript(lua_State *state, td_script script) {
 
 int moveEntity(lua_State *state) {
     td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(1));
-    const char *entityID = luaL_checkstring(state, 1);
+    td_entity entity = (td_entity) lua_topointer(state, 1);
     float x = luaL_checknumber(state, 2);
     float y = luaL_checknumber(state, 3);
-    td_entity entity = getEntityByID(scene, (char *) entityID);
     td_tuple position = getEntityPosition(entity);
     setEntityPosition(entity, addTuple(position, (td_tuple) { x, y }));
     return 1;
