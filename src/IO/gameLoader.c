@@ -126,9 +126,13 @@ void copySceneToRenderQueue(td_game game) {
     listForEach(getEntities(game -> currentScene), copyCallback, game -> renderer);
 }
 
-void executeTick(td_game game, SDL_Event e, int delta) {
+void executeTick(td_game game, int delta) {
     physicsUpdate(game -> currentScene, delta);
-    executeBehaviors(game -> state, game -> currentScene, game -> keymap, e);
+    executeUpdateBehaviors(game -> state, game -> currentScene);
+}
+
+void executeEvent(td_game game, SDL_Event e) {
+    executeEventBehaviors(game -> state, game -> currentScene, game -> keymap, e);
 }
 
 lua_State *getState(td_game game) {

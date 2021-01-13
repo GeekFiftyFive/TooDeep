@@ -16,10 +16,12 @@ void startEventLoop(td_game game) {
     copySceneToRenderQueue(game);
 
     while(!quit) {
-        SDL_PollEvent(&e);
         quit = e.type == SDL_QUIT;
         renderFrame(getRenderer(game));
-        executeTick(game, e, SDL_GetTicks() - prevTicks);
+        executeTick(game, SDL_GetTicks() - prevTicks);
+        while(SDL_PollEvent(&e)) {
+            executeEvent(game, e);
+        }
         acc++;
         count += SDL_GetTicks() - prevTicks;
         prevTicks = SDL_GetTicks();

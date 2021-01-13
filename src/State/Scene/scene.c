@@ -184,13 +184,23 @@ void executeBehaviorCallback(void *entryData, void *callbackData, char *key) {
     executeScript(state, (td_script) entryData);
 }
 
-void executeBehaviors(lua_State *state, td_scene scene, td_hashMap keymap, SDL_Event e) {
+void executeUpdateBehaviors(lua_State *state, td_scene scene) {
     td_linkedList updateBehaviors = (td_linkedList) getFromHashMap(scene -> behaviors, "on_update");
 
+    if(!updateBehaviors) {
+        return;
+    }
+    listForEach(updateBehaviors, executeBehaviorCallback, state);
+}
+
+void executeEventBehaviors(lua_State *state, td_scene scene, td_hashMap keymap, SDL_Event e) {
     // Handle keyboard events
     // TODO: This should probably be moved to the keyboard events module
     switch (e.type) {
         case SDL_KEYDOWN: {
+            if(e.key.repeat != 0) {
+                break;
+            }
             const char* keyname = keySymToString(e.key.keysym.sym);
             char *action = (char *) getFromHashMap(keymap, (char *) keyname);
             if(!action) {
@@ -203,11 +213,6 @@ void executeBehaviors(lua_State *state, td_scene scene, td_hashMap keymap, SDL_E
         default:
             break;
     }
-
-    if(!updateBehaviors) {
-        return;
-    }
-    listForEach(updateBehaviors, executeBehaviorCallback, state);
 }
 
 td_entity getEntityByID(td_scene scene, char *ID) {
