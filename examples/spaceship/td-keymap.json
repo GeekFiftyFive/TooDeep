@@ -1,10 +1,12 @@
 {
     "mapping": {
         "left_arrow": {
-            "down": "move_left"
+            "down": "move_left",
+            "up": "stop_moving"
         },
         "right_arrow": {
-            "down": "move_right"
+            "down": "move_right",
+            "up": "stop_moving"
         }
     }
 }

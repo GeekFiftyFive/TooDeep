@@ -202,7 +202,28 @@ void executeEventBehaviors(lua_State *state, td_scene scene, td_hashMap keymap, 
                 break;
             }
             const char* keyname = keySymToString(e.key.keysym.sym);
-            char *action = (char *) getFromHashMap(keymap, (char *) keyname);
+            td_keymap map = (td_keymap) getFromHashMap(keymap, (char *) keyname);
+            if(!map) {
+                break;
+            }
+            char *action = map -> down;
+            if(!action) {
+                break;
+            }
+            td_linkedList keyBehaviors = (td_linkedList) getFromHashMap(scene -> behaviors, action);
+            listForEach(keyBehaviors, executeBehaviorCallback, state);
+            break;
+        }
+        case SDL_KEYUP: {
+            if(e.key.repeat != 0) {
+                break;
+            }
+            const char* keyname = keySymToString(e.key.keysym.sym);
+            td_keymap map = (td_keymap) getFromHashMap(keymap, (char *) keyname);
+            if(!map) {
+                break;
+            }
+            char *action = map -> up;
             if(!action) {
                 break;
             }

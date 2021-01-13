@@ -3,6 +3,13 @@
 
 #include <SDL2/SDL.h>
 
+typedef struct td_keymap {
+    char *up;
+    char *down;
+} *td_keymap;
+
 const char *keySymToString(SDL_Keycode);
+
+void destroyKeymap(td_keymap);
 
 #endif

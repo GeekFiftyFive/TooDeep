@@ -10,6 +10,7 @@
 #include "../State/Entity/entity.h"
 #include "../Utils/stringUtils.h"
 #include "../Scripting/luaFunctions.h"
+#include "../Events/keyboardEvents.h"
 
 #define MANIFEST_NAME "td-game.json"
 #define SCENES_PATH "scenes"
@@ -47,10 +48,21 @@ void addJsonToHashmapCallback(char *path, void *rawData) {
 void keymapCallback(td_json json, void *data) {
     td_hashMap keymap = (td_hashMap) data;
     char *fieldName = getFieldName(json);
-    char *action = getJSONString(json, "down", NULL);
-    char *actionCopy = malloc(strlen(action) + 1);
-    strcpy(actionCopy, action);
-    insertIntoHashMap(keymap, fieldName, actionCopy, free);
+
+    char *downAction = getJSONString(json, "down", NULL);
+    char *downActionCopy = malloc(strlen(downAction) + 1);
+
+    char *upAction = getJSONString(json, "up", NULL);
+    char *upActionCopy = malloc(strlen(upAction) + 1);
+
+    strcpy(downActionCopy, downAction);
+    strcpy(upActionCopy, upAction);
+
+    td_keymap map = malloc(sizeof(struct td_keymap));
+    map -> up = upActionCopy;
+    map -> down = downActionCopy;
+
+    insertIntoHashMap(keymap, fieldName, map, destroyKeymap);
 }
 
 td_hashMap loadKeymap(td_resourceLoader loader) {

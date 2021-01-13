@@ -10,3 +10,8 @@ const char *keySymToString(SDL_Keycode sym) {
             return "";
     }
 }
+
+void destroyKeymap(td_keymap keymap) {
+    free(keymap -> up);
+    free(keymap -> down);
+}
