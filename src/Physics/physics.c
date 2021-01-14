@@ -3,17 +3,21 @@
 #include "../IO/logger.h"
 
 // TODO: Allow this to be configured
-#define GRAVITY 0.00
+#define GRAVITY 0.005
 
 struct td_physicsObject {
     td_tuple position;
     td_tuple velocity;
+    td_tuple force;
+    float mass;
 };
 
 td_physicsObject createPhysicsObject() {
     td_physicsObject physicsObject = malloc(sizeof(struct td_physicsObject));
     physicsObject -> position = (td_tuple) { 0, 0 };
     physicsObject -> velocity = (td_tuple) { 0, 0 };
+    physicsObject -> force    = (td_tuple) { 0, 0 };
+    physicsObject -> mass     = 1.0; // TODO: Make this configurable per object
     return physicsObject;
 }
 
@@ -33,13 +37,16 @@ td_tuple getPhysicsObjectVelocity(td_physicsObject physicsObject) {
     return physicsObject -> velocity;
 }
 
+void applyForceToPhysicsObject(td_physicsObject physicsObject, td_tuple force) {
+    physicsObject -> force = addTuple(physicsObject -> force, force);
+}
+
 td_tuple updatePhysicsObject(td_physicsObject physicsObject, int delta) {
     td_tuple posDelta = multiplyTuple(delta, physicsObject -> velocity);
     physicsObject -> position = addTuple(physicsObject -> position, posDelta);
-    physicsObject -> velocity = addTuple(
-        physicsObject -> velocity,
-        (td_tuple) { 0, GRAVITY * -delta }
-    );
+    td_tuple acceleration = multiplyTuple(1.0 / physicsObject -> mass, physicsObject -> force);
+    acceleration = addTuple(acceleration, (td_tuple) { 0, -GRAVITY });
+    physicsObject -> velocity = addTuple(physicsObject -> velocity, multiplyTuple(delta, acceleration));
     return physicsObject -> position;
 }
 

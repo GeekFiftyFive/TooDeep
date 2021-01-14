@@ -6,6 +6,8 @@ const char *keySymToString(SDL_Keycode sym) {
             return "left_arrow";
         case SDLK_RIGHT:
             return "right_arrow";
+        case SDLK_SPACE:
+            return "space_bar";
         default:
             return "";
     }

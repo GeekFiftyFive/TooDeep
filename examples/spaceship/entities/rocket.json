@@ -25,6 +25,18 @@
                 "x": 0.0,
                 "y": 0.0
             }
+        },
+        "thrust": {
+            "script": "applyThrust.lua",
+            "variables": {
+                "thrust": 0.03
+            }
+        },
+        "stop_thrust": {
+            "script": "applyThrust.lua",
+            "variables": {
+                "thrust": -0.03
+            }
         }
     }
 }

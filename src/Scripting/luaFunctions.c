@@ -90,6 +90,15 @@ int luaSetEntityVelocity(lua_State *state) {
     return 1;
 }
 
+int luaApplyForceToEntity(lua_State *state) {
+    td_entity entity = (td_entity) lua_topointer(state, 1);
+    float x = luaL_checknumber(state, 2);
+    float y = luaL_checknumber(state, 3);
+    td_tuple force = (td_tuple) { x, y };
+    applyForceToEntity(entity, force);
+    return 1;
+}
+
 int luaGetEntity(lua_State *state) {
     td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(1));
     const char *entityID = luaL_checkstring(state, 1);
@@ -109,4 +118,7 @@ void registerCFunctions(lua_State *state, td_scene scene) {
 
     lua_pushcfunction(state, luaSetEntityVelocity);
     lua_setglobal(state, "setEntityVelocity");
+
+    lua_pushcfunction(state, luaApplyForceToEntity);
+    lua_setglobal(state, "applyForceToEntity");
 }

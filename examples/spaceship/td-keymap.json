@@ -7,6 +7,10 @@
         "right_arrow": {
             "down": "move_right",
             "up": "stop_moving"
+        },
+        "space_bar": {
+            "down": "thrust",
+            "up": "stop_thrust"
         }
     }
 }

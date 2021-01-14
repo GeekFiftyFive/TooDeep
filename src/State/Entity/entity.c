@@ -42,6 +42,10 @@ char *getEntityID(td_entity entity) {
     return entity -> ID;
 }
 
+void applyForceToEntity(td_entity entity, td_tuple force) {
+    applyForceToPhysicsObject(entity -> physicsObject, force);
+}
+
 void entityPhysicsUpdate(void *data, void *callbackData, char *key) {
     td_entity entity = (td_entity) data;
     int delta = *((int*) callbackData);
