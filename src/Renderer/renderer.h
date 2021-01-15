@@ -17,9 +17,11 @@ void appendToRenderQueue(td_renderer, td_renderable);
 
 td_renderable createRenderableFromSurface(td_renderer, SDL_Surface *);
 
+void setRenderableTextureRegion(td_renderable, SDL_Rect);
+
 void setRenderablePosition(td_renderable, td_tuple);
 
-void updateRenderablePosition(td_renderable renderable, td_tuple delta);
+void updateRenderablePosition(td_renderable, td_tuple);
 
 void setRenderSpace(td_renderable, td_renderSpace);
 

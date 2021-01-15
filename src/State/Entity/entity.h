@@ -17,6 +17,8 @@ td_tuple getEntityVelocity(td_entity);
 
 td_renderable getRenderable(td_entity);
 
+void enableEntityGravity(td_entity, bool);
+
 char *getEntityID(td_entity);
 
 void applyForceToEntity(td_entity, td_tuple);

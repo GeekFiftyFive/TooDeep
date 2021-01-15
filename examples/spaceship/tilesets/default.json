@@ -2,7 +2,7 @@
     "name": "default_tileset",
     "source": "tile_set.png",
     "dimensions": {
-        "x": 128,
-        "y": 128
+        "w": 128,
+        "h": 128
     }
 }

@@ -59,6 +59,19 @@ int getJSONInt(td_json json, char *field, td_jsonError *error) {
     return obj -> valueint;
 }
 
+bool getJSONBool(td_json json, char *field, td_jsonError *error) {
+    if(error) *(error) = JSON_NO_ERROR;
+    td_json obj = getJSONObject(json, field, error);
+
+    if(!cJSON_IsBool(obj)) {
+        logWarn("field at %s is not a boolean!\n", field);
+        if(error) *(error) = JSON_ERROR;
+        return false;
+    }
+
+    return (bool) obj -> valueint;
+}
+
 double getJSONDouble(td_json json, char *field, td_jsonError *error) {
     if(error) *(error) = JSON_NO_ERROR;
     td_json obj = getJSONObject(json, field, error);

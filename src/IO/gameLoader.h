@@ -25,6 +25,8 @@ td_json getScene(td_game, char*);
 
 td_json getEntity(td_game, char*);
 
+td_json getTileset(td_game, char*);
+
 td_resourceLoader getResourceLoader(td_game);
 
 td_renderer getRenderer(td_game);

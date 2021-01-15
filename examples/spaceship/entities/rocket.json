@@ -38,5 +38,8 @@
                 "thrust": -0.03
             }
         }
+    },
+    "physics": {
+        "gravity_enabled": true
     }
 }

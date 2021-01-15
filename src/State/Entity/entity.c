@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include "entity.h"
 #include "../../Physics/physics.h"
 
@@ -36,6 +37,10 @@ td_tuple getEntityVelocity(td_entity entity) {
 
 td_renderable getRenderable(td_entity entity) {
     return entity -> renderable;
+}
+
+void enableEntityGravity(td_entity entity, bool gravity) {
+    enableGravity(entity -> physicsObject, gravity);
 }
 
 char *getEntityID(td_entity entity) {

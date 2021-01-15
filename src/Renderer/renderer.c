@@ -20,6 +20,7 @@ struct td_renderable {
     td_tuple pos;
     td_tuple size;
     td_renderSpace space;
+    SDL_Rect *textureRegion;
 };
 
 /*
@@ -120,8 +121,17 @@ td_renderable createRenderableFromSurface(td_renderer renderer, SDL_Surface *sur
     renderable -> size.x = (float) w;
     renderable -> size.y = (float) h;
     renderable -> space  = WORLD_SPACE;
+    renderable -> textureRegion = NULL;
 
     return renderable;
+}
+
+void setRenderableTextureRegion(td_renderable renderable, SDL_Rect region) {
+    if(!renderable -> textureRegion) {
+        renderable -> textureRegion = malloc(sizeof(SDL_Rect));
+    }
+
+    *(renderable -> textureRegion) = region;
 }
 
 void setRenderablePosition(td_renderable renderable, td_tuple pos) {
@@ -179,5 +189,8 @@ void destroyRenderer(td_renderer renderer) {
 
 void destroyRenderable(td_renderable renderable) {
     SDL_DestroyTexture(renderable -> texture);
+    if(renderable -> textureRegion) {
+        free(renderable -> textureRegion);
+    }
     free(renderable);
 }

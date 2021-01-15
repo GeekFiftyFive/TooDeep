@@ -15,6 +15,7 @@
 #define MANIFEST_NAME "td-game.json"
 #define SCENES_PATH "scenes"
 #define ENTITIES_PATH "entities"
+#define TILESETS_PATH "tilesets"
 
 struct td_game {
     td_resourceLoader loader;
@@ -22,6 +23,7 @@ struct td_game {
     td_hashMap scenes;
     td_scene currentScene;
     td_hashMap entities;
+    td_hashMap tilesets;
     td_json manifest;
     int entityCount;
     lua_State *state;
@@ -98,6 +100,7 @@ td_game loadGameFromDirectory(char *path, td_renderer renderer) {
 
     game -> scenes = createHashMap(10);
     game -> entities = createHashMap(10);
+    game -> tilesets = createHashMap(10);
     game -> keymap = loadKeymap(game -> loader);
 
     char *scenePath = concatPath(path, SCENES_PATH);
@@ -107,6 +110,10 @@ td_game loadGameFromDirectory(char *path, td_renderer renderer) {
     char *entityPath = concatPath(path, ENTITIES_PATH);
     mapData.map = game -> entities;
     iterateOverDir(entityPath, true, addJsonToHashmapCallback, &mapData);
+
+    char *tilesetPath = concatPath(path, TILESETS_PATH);
+    mapData.map = game -> tilesets;
+    iterateOverDir(tilesetPath, true, addJsonToHashmapCallback, &mapData);
 
     td_jsonError err;
     char *startSceneName = getJSONString(game -> manifest, "start_scene", &err);
@@ -163,6 +170,10 @@ td_json getEntity(td_game game, char* entityName) {
     return (td_json) getFromHashMap(game -> entities, entityName);
 }
 
+td_json getTileset(td_game game, char *tilesetName) {
+    return (td_json) getFromHashMap(game -> tilesets, tilesetName);
+}
+
 td_resourceLoader getResourceLoader(td_game game) {
     return game -> loader;
 }
@@ -182,6 +193,7 @@ void destroyGame(td_game game) {
     destroyHashMap(game -> scenes);
     destroyHashMap(game -> entities);
     destroyHashMap(game -> keymap);
+    destroyHashMap(game -> tilesets);
     destroyScene(game -> currentScene);
     lua_close(game -> state);
     freeJson(game -> manifest);
