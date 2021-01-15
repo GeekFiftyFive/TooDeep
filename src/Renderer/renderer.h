@@ -13,11 +13,17 @@ typedef struct td_renderable *td_renderable;
 
 td_renderer initRenderer(char *, int,int);
 
+SDL_Texture *surfaceToTexture(td_renderer, SDL_Surface *);
+
 void appendToRenderQueue(td_renderer, td_renderable);
+
+td_renderable createRenderableFromTexture(td_renderer, SDL_Texture *);
 
 td_renderable createRenderableFromSurface(td_renderer, SDL_Surface *);
 
 void setRenderableTextureRegion(td_renderable, SDL_Rect);
+
+void setRenderableSize(td_renderable, td_tuple);
 
 void setRenderablePosition(td_renderable, td_tuple);
 

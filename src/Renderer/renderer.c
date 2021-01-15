@@ -107,10 +107,10 @@ void appendToRenderQueue(td_renderer renderer, td_renderable renderable) {
     append(renderer -> renderQueue, renderable, key);
 }
 
-td_renderable createRenderableFromSurface(td_renderer renderer, SDL_Surface *surface) {
+td_renderable createRenderableFromTexture(td_renderer renderer, SDL_Texture *texture) {
     td_renderable renderable = malloc(sizeof(struct td_renderable));
 
-    renderable -> texture = surfaceToTexture(renderer, surface);
+    renderable -> texture = texture;
 
     int w, h;
 
@@ -126,12 +126,22 @@ td_renderable createRenderableFromSurface(td_renderer renderer, SDL_Surface *sur
     return renderable;
 }
 
+td_renderable createRenderableFromSurface(td_renderer renderer, SDL_Surface *surface) {
+    SDL_Texture *texture = surfaceToTexture(renderer, surface);
+
+    return createRenderableFromTexture(renderer, texture);
+}
+
 void setRenderableTextureRegion(td_renderable renderable, SDL_Rect region) {
     if(!renderable -> textureRegion) {
         renderable -> textureRegion = malloc(sizeof(SDL_Rect));
     }
 
     *(renderable -> textureRegion) = region;
+}
+
+void setRenderableSize(td_renderable renderable, td_tuple size) {
+    renderable -> size = size;
 }
 
 void setRenderablePosition(td_renderable renderable, td_tuple pos) {

@@ -25,10 +25,12 @@ struct callbackData {
 };
 
 struct tilesetCallbackData {
+    td_game game;
     SDL_Rect textureDimensions;
+    SDL_Rect tileDimensions;
     td_tuple worldDimensions;
     td_tuple startPosition;
-    SDL_Surface *surface;
+    SDL_Texture *texture;
     td_linkedList layer;
     int xIndex;
     int yIndex;
@@ -161,7 +163,31 @@ void entityCallback(td_json json, void *data) {
 }
 
 void tileIndexCallback(td_json json, void *data) {
+    int tileNum = getJSONInt(json, NULL, NULL);
+    struct tilesetCallbackData *callbackData = (struct tilesetCallbackData*) data;
+    if(!tileNum) {
+        callbackData -> xIndex++;
+        return;
+    }
+    td_renderable renderable = createRenderableFromTexture(
+        getRenderer(callbackData -> game),
+        callbackData -> texture
+    );
+    setRenderableSize(renderable, callbackData -> worldDimensions);
+    char *entityID = newEntityID(callbackData -> game);
+    
+    // Create entity and add it to layer
+    td_entity entity = createEntity(entityID, renderable);
+    td_tuple pos = callbackData -> startPosition;
+    td_tuple displacement = productTuple(
+        callbackData -> worldDimensions,
+        (td_tuple) { callbackData -> xIndex, -callbackData -> yIndex }
+    );
+    pos = addTuple(pos, displacement);
 
+    setEntityPosition(entity, pos);
+    append(callbackData -> layer, entity, getEntityID(entity));
+    callbackData -> xIndex++;
 }
 
 void tileRowCallback(td_json json, void *data) {
@@ -183,9 +209,13 @@ void tilesetCallback(td_json json, void *data) {
     char *fullAssetName = malloc(strlen(assetName) + strlen(ASSET_DIR) + 1);
     sprintf(fullAssetName, "%s%s", ASSET_DIR, assetName);
 
-    // Load asset using asset name and create renderable
+    // Load asset using asset name and create texture
     SDL_Surface *surface =  loadSurfaceResource(getResourceLoader(dataCast -> game), fullAssetName);
     free(fullAssetName);
+    SDL_Texture *texture = surfaceToTexture(getRenderer(dataCast -> game), surface);
+
+    // Query Surface
+
     
     // Get additional details about the tiles
     bool collision = getJSONBool(json, "collision", NULL);
@@ -194,17 +224,19 @@ void tilesetCallback(td_json json, void *data) {
     float startY = (float) getJSONDouble(json, "start_point.y", NULL);
     float width = (float) getJSONDouble(json, "tile_size.w", NULL);
     float height = (float) getJSONDouble(json, "tile_size.h", NULL);
-    int textureWidth = getJSONInt(tilesetJSON, "dimensions.w", NULL);
-    int textureHeight = getJSONInt(tilesetJSON, "dimensions.h", NULL);
+    int tileWidth = getJSONInt(tilesetJSON, "dimensions.w", NULL);
+    int tileHeight = getJSONInt(tilesetJSON, "dimensions.h", NULL);
     int *layerIndex = getFromHashMap(dataCast -> layerIndexes, layerName);
     td_linkedList layer = dataCast -> layers[*layerIndex];
 
     // Create data to be called on tiles callbacks
     struct tilesetCallbackData callbackData = {
-        (SDL_Rect) { 0, 0, textureWidth, textureHeight },
+        dataCast -> game,
+        (SDL_Rect) { 0, 0, 0, 0 },
+        (SDL_Rect) { 0, 0, tileWidth, tileHeight },
         (td_tuple) { width, height },
         (td_tuple) { startX, startY },
-        surface,
+        texture,
         layer,
         0,
         0,
