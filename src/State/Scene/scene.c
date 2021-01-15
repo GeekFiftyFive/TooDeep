@@ -26,7 +26,6 @@ struct callbackData {
 
 struct tilesetCallbackData {
     td_game game;
-    SDL_Rect textureDimensions;
     SDL_Rect tileDimensions;
     td_tuple worldDimensions;
     td_tuple startPosition;
@@ -162,6 +161,21 @@ void entityCallback(td_json json, void *data) {
     append(layer, entity, getEntityID(entity));
 }
 
+static SDL_Rect getTextureRegion(SDL_Texture *texture, SDL_Rect dimensions, int index) {
+    int w, h;
+    SDL_QueryTexture(texture, NULL, NULL, &w, &h);
+    SDL_Rect region = dimensions;
+    if(index * dimensions.w > w) {
+        // Wrap
+        region.x = (index - 1) - (w / dimensions.w);
+        region.y = h * ((int) (index / (w / dimensions.w)));
+    } else {
+        region.x = (index - 1) * dimensions.w;
+        region.y = 0;    
+    }
+    return region;
+}
+
 void tileIndexCallback(td_json json, void *data) {
     int tileNum = getJSONInt(json, NULL, NULL);
     struct tilesetCallbackData *callbackData = (struct tilesetCallbackData*) data;
@@ -172,6 +186,14 @@ void tileIndexCallback(td_json json, void *data) {
     td_renderable renderable = createRenderableFromTexture(
         getRenderer(callbackData -> game),
         callbackData -> texture
+    );
+    setRenderableTextureRegion(
+        renderable,
+        getTextureRegion(
+            callbackData -> texture,
+            callbackData -> tileDimensions,
+            tileNum
+        )
     );
     setRenderableSize(renderable, callbackData -> worldDimensions);
     char *entityID = newEntityID(callbackData -> game);
@@ -213,9 +235,6 @@ void tilesetCallback(td_json json, void *data) {
     SDL_Surface *surface =  loadSurfaceResource(getResourceLoader(dataCast -> game), fullAssetName);
     free(fullAssetName);
     SDL_Texture *texture = surfaceToTexture(getRenderer(dataCast -> game), surface);
-
-    // Query Surface
-
     
     // Get additional details about the tiles
     bool collision = getJSONBool(json, "collision", NULL);
@@ -232,7 +251,6 @@ void tilesetCallback(td_json json, void *data) {
     // Create data to be called on tiles callbacks
     struct tilesetCallbackData callbackData = {
         dataCast -> game,
-        (SDL_Rect) { 0, 0, 0, 0 },
         (SDL_Rect) { 0, 0, tileWidth, tileHeight },
         (td_tuple) { width, height },
         (td_tuple) { startX, startY },

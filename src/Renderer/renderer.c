@@ -175,7 +175,15 @@ void drawRenderable(void *renderableData, void *rendererData, char *key) {
 
     SDL_Rect drawArea = scaleRect(renderable -> pos, renderable -> size, renderer);
 
-    SDL_RenderCopyEx(renderer -> renderer, renderable -> texture, NULL, &drawArea, 0, NULL, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(
+        renderer -> renderer,
+        renderable -> texture,
+        renderable -> textureRegion,
+        &drawArea, 
+        0,
+        NULL,
+        SDL_FLIP_NONE
+    );
 }
 
 void renderFrame(td_renderer renderer) {
