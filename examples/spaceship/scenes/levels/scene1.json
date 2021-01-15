@@ -14,6 +14,21 @@
             }
         }
     ],
+    "tiled_regions": [
+        {
+            "tileset": "default_tileset",
+            "collision": true,
+            "layer": "foreground",
+            "start_point": {
+                "x": 0,
+                "y": 824
+            },
+            "tiles": [
+                [0, 0, 1, 2, 0, 0],
+                [1, 2, 1, 2, 1, 2]
+            ]
+        }
+    ],
     "layers": [
         "bg",
         "foreground",
