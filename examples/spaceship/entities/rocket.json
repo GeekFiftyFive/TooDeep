@@ -40,6 +40,15 @@
         }
     },
     "physics": {
+        "collision_hulls": [
+            {
+                "type": "box",
+                "x": 0.0,
+                "y": 0.0,
+                "w": 136.0,
+                "h": 200.0
+            }
+        ],
         "gravity_enabled": true
     }
 }
