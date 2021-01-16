@@ -132,11 +132,38 @@ void behaviourCallback(td_json json, void *data) {
     appendWithFree(actionList, script, fullScriptName, destroyScript);
 }
 
-void handleCollision(td_tuple intrusion, void *data) {
+void handleCollision(td_collision collision, void *data) {
     td_entity entity = (td_entity) data;
     td_tuple position = getEntityPosition(entity);
-    setEntityPosition(entity, addTuple(position, (td_tuple){0, intrusion.y}));
-    setEntityVelocity(entity, (td_tuple) { 0.0, 0.0 });
+
+    td_tuple hullPosition = { collision.hull.x, collision.hull.y };
+    td_tuple topLeft = subtractTuple(hullPosition, getPositionDelta(entity));
+    td_tuple bottomRight = { topLeft.x + collision.hull.w, topLeft.y - collision.hull.h };
+    td_box collidingHull = collision.collidingHull;
+
+    td_tuple delta = { 0.0, 0.0 };
+    td_tuple newVelocity = getEntityVelocity(entity);
+
+    if(bottomRight.y >= collidingHull.y || topLeft.y <= collidingHull.y - collidingHull.h) {
+        // Collided in the y axis
+        if(bottomRight.y >= collidingHull.y) {
+            delta.y = -collision.intrusion.y;
+        } else {
+            delta.y = -collision.intrusion.y;
+        }
+        newVelocity.y = 0.0;
+    } else {
+        // Collided in the x axis
+        if(bottomRight.x <= collidingHull.x) {
+            delta.x = collision.intrusion.x;
+        } else {
+            delta.x = -collision.intrusion.x;
+        }
+        newVelocity.x = 0.0;
+    }
+
+    setEntityPosition(entity, addTuple(position, delta));
+    setEntityVelocity(entity, newVelocity);
 }
 
 void addCollisionHullCallback(td_json json, void *data) {
@@ -147,9 +174,9 @@ void addCollisionHullCallback(td_json json, void *data) {
     float w = (float) getJSONDouble(json, "w", NULL);
     float h = (float) getJSONDouble(json, "h", NULL);
     char *name = getJSONString(json, "name", NULL);
-    td_box hull = (td_box) {
-        x + entityStartPosition.x,
-        y + entityStartPosition.y,
+    td_box hull = {
+        entityStartPosition.x + x,
+        entityStartPosition.y + y,
         w,
         h
     };

@@ -24,9 +24,11 @@ char *getEntityID(td_entity);
 
 void applyForceToEntity(td_entity, td_tuple);
 
-void addCollisionHull(td_entity entity, td_boxCollider collider, char *key);
+void addCollisionHull(td_entity, td_boxCollider, char *);
 
-void entityPhysicsUpdate(void *data, void *callbackData, char *key);
+td_tuple getPositionDelta(td_entity);
+
+void entityPhysicsUpdate(void *, void *, char *);
 
 void destroyEntity(td_entity);
 

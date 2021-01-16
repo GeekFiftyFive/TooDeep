@@ -5,7 +5,7 @@
 struct td_boxCollider {
     td_box hull;
     void *callbackData;
-    void (*callbackFunction)(td_tuple, void *);
+    void (*callbackFunction)(td_collision, void *);
 };
 
 td_boxCollider createBoxCollider(td_box hull) {
@@ -33,10 +33,10 @@ bool checkCollision(td_boxCollider collider1, td_boxCollider collider2) {
     td_tuple col2Corner; // collider2 bottom right corner
 
     col1Corner.x = col1Box.x + col1Box.w;
-    col1Corner.y = col1Box.y + col1Box.h;
+    col1Corner.y = col1Box.y - col1Box.h;
 
     col2Corner.x = col2Box.x + col2Box.w;
-    col2Corner.y = col2Box.y + col2Box.h;
+    col2Corner.y = col2Box.y - col2Box.h;
 
     td_tuple intrusion;
 
@@ -54,25 +54,31 @@ bool checkCollision(td_boxCollider collider1, td_boxCollider collider2) {
     }
 
     //Calculate Y Intrusion
-    if(col1Corner.y > col2Box.y && col1Corner.y < col2Corner.y)
+    if(col1Corner.y < col2Box.y && col1Corner.y > col2Corner.y)
         intrusion.y = col1Corner.y - col2Box.y;
-    else if(col1Box.y > col2Box.y && col1Box.y < col2Corner.y)
+    else if(col1Box.y < col2Box.y && col1Box.y > col2Corner.y)
         intrusion.y = col1Box.y - col2Corner.y;
     else {
-        if(col2Corner.y > col1Box.y && col2Corner.y < col1Corner.y)
+        if(col2Corner.y < col1Box.y && col2Corner.y > col1Corner.y)
             intrusion.y = col1Corner.y - col2Box.y;
-        else if(col2Box.y > col1Box.y && col2Box.y < col1Corner.y)
+        else if(col2Box.y < col1Box.y && col2Box.y > col1Corner.y)
             intrusion.y = col1Box.y - col2Corner.y;
         else intrusion.y = 0;
     }
 
+    td_collision collision = { intrusion };
+
     if(intrusion.x && intrusion.y) {
         if(collider1 -> callbackFunction) {
-            collider1 -> callbackFunction(intrusion, collider1 -> callbackData);
+            collision.hull = col1Box;
+            collision.collidingHull = col2Box;
+            collider1 -> callbackFunction(collision, collider1 -> callbackData);
         }
 
         if(collider2 -> callbackFunction) {
-            collider2 -> callbackFunction(intrusion, collider2 -> callbackData);
+            collision.hull = col2Box;
+            collision.collidingHull = col1Box;
+            collider2 -> callbackFunction(collision, collider2 -> callbackData);
         }
 
         return true;

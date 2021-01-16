@@ -13,6 +13,12 @@ typedef enum {
 
 typedef struct td_boxCollider *td_boxCollider;
 
+typedef struct td_collision {
+    td_tuple intrusion;
+    td_box hull;
+    td_box collidingHull;
+} td_collision;
+
 td_boxCollider createBoxCollider(td_box);
 
 void registerBoxColliderCallback(td_boxCollider, void *);

@@ -11,6 +11,7 @@ struct td_entity {
     td_renderable renderable;
     td_physicsObject physicsObject;
     td_linkedList collisionHulls;
+    td_tuple posDelta; // TODO: Find a better way of tracking this
 };
 
 td_entity createEntity(char *ID, td_renderable renderable) {
@@ -19,6 +20,7 @@ td_entity createEntity(char *ID, td_renderable renderable) {
     entity -> renderable = renderable;
     entity -> physicsObject = createPhysicsObject();
     entity -> collisionHulls = createLinkedList();
+    entity -> posDelta = (td_tuple) { 0.0, 0.0 };
     return entity;
 }
 
@@ -35,6 +37,7 @@ void setEntityPosition(td_entity entity, td_tuple position) {
     setPhysicsObjectPosition(entity -> physicsObject, position);
     setRenderablePosition(entity -> renderable, position);
     td_tuple delta = subtractTuple(position, currentPosition);
+    entity -> posDelta;
     listForEach(entity -> collisionHulls, moveCollider, &delta);
 }
 
@@ -70,6 +73,10 @@ void addCollisionHull(td_entity entity, td_boxCollider collider, char *key) {
     append(entity -> collisionHulls, collider, key);
 }
 
+td_tuple getPositionDelta(td_entity entity) {
+    return entity -> posDelta;
+}
+
 void entityPhysicsUpdate(void *data, void *callbackData, char *key) {
     td_entity entity = (td_entity) data;
     int delta = *((int*) callbackData);
@@ -77,6 +84,7 @@ void entityPhysicsUpdate(void *data, void *callbackData, char *key) {
     td_tuple position = updatePhysicsObject(entity -> physicsObject, delta);
     setRenderablePosition(entity -> renderable, position);
     td_tuple posDelta = subtractTuple(position, currentPosition);
+    entity -> posDelta = posDelta;
     listForEach(entity -> collisionHulls, moveCollider, &posDelta);
 }
 
