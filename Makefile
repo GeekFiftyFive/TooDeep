@@ -30,7 +30,8 @@ tooDeep: obj/main.o\
 		 obj/luaFunctions.o\
 		 obj/keyboardEvents.o\
 		 obj/physics.o\
-		 obj/boxCollision.o
+		 obj/boxCollision.o\
+		 obj/camera.o
 			cc $(ARGS) -o tooDeep obj/main.o\
 				obj/renderer.o\
 				obj/eventLoop.o\
@@ -56,6 +57,7 @@ tooDeep: obj/main.o\
 				obj/keyboardEvents.o\
 				obj/physics.o\
 				obj/boxCollision.o\
+				obj/camera.o\
 				$(LIBS)
 
 obj/main.o: src/main.c
@@ -132,6 +134,9 @@ obj/physics.o: src/Physics/physics.c src/Physics/physics.h
 
 obj/boxCollision.o: src/Physics/boxCollision.c src/Physics/boxCollision.h
 			cc $(ARGS) -c src/Physics/boxCollision.c -o obj/boxCollision.o
+
+obj/camera.o: src/Renderer/camera.c src/Renderer/camera.h
+			cc $(ARGS) -c src/Renderer/camera.c -o obj/camera.o
 
 clean:
 	rm -rf obj/* && rm tooDeep

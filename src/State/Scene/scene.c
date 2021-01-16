@@ -9,6 +9,8 @@
 #include "../../DataStructures/Box/box.h"
 #include "../../Physics/boxCollision.h"
 
+// TODO: This need A LOT of cleaning up!
+
 #define ASSET_DIR "/assets/"
 #define SCRIPT_DIR "/scripts/"
 
