@@ -132,10 +132,10 @@ void behaviourCallback(td_json json, void *data) {
     appendWithFree(actionList, script, fullScriptName, destroyScript);
 }
 
-void handleCollision(td_collision collision, void *data) {
+void handleCollision(td_tuple intrusion, void *data) {
     td_entity entity = (td_entity) data;
     td_tuple position = getEntityPosition(entity);
-    setEntityPosition(entity, addTuple(position, collision.amount));
+    setEntityPosition(entity, addTuple(position, (td_tuple){0, intrusion.y}));
     setEntityVelocity(entity, (td_tuple) { 0.0, 0.0 });
 }
 

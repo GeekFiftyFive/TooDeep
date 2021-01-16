@@ -31,9 +31,9 @@ void moveCollider(void *entryData, void *callbackData, char *key) {
 }
 
 void setEntityPosition(td_entity entity, td_tuple position) {
+    td_tuple currentPosition = getPhysicsObjectPosition(entity -> physicsObject);
     setPhysicsObjectPosition(entity -> physicsObject, position);
     setRenderablePosition(entity -> renderable, position);
-    td_tuple currentPosition = getPhysicsObjectPosition(entity -> physicsObject);
     td_tuple delta = subtractTuple(position, currentPosition);
     listForEach(entity -> collisionHulls, moveCollider, &delta);
 }

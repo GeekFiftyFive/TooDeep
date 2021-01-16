@@ -5,7 +5,7 @@
 struct td_boxCollider {
     td_box hull;
     void *callbackData;
-    void (*callbackFunction)(td_collision, void *);
+    void (*callbackFunction)(td_tuple, void *);
 };
 
 td_boxCollider createBoxCollider(td_box hull) {
@@ -38,76 +38,41 @@ bool checkCollision(td_boxCollider collider1, td_boxCollider collider2) {
     col2Corner.x = col2Box.x + col2Box.w;
     col2Corner.y = col2Box.y + col2Box.h;
 
-    // TODO: Make this into a function instead of repeating
-    if(col1Corner.x > col2Box.x &&
-       col1Corner.y > col2Box.y &&
-       col1Corner.x < col2Corner.x &&
-       col1Corner.y < col2Corner.y) {
-        // Collider 1 bottrom right corner intersected
+    td_tuple intrusion;
 
-        if(collider1 -> callbackFunction) {
-            td_tuple amount = (td_tuple) {
-                col1Corner.x - col2Box.x,
-                col1Corner.y - col2Box.y
-            };
-
-            td_collision collision = (td_collision) {
-                amount,
-                TD_CRNR_BOTTOM
-            };
-
-            collider1 -> callbackFunction(collision, collider1 -> callbackData);
-        }
-
-        if(collider2 -> callbackFunction) {
-            td_tuple amount = (td_tuple) {
-                col2Box.x - col1Corner.x,
-                col2Box.y - col1Corner.y
-            };
-
-            td_collision collision = (td_collision) {
-                amount,
-                TD_CRNR_TOP
-            };
-
-            collider2 -> callbackFunction(collision, collider2 -> callbackData);
-        }
-
-        return true;
+    //Calculate X Intrusion
+    if(col1Corner.x > col2Box.x && col1Corner.x < col2Corner.x)
+        intrusion.x = col1Corner.x - col2Box.x;
+    else if(col1Box.x > col2Box.x && col1Box.x < col2Corner.x)
+        intrusion.x = col1Box.x - col2Corner.x;
+    else {
+        if(col2Corner.x > col1Box.x && col2Corner.x < col1Corner.x)
+            intrusion.x = col1Corner.x - col2Box.x;
+        else if(col2Box.x > col1Box.x && col2Box.x < col1Corner.x)
+            intrusion.x = col1Box.x - col2Corner.x;
+        else intrusion.x = 0;
     }
 
-    if(col2Corner.x > col1Box.x &&
-       col2Corner.y > col1Box.y &&
-       col2Corner.x < col1Corner.x &&
-       col2Corner.y < col1Corner.y) {
-        // Collider 2 bottrom right corner intersected
+    //Calculate Y Intrusion
+    if(col1Corner.y > col2Box.y && col1Corner.y < col2Corner.y)
+        intrusion.y = col1Corner.y - col2Box.y;
+    else if(col1Box.y > col2Box.y && col1Box.y < col2Corner.y)
+        intrusion.y = col1Box.y - col2Corner.y;
+    else {
+        if(col2Corner.y > col1Box.y && col2Corner.y < col1Corner.y)
+            intrusion.y = col1Corner.y - col2Box.y;
+        else if(col2Box.y > col1Box.y && col2Box.y < col1Corner.y)
+            intrusion.y = col1Box.y - col2Corner.y;
+        else intrusion.y = 0;
+    }
 
+    if(intrusion.x && intrusion.y) {
         if(collider1 -> callbackFunction) {
-            td_tuple amount = (td_tuple) {
-                col2Corner.x - col1Box.x,
-                col2Corner.y - col1Box.y
-            };
-
-            td_collision collision = (td_collision) {
-                amount,
-                TD_CRNR_TOP
-            };
-
-            collider1 -> callbackFunction(collision, collider1 -> callbackData);
+            collider1 -> callbackFunction(intrusion, collider1 -> callbackData);
         }
 
         if(collider2 -> callbackFunction) {
-            td_tuple amount = (td_tuple) {
-                col1Box.x - col2Corner.x,
-                col1Box.y - col2Corner.y
-            };
-
-            td_collision collision = (td_collision) {
-                amount,
-                TD_CRNR_BOTTOM
-            };
-
-            collider2 -> callbackFunction(collision, collider2 -> callbackData);
+            collider2 -> callbackFunction(intrusion, collider2 -> callbackData);
         }
 
         return true;
