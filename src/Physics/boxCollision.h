@@ -1,27 +1,29 @@
 #ifndef TD_BOX_COLLISION
 #define TD_BOX_COLLISION
 
+#include <stdbool.h>
 #include "../DataStructures/Box/box.h"
+#include "../DataStructures/Tuple/tuple.h"
 
 typedef enum {
-    TD_INTR_LEFT,
-    TD_INTR_RIGHT,
-    TD_INTR_TOP,
-    TD_INTR_BOTTOM,
+    TD_CRNR_TOP,    // top left corner
+    TD_CRNR_BOTTOM, // bottom right corner
     TD_INTR_NONE
-} td_intrusionDirection;
+} td_intrudingCorner;
 
 typedef struct td_boxCollider *td_boxCollider;
 
 typedef struct td_collision {
-    float amount;
-    td_intrusionDirection direction;
+    td_tuple amount;
+    td_intrudingCorner corner;
 } td_collision;
 
 td_boxCollider createBoxCollider(td_box);
 
 void registerBoxColliderCallback(td_boxCollider, void *);
 
-td_collision checkCollision(td_boxCollider, td_boxCollider);
+void registerCallbackData(td_boxCollider, void *);
+
+bool checkCollision(td_boxCollider, td_boxCollider);
 
 #endif
