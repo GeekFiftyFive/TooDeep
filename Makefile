@@ -6,8 +6,57 @@ ARGS = -std=c99 -Wall -O2 -g -D_DEFAULT_SOURCE=__STRICT_ANSI__ $(LUA_INC)
 
 LIBS = -lSDL2 -lSDL2_image -lm -lcjson $(LUA_LIB)
 
-tooDeep: obj/main.o obj/renderer.o obj/eventLoop.o obj/linkedList.o obj/hashMap.o obj/testHelper.o obj/linkedListTests.o obj/hashMapTests.o  obj/resourceLoaderTests.o obj/fileIO.o obj/resourceLoader.o obj/jsonParser.o obj/jsonTests.o obj/logger.o obj/gameLoader.o obj/scene.o obj/entity.o obj/tuple.o obj/tupleTests.o  obj/stringUtilsTests.o obj/stringUtils.o obj/luaFunctions.o obj/keyboardEvents.o obj/physics.o
-			cc $(ARGS) -o tooDeep obj/main.o obj/renderer.o obj/eventLoop.o obj/hashMap.o obj/linkedList.o obj/testHelper.o obj/linkedListTests.o obj/hashMapTests.o obj/resourceLoaderTests.o obj/fileIO.o obj/resourceLoader.o obj/jsonParser.o obj/jsonTests.o obj/logger.o obj/gameLoader.o obj/scene.o obj/entity.o obj/tuple.o obj/tupleTests.o obj/stringUtilsTests.o obj/stringUtils.o obj/luaFunctions.o obj/keyboardEvents.o obj/physics.o $(LIBS)
+tooDeep: obj/main.o\
+		 obj/renderer.o\
+		 obj/eventLoop.o\
+		 obj/linkedList.o\
+		 obj/hashMap.o\
+		 obj/testHelper.o\
+		 obj/linkedListTests.o\
+		 obj/hashMapTests.o\
+		 obj/resourceLoaderTests.o\
+		 obj/fileIO.o\
+		 obj/resourceLoader.o\
+		 obj/jsonParser.o\
+		 obj/jsonTests.o\
+		 obj/logger.o\
+		 obj/gameLoader.o\
+		 obj/scene.o\
+		 obj/entity.o\
+		 obj/tuple.o\
+		 obj/tupleTests.o\
+		 obj/stringUtilsTests.o\
+		 obj/stringUtils.o\
+		 obj/luaFunctions.o\
+		 obj/keyboardEvents.o\
+		 obj/physics.o\
+		 obj/boxCollision.o
+			cc $(ARGS) -o tooDeep obj/main.o\
+				obj/renderer.o\
+				obj/eventLoop.o\
+				obj/hashMap.o\
+				obj/linkedList.o\
+				obj/testHelper.o\
+				obj/linkedListTests.o\
+				obj/hashMapTests.o\
+				obj/resourceLoaderTests.o\
+				obj/fileIO.o\
+				obj/resourceLoader.o\
+				obj/jsonParser.o\
+				obj/jsonTests.o\
+				obj/logger.o\
+				obj/gameLoader.o\
+				obj/scene.o\
+				obj/entity.o\
+				obj/tuple.o\
+				obj/tupleTests.o\
+				obj/stringUtilsTests.o\
+				obj/stringUtils.o\
+				obj/luaFunctions.o\
+				obj/keyboardEvents.o\
+				obj/physics.o\
+				obj/boxCollision.o\
+				$(LIBS)
 
 obj/main.o: src/main.c
 			cc $(ARGS) -c src/main.c -o obj/main.o
@@ -80,6 +129,9 @@ obj/keyboardEvents.o: src/Events/keyboardEvents.c src/Events/keyboardEvents.h
 
 obj/physics.o: src/Physics/physics.c src/Physics/physics.h
 			cc $(ARGS) -c src/Physics/physics.c -o obj/physics.o
+
+obj/boxCollision.o: src/Physics/boxCollision.c src/Physics/boxCollision.h
+			cc $(ARGS) -c src/Physics/boxCollision.c -o obj/boxCollision.o
 
 clean:
 	rm -rf obj/* && rm tooDeep
