@@ -15,6 +15,8 @@ void physicsUpdate(td_scene, int);
 
 void executeUpdateBehaviors(lua_State *, td_scene);
 
+void resolveCollisions(td_scene);
+
 void executeEventBehaviors(lua_State *, td_scene, td_hashMap, SDL_Event);
 
 td_entity getEntityByID(td_scene, char *);

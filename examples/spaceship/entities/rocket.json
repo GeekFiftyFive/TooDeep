@@ -43,6 +43,7 @@
         "collision_hulls": [
             {
                 "type": "box",
+                "name": "main",
                 "x": 0.0,
                 "y": 0.0,
                 "w": 136.0,

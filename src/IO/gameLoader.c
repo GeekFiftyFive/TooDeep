@@ -147,6 +147,7 @@ void copySceneToRenderQueue(td_game game) {
 
 void executeTick(td_game game, int delta) {
     physicsUpdate(game -> currentScene, delta);
+    resolveCollisions(game -> currentScene);
     executeUpdateBehaviors(game -> state, game -> currentScene);
 }
 

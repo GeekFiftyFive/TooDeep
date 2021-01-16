@@ -2,6 +2,7 @@
 #define ENTITY
 
 #include "../../Renderer/renderer.h"
+#include "../../Physics/boxCollision.h"
 
 typedef struct td_entity *td_entity;
 
@@ -22,6 +23,8 @@ void enableEntityGravity(td_entity, bool);
 char *getEntityID(td_entity);
 
 void applyForceToEntity(td_entity, td_tuple);
+
+void addCollisionHull(td_entity entity, td_boxCollider collider, char *key);
 
 void entityPhysicsUpdate(void *data, void *callbackData, char *key);
 

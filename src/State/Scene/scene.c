@@ -6,6 +6,8 @@
 #include "../../IO/resourceLoader.h"
 #include "../../Scripting/luaFunctions.h"
 #include "../../Events/keyboardEvents.h"
+#include "../../DataStructures/Box/box.h"
+#include "../../Physics/boxCollision.h"
 
 #define ASSET_DIR "/assets/"
 #define SCRIPT_DIR "/scripts/"
@@ -13,6 +15,8 @@
 struct td_scene {
     td_linkedList entities;
     td_hashMap behaviors;
+    td_linkedList mutableColliders;
+    td_linkedList immutableColliders;
 };
 
 struct callbackData {
@@ -22,6 +26,8 @@ struct callbackData {
     td_game game;
     td_hashMap behaviors;
     char *entityID;
+    td_linkedList mutableColliders;
+    td_linkedList immutableColliders;
 };
 
 struct tilesetCallbackData {
@@ -34,6 +40,12 @@ struct tilesetCallbackData {
     int xIndex;
     int yIndex;
     bool collision;
+    td_linkedList immutableColliders;
+};
+
+struct addCollisionHullCallbackData {
+    td_entity entity;
+    td_linkedList mutableColliders;
 };
 
 void layerCallback(td_json json, void *data) {
@@ -120,6 +132,38 @@ void behaviourCallback(td_json json, void *data) {
     appendWithFree(actionList, script, fullScriptName, destroyScript);
 }
 
+void handleCollision(td_collision collision, void *data) {
+    td_entity entity = (td_entity) data;
+    td_tuple position = getEntityPosition(entity);
+    setEntityPosition(entity, addTuple(position, collision.amount));
+    setEntityVelocity(entity, (td_tuple) { 0.0, 0.0 });
+}
+
+void addCollisionHullCallback(td_json json, void *data) {
+    struct addCollisionHullCallbackData *callbackData = (struct addCollisionHullCallbackData *) data;
+    td_tuple entityStartPosition= getEntityPosition(callbackData -> entity);
+    float x = (float) getJSONDouble(json, "x", NULL);
+    float y = (float) getJSONDouble(json, "y", NULL);
+    float w = (float) getJSONDouble(json, "w", NULL);
+    float h = (float) getJSONDouble(json, "h", NULL);
+    char *name = getJSONString(json, "name", NULL);
+    td_box hull = (td_box) {
+        x + entityStartPosition.x,
+        y + entityStartPosition.y,
+        w,
+        h
+    };
+    td_boxCollider collider = createBoxCollider(hull);
+    registerBoxColliderCallback(collider, handleCollision);
+    registerBoxColliderCallbackData(collider, callbackData -> entity);
+
+    char *nameCpy = malloc(strlen(name) + 1);
+    strcpy(nameCpy, name);
+
+    addCollisionHull(callbackData -> entity, collider, nameCpy);
+    append(callbackData -> mutableColliders, collider, name);
+}
+
 // TODO: JSON error handling, refactor
 void entityCallback(td_json json, void *data) {
     struct callbackData *dataCast = (struct callbackData*) data;
@@ -151,12 +195,20 @@ void entityCallback(td_json json, void *data) {
     // Get physics info
     bool gravityEnabled = getJSONBool(entityJSON, "physics.gravity_enabled", NULL);
 
-    // Create entity and add it to layer
+    // Create entity
     td_entity entity = createEntity(entityID, renderable);
     setEntityPosition(entity, pos);
     enableEntityGravity(entity, gravityEnabled);
     char *layerName = getJSONString(json, "render_info.layer", NULL); 
     int *layerIndex = getFromHashMap(dataCast -> layerIndexes, layerName);
+
+    // Register collision hulls
+    struct addCollisionHullCallbackData addCollisionHullCallbackData;
+    addCollisionHullCallbackData.entity = entity;
+    addCollisionHullCallbackData.mutableColliders = dataCast -> mutableColliders;
+    jsonArrayForEach(entityJSON, "physics.collision_hulls", addCollisionHullCallback, &addCollisionHullCallbackData);
+
+    // Add entitiy to corresponding layer
     td_linkedList layer = dataCast -> layers[*layerIndex];
     append(layer, entity, getEntityID(entity));
 }
@@ -209,6 +261,20 @@ void tileIndexCallback(td_json json, void *data) {
 
     setEntityPosition(entity, pos);
     append(callbackData -> layer, entity, getEntityID(entity));
+
+    // Create collision
+    td_box hull = (td_box) {
+        pos.x,
+        pos.y,
+        callbackData -> worldDimensions.x,
+        callbackData -> worldDimensions.y
+    };
+
+    td_boxCollider collider = createBoxCollider(hull);
+    char *idCopy = malloc(strlen(entityID) + 1);
+    strcpy(idCopy, entityID);
+    appendWithFree(callbackData -> immutableColliders, collider, idCopy, free);
+
     callbackData -> xIndex++;
 }
 
@@ -258,7 +324,8 @@ void tilesetCallback(td_json json, void *data) {
         layer,
         0,
         0,
-        collision
+        collision,
+        dataCast -> immutableColliders
     };
 
     jsonArrayForEach(json, "tiles", tileRowCallback, &callbackData);
@@ -272,8 +339,19 @@ td_scene buildScene(td_game game, char *sceneName) {
     td_linkedList *layers = malloc(sizeof(td_linkedList) * layerCount);
     td_hashMap layerIndexes = createHashMap(layerCount);
     td_hashMap behaviors = createHashMap(10);
+    td_linkedList immutableColliders = createLinkedList();
+    td_linkedList mutableColliders = createLinkedList();
 
-    struct callbackData layerData = { 0, layers, layerIndexes, game, behaviors, NULL };
+    struct callbackData layerData = {
+        0,
+        layers,
+        layerIndexes,
+        game,
+        behaviors,
+        NULL,
+        mutableColliders,
+        immutableColliders
+    };
 
     jsonArrayForEach(sceneJson, "layers", layerCallback, &layerData);
     jsonArrayForEach(sceneJson, "entities", entityCallback, &layerData);
@@ -291,6 +369,8 @@ td_scene buildScene(td_game game, char *sceneName) {
 
     scene -> entities = entities;
     scene -> behaviors = behaviors;
+    scene -> immutableColliders = immutableColliders;
+    scene -> mutableColliders = mutableColliders;
 
     destroyHashMap(layerIndexes);
 
@@ -311,6 +391,21 @@ void executeUpdateBehaviors(lua_State *state, td_scene scene) {
         return;
     }
     listForEach(updateBehaviors, executeBehaviorCallback, state);
+}
+
+void immutableColliderCallback(void *entryData, void *callbackData, char *key) {
+    td_boxCollider mutableCollider = (td_boxCollider) callbackData;
+    td_boxCollider immutableCollider = (td_boxCollider) entryData;
+    checkCollision(mutableCollider, immutableCollider);
+}
+
+void mutableColliderCallback(void *entryData, void *callbackData, char *key) {
+    td_linkedList immutableColiders = (td_linkedList) callbackData;
+    listForEach(immutableColiders, immutableColliderCallback, entryData);
+}
+
+void resolveCollisions(td_scene scene) {
+    listForEach(scene -> mutableColliders, mutableColliderCallback, scene -> immutableColliders);
 }
 
 void executeEventBehaviors(lua_State *state, td_scene scene, td_hashMap keymap, SDL_Event e) {
@@ -366,6 +461,8 @@ td_linkedList getEntities(td_scene scene) {
 
 void destroyScene(td_scene scene) {
     destroyLinkedList(scene -> entities);
+    destroyLinkedList(scene -> mutableColliders);
+    destroyLinkedList(scene -> immutableColliders);
     destroyHashMap(scene -> behaviors);
     free(scene);
 }

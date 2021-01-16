@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "boxCollision.h"
+#include "../IO/logger.h"
 
 struct td_boxCollider {
     td_box hull;
@@ -21,7 +22,7 @@ void registerBoxColliderCallback(td_boxCollider collider, void *callbackFunction
     collider -> callbackFunction = callbackFunction;
 }
 
-void registerCallbackData(td_boxCollider collider, void *data) {
+void registerBoxColliderCallbackData(td_boxCollider collider, void *data) {
     collider -> callbackData = data;
 }
 
@@ -54,6 +55,8 @@ bool checkCollision(td_boxCollider collider1, td_boxCollider collider2) {
                 amount,
                 TD_CRNR_BOTTOM
             };
+
+            collider1 -> callbackFunction(collision, collider1 -> callbackData);
         }
 
         if(collider2 -> callbackFunction) {
@@ -66,6 +69,8 @@ bool checkCollision(td_boxCollider collider1, td_boxCollider collider2) {
                 amount,
                 TD_CRNR_TOP
             };
+
+            collider2 -> callbackFunction(collision, collider2 -> callbackData);
         }
 
         return true;
@@ -87,6 +92,8 @@ bool checkCollision(td_boxCollider collider1, td_boxCollider collider2) {
                 amount,
                 TD_CRNR_TOP
             };
+
+            collider1 -> callbackFunction(collision, collider1 -> callbackData);
         }
 
         if(collider2 -> callbackFunction) {
@@ -99,10 +106,21 @@ bool checkCollision(td_boxCollider collider1, td_boxCollider collider2) {
                 amount,
                 TD_CRNR_BOTTOM
             };
+
+            collider2 -> callbackFunction(collision, collider2 -> callbackData);
         }
 
         return true;
     }
 
     return false;
+}
+
+td_tuple getBoxColliderPosition(td_boxCollider collider) {
+    return (td_tuple) { collider -> hull.x, collider -> hull.y };
+}
+
+void setBoxColliderPosition(td_boxCollider collider, td_tuple position) {
+    collider -> hull.x = position.x;
+    collider -> hull.y = position.y;
 }

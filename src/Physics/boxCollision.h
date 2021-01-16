@@ -22,8 +22,12 @@ td_boxCollider createBoxCollider(td_box);
 
 void registerBoxColliderCallback(td_boxCollider, void *);
 
-void registerCallbackData(td_boxCollider, void *);
+void registerBoxColliderCallbackData(td_boxCollider, void *);
 
 bool checkCollision(td_boxCollider, td_boxCollider);
+
+td_tuple getBoxColliderPosition(td_boxCollider);
+
+void setBoxColliderPosition(td_boxCollider, td_tuple);
 
 #endif
