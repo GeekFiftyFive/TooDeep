@@ -518,6 +518,10 @@ td_entity getEntityByID(td_scene scene, char *ID) {
     return getFromList(scene -> entities, ID);
 }
 
+td_camera getCameraByID(td_scene scene, char *ID) {
+    return getFromList(scene -> cameras, ID);
+}
+
 td_linkedList getEntities(td_scene scene) {
     return scene -> entities;
 }

@@ -5,6 +5,9 @@
         "asset": "rocket.png"
     },
     "behavior": {
+        "on_update": {
+            "script": "camera.lua"
+        },
         "move_left": {
             "script": "move.lua",
             "variables": {

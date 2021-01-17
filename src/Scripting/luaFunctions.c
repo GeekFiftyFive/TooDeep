@@ -4,6 +4,7 @@
 #include "../State/Entity/entity.h"
 #include "../DataStructures/LinkedList/linkedList.h"
 #include "../IO/logger.h"
+#include "../Renderer/camera.h"
 
 typedef struct td_script_variable {
     char *name;
@@ -67,17 +68,53 @@ void executeScript(lua_State *state, td_script script) {
     }
 }
 
-int luaGetEntityVelocity(lua_State *state) {
-    td_entity entity = (td_entity) lua_topointer(state, 1);
-    td_tuple velocity = getEntityVelocity(entity);
+static void tupleToTable(lua_State *state, td_tuple tuple) {
     lua_createtable(state, 0, 2);
     lua_pushstring(state, "x");
-    lua_pushnumber(state, velocity.x);
+    lua_pushnumber(state, tuple.x);
     lua_settable(state, -3);
 
     lua_pushstring(state, "y");
-    lua_pushnumber(state, velocity.y);
+    lua_pushnumber(state, tuple.y);
     lua_settable(state, -3);
+}
+
+int luaGetEntityPosition(lua_State *state) {
+    td_entity entity = (td_entity) lua_topointer(state, 1);
+    td_tuple position = getEntityPosition(entity);
+    tupleToTable(state, position);
+    return 1;
+}
+
+int luaSetEntityPosition(lua_State *state) {
+    td_entity entity = (td_entity) lua_topointer(state, 1);
+    float x = luaL_checknumber(state, 2);
+    float y = luaL_checknumber(state, 3);
+    td_tuple position = (td_tuple) { x, y };
+    setEntityPosition(entity, position);
+    return 1;   
+}
+
+int luaGetCameraPosition(lua_State *state) {
+    td_camera camera = (td_camera) lua_topointer(state, 1);
+    td_tuple position = getCameraPosition(camera);
+    tupleToTable(state, position);
+    return 1;
+}
+
+int luaSetCameraPosition(lua_State *state) {
+    td_camera camera = (td_camera) lua_topointer(state, 1);
+    float x = luaL_checknumber(state, 2);
+    float y = luaL_checknumber(state, 3);
+    td_tuple position = (td_tuple) { x, y };
+    setCameraPosition(camera, position);
+    return 1;   
+}
+
+int luaGetEntityVelocity(lua_State *state) {
+    td_entity entity = (td_entity) lua_topointer(state, 1);
+    td_tuple velocity = getEntityVelocity(entity);
+    tupleToTable(state, velocity);
     return 1;
 }
 
@@ -108,10 +145,35 @@ int luaGetEntity(lua_State *state) {
     return 1;
 }
 
+int luaGetCamera(lua_State *state) {
+    td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(1));
+    const char *cameraID = luaL_checkstring(state, 1);
+    td_camera camera = getCameraByID(scene, (char *) cameraID);
+
+    lua_pushlightuserdata(state, camera);
+    return 1;
+}
+
 void registerCFunctions(lua_State *state, td_scene scene) {
     lua_pushlightuserdata(state, scene);
     lua_pushcclosure(state, luaGetEntity, 1);
     lua_setglobal(state, "getEntity");
+
+    lua_pushlightuserdata(state, scene);
+    lua_pushcclosure(state, luaGetCamera, 1);
+    lua_setglobal(state, "getCamera");
+
+    lua_pushcfunction(state, luaGetCameraPosition);
+    lua_setglobal(state, "getCameraPosition");
+
+    lua_pushcfunction(state, luaSetCameraPosition);
+    lua_setglobal(state, "setCameraPosition");
+
+    lua_pushcfunction(state, luaGetEntityPosition);
+    lua_setglobal(state, "getEntityPosition");
+
+    lua_pushcfunction(state, luaSetEntityPosition);
+    lua_setglobal(state, "setEntityPosition");
 
     lua_pushcfunction(state, luaGetEntityVelocity);
     lua_setglobal(state, "getEntityVelocity");

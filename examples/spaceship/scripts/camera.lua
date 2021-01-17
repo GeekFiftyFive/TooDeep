@@ -1,0 +1,5 @@
+local spaceship = getEntity(entityID)
+local camera = getCamera("default")
+local cameraPos = getCameraPosition(camera)
+local spaceshipPos = getEntityPosition(spaceship)
+setCameraPosition(camera, cameraPos["x"], spaceshipPos["y"])
