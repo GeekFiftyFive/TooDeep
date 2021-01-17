@@ -12,6 +12,7 @@ struct td_renderer {
     SDL_Window *window;
     SDL_Renderer *renderer;
     td_linkedList renderQueue;
+    td_camera camera;
     float scaleFactor;
 };
 
@@ -73,6 +74,7 @@ td_renderer initRenderer(char *title, int width, int height) {
     renderer -> renderer = sdlRenderer;
     renderer -> renderQueue = createLinkedList();
     renderer -> scaleFactor = (float) width / BASE_WIDTH;
+    renderer -> camera = NULL;
 
     return renderer;
 }
@@ -132,6 +134,10 @@ td_renderable createRenderableFromSurface(td_renderer renderer, SDL_Surface *sur
     return createRenderableFromTexture(renderer, texture);
 }
 
+void setCurrentCamera(td_renderer renderer, td_camera camera) {
+    renderer -> camera = camera;
+}
+
 void setRenderableTextureRegion(td_renderable renderable, SDL_Rect region) {
     if(!renderable -> textureRegion) {
         renderable -> textureRegion = malloc(sizeof(SDL_Rect));
@@ -158,10 +164,14 @@ void setRenderSpace(td_renderable renderable, td_renderSpace space) {
 
 SDL_Rect scaleRect(td_tuple pos, td_tuple size, td_renderer renderer) {
     float scaleFactor = renderer -> scaleFactor;
+    td_tuple cameraPosition = getCameraPosition(renderer -> camera);
+    float zoom = getCameraZoom(renderer -> camera);
+
+    scaleFactor *= zoom;
 
     SDL_Rect scaled = {
-        pos.x * scaleFactor,
-        pos.y * -scaleFactor,
+        (pos.x - cameraPosition.x) * scaleFactor,
+        (pos.y - cameraPosition.y) * -scaleFactor,
         size.x * scaleFactor,
         size.y * scaleFactor
     };

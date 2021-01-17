@@ -1,11 +1,12 @@
 #ifndef TD_SCENE
 #define TD_SCENE
 
+#include <SDL2/SDL.h>
+#include "../Entity/entity.h"
 #include "../../IO/gameLoader.h"
 #include "../../DataStructures/LinkedList/linkedList.h"
 #include "../../DataStructures/HashMap/hashMap.h"
-#include "../Entity/entity.h"
-#include <SDL2/SDL.h>
+#include "../../Renderer/camera.h"
 
 typedef struct td_scene *td_scene;
 

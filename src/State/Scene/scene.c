@@ -19,6 +19,7 @@ struct td_scene {
     td_hashMap behaviors;
     td_linkedList mutableColliders;
     td_linkedList immutableColliders;
+    td_linkedList cameras;
 };
 
 struct callbackData {
@@ -48,6 +49,11 @@ struct tilesetCallbackData {
 struct addCollisionHullCallbackData {
     td_entity entity;
     td_linkedList mutableColliders;
+};
+
+struct addCameraCallbackData {
+    td_linkedList cameras;
+    td_renderer renderer;
 };
 
 void layerCallback(td_json json, void *data) {
@@ -360,6 +366,29 @@ void tilesetCallback(td_json json, void *data) {
     jsonArrayForEach(json, "tiles", tileRowCallback, &callbackData);
 }
 
+void addCameraCallback(td_json json, void *data) {
+    td_linkedList cameras = ((struct addCameraCallbackData*) data) -> cameras;
+    td_renderer renderer = ((struct addCameraCallbackData*) data) -> renderer;
+    td_camera camera = createCamera();
+
+    // Get camera info
+    float x = getJSONDouble(json, "start_pos.x", NULL);
+    float y = getJSONDouble(json, "start_pos.y", NULL);
+    float zoom = getJSONDouble(json, "zoom", NULL);
+    bool defaultCamera = getJSONBool(json, "default_camera", NULL);
+    char *name = getJSONString(json, "name", NULL);
+
+    // Setup camera
+    setCameraPosition(camera, (td_tuple) { x, y });
+    setCameraZoom(camera, zoom);
+
+    if(defaultCamera) {
+        setCurrentCamera(renderer, camera);
+    }
+
+    appendWithFree(cameras, camera, name, destroyCamera);
+}
+
 td_scene buildScene(td_game game, char *sceneName) {
     td_json sceneJson = getScene(game, sceneName);
     td_scene scene = malloc(sizeof(struct td_scene));
@@ -370,6 +399,7 @@ td_scene buildScene(td_game game, char *sceneName) {
     td_hashMap behaviors = createHashMap(10);
     td_linkedList immutableColliders = createLinkedList();
     td_linkedList mutableColliders = createLinkedList();
+    td_linkedList cameras = createLinkedList();
 
     struct callbackData layerData = {
         0,
@@ -382,9 +412,12 @@ td_scene buildScene(td_game game, char *sceneName) {
         immutableColliders
     };
 
+    struct addCameraCallbackData cameraCallbackData = { cameras, getRenderer(game) };
+
     jsonArrayForEach(sceneJson, "layers", layerCallback, &layerData);
     jsonArrayForEach(sceneJson, "entities", entityCallback, &layerData);
     jsonArrayForEach(sceneJson, "tiled_regions", tilesetCallback, &layerData);
+    jsonArrayForEach(sceneJson, "cameras", addCameraCallback, &cameraCallbackData);
 
     td_linkedList entities = createLinkedList();
 
@@ -400,6 +433,7 @@ td_scene buildScene(td_game game, char *sceneName) {
     scene -> behaviors = behaviors;
     scene -> immutableColliders = immutableColliders;
     scene -> mutableColliders = mutableColliders;
+    scene -> cameras = cameras;
 
     destroyHashMap(layerIndexes);
 
@@ -492,6 +526,7 @@ void destroyScene(td_scene scene) {
     destroyLinkedList(scene -> entities);
     destroyLinkedList(scene -> mutableColliders);
     destroyLinkedList(scene -> immutableColliders);
+    destroyLinkedList(scene -> cameras);
     destroyHashMap(scene -> behaviors);
     free(scene);
 }
