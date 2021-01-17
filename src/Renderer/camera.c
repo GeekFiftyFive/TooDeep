@@ -1,4 +1,5 @@
 #include "camera.h"
+#include <stdlib.h>
 
 struct td_camera {
     float zoom;
