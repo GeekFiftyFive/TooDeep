@@ -14,6 +14,7 @@ struct td_renderer {
     td_linkedList renderQueue;
     td_camera camera;
     float scaleFactor;
+    SDL_Rect frameDimensions;
 };
 
 struct td_renderable {
@@ -75,6 +76,7 @@ td_renderer initRenderer(char *title, int width, int height) {
     renderer -> renderQueue = createLinkedList();
     renderer -> scaleFactor = (float) width / BASE_WIDTH;
     renderer -> camera = NULL;
+    renderer -> frameDimensions = (SDL_Rect) { 0, 0, width, height };
 
     return renderer;
 }
@@ -169,9 +171,12 @@ SDL_Rect scaleRect(td_tuple pos, td_tuple size, td_renderer renderer) {
 
     scaleFactor *= zoom;
 
+    int xOffset = renderer -> frameDimensions.w / 2;
+    int yOffset = renderer -> frameDimensions.h / 2;
+
     SDL_Rect scaled = {
-        (pos.x - cameraPosition.x) * scaleFactor,
-        (pos.y - cameraPosition.y) * -scaleFactor,
+        ((pos.x - cameraPosition.x) * scaleFactor) + xOffset,
+        ((pos.y - cameraPosition.y) * -scaleFactor) + yOffset,
         size.x * scaleFactor,
         size.y * scaleFactor
     };

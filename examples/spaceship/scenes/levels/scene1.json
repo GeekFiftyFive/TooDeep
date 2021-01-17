@@ -40,8 +40,8 @@
             "name": "default",
             "default_camera": true,
             "start_pos": {
-                "x": 0.0,
-                "y": 0.0
+                "x": 960.0,
+                "y": -540.0
             },
             "zoom": 1.0
         }
