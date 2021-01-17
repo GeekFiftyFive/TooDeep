@@ -118,6 +118,10 @@ void jsonArrayForEach(td_json json, char *field, void (*callback)(td_json, void 
 void jsonObjectForEach(td_json json, char *field, void (*callback)(td_json, void *), void *data) {
     td_json obj = getJSONObject(json, field, NULL);
 
+    if(!obj) {
+        return;
+    }
+
     if(!cJSON_IsObject(obj)) {
         logWarn("field at %s is not an object!\n", field);
         return;
