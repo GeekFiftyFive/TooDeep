@@ -6,7 +6,11 @@
     },
     "behavior": {
         "on_update": {
-            "script": "camera.lua"
+            "script": "camera.lua",
+            "variables": {
+                "tolerance": 0.0,
+                "startY": -540.0
+            }
         },
         "move_left": {
             "script": "move.lua",
