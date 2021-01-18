@@ -179,7 +179,7 @@ void handleCollision(td_collision collision, void *data) {
 
 void addCollisionHullCallback(td_json json, void *data) {
     struct addCollisionHullCallbackData *callbackData = (struct addCollisionHullCallbackData *) data;
-    td_tuple entityStartPosition= getEntityPosition(callbackData -> entity);
+    td_tuple entityStartPosition = getEntityPosition(callbackData -> entity);
     float x = (float) getJSONDouble(json, "x", NULL);
     float y = (float) getJSONDouble(json, "y", NULL);
     float w = (float) getJSONDouble(json, "w", NULL);

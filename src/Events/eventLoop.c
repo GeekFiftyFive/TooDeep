@@ -18,6 +18,9 @@ void startEventLoop(td_game game) {
     while(!quit) {
         quit = e.type == SDL_QUIT;
         renderFrame(getRenderer(game));
+        // FIXME: Doing this is overkill. Should just swap at renderables
+        // that need to be swapped out when they need to be swapped out
+        // e.g. when an animation begins playing
         clearRenderQueue(getRenderer(game));
         copySceneToRenderQueue(game);
         executeTick(game, SDL_GetTicks() - prevTicks);
