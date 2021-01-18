@@ -3,10 +3,15 @@
 
 #include "../../Renderer/renderer.h"
 #include "../../Physics/boxCollision.h"
+#include "../../Renderer/animation.h"
 
 typedef struct td_entity *td_entity;
 
 td_entity createEntity(char *, td_renderable);
+
+void playAnimation(td_entity, char *);
+
+void addAnimation(td_entity, td_animation, char *);
 
 void setEntityPosition(td_entity, td_tuple);
 

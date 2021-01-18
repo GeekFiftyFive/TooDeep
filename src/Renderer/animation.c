@@ -2,6 +2,8 @@
 #include "animation.h"
 #include "../IO/logger.h"
 
+#define ASSET_DIR "/assets/"
+
 struct td_animation {
     int *frames;
     int frameCount;
@@ -13,6 +15,11 @@ struct td_animation {
     td_renderable renderable;
     SDL_Texture *texture;
     SDL_Rect dimensions;
+};
+
+struct addFrameCallbackData {
+    int index;
+    int *frames;
 };
 
 td_animation createAnimation(
@@ -80,6 +87,45 @@ void iterateAnimation(td_animation animation) {
     );
 
     setRenderableTextureRegion(animation -> renderable, textureRegion);
+}
+
+static void addFrameCallback(td_json json, void *callbackData) {
+    struct addFrameCallbackData *dataCast = (struct addFrameCallbackData*) callbackData;
+    int index = dataCast -> index;
+    int frameNumber = getJSONInt(json, NULL, NULL);
+    dataCast -> frames[index] = frameNumber;
+    dataCast -> index++;
+}
+
+td_animation createAnimationFromJson(td_json json, td_game game) {
+    char *source = getJSONString(json, "source", NULL);
+    int width = getJSONInt(json, "tile_dimensions.w", NULL);
+    int height = getJSONInt(json, "tile_dimensions.h", NULL);
+    float worldWidth = getJSONDouble(json, "world_dimensions.w", NULL);
+    float worldHeight = getJSONDouble(json, "world_dimensions.h", NULL);
+    int frameCount = getJSONArrayLength(json, "frames");
+    int *frames = malloc(sizeof(int) * frameCount);
+    bool loop = getJSONBool(json, "loop", NULL);
+    int frameRate = getJSONInt(json, "frame_rate", NULL);
+    char *fullAssetName = malloc(strlen(source) + strlen(ASSET_DIR) + 1);
+    sprintf(fullAssetName, "%s%s", ASSET_DIR, source);
+    // Load asset using asset name and create renderable
+    SDL_Surface *surface =  loadSurfaceResource(getResourceLoader(game), fullAssetName);
+    SDL_Texture *texture = surfaceToTexture(getRenderer(game), surface);
+    struct addFrameCallbackData callbackData = { 0, frames };
+    jsonArrayForEach(json, "frames", addFrameCallback, &callbackData);
+    td_animation animation = createAnimation(
+        getRenderer(game),
+        (SDL_Rect) { 0, 0, width, height },
+        (td_tuple) { worldWidth, worldHeight },
+        texture,
+        frames,
+        frameCount,
+        frameRate,
+        loop
+    );
+
+    return animation;
 }
 
 void destroyAnimation(td_animation animation) {

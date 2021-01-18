@@ -4,6 +4,7 @@
 #include "entity.h"
 #include "../../Physics/physics.h"
 #include "../../DataStructures/LinkedList/linkedList.h"
+#include "../../DataStructures/HashMap/hashMap.h"
 #include "../../IO/logger.h"
 
 struct td_entity {
@@ -12,6 +13,8 @@ struct td_entity {
     td_physicsObject physicsObject;
     td_linkedList collisionHulls;
     td_tuple posDelta; // TODO: Find a better way of tracking this
+    td_animation animation;
+    td_hashMap animations;
 };
 
 td_entity createEntity(char *ID, td_renderable renderable) {
@@ -21,6 +24,8 @@ td_entity createEntity(char *ID, td_renderable renderable) {
     entity -> physicsObject = createPhysicsObject();
     entity -> collisionHulls = createLinkedList();
     entity -> posDelta = (td_tuple) { 0.0, 0.0 };
+    entity -> animation = NULL;
+    entity -> animations = createHashMap(10);
     return entity;
 }
 
@@ -32,12 +37,24 @@ void moveCollider(void *entryData, void *callbackData, char *key) {
     setBoxColliderPosition(collider, position);
 }
 
+void playAnimation(td_entity entity, char *animationName) {
+    setAnimationPlaying(entity -> animation, false);
+    td_animation animation = (td_animation) getFromHashMap(entity -> animations, animationName);
+    setAnimationPlaying(animation, true);
+    entity -> animation = animation;
+    entity -> renderable = getRenderableFromAnimation(animation);
+}
+
+void addAnimation(td_entity entity, td_animation animation, char *name) {
+    insertIntoHashMap(entity -> animations, name, animation, NULL);
+}
+
 void setEntityPosition(td_entity entity, td_tuple position) {
     td_tuple currentPosition = getPhysicsObjectPosition(entity -> physicsObject);
     setPhysicsObjectPosition(entity -> physicsObject, position);
     setRenderablePosition(entity -> renderable, position);
     td_tuple delta = subtractTuple(position, currentPosition);
-    entity -> posDelta;
+    entity -> posDelta = delta;
     listForEach(entity -> collisionHulls, moveCollider, &delta);
 }
 
@@ -92,5 +109,6 @@ void destroyEntity(td_entity entity) {
     destroyRenderable(entity -> renderable);
     destroyPhysicsObject(entity -> physicsObject);
     destroyLinkedList(entity -> collisionHulls);
+    destroyHashMap(entity -> animations);
     free(entity);
 }
