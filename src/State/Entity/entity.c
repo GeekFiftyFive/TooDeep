@@ -63,7 +63,6 @@ void setEntityPosition(td_entity entity, td_tuple position) {
     setPhysicsObjectPosition(entity -> physicsObject, position);
     setRenderablePosition(entity -> renderable, position);
     td_tuple delta = subtractTuple(position, currentPosition);
-    entity -> posDelta = delta;
     listForEach(entity -> collisionHulls, moveCollider, &delta);
 }
 
