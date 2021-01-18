@@ -134,7 +134,13 @@ td_game loadGameFromDirectory(char *path, td_renderer renderer) {
     game -> state = luaL_newstate();
     luaL_openlibs(game -> state);
 
-    registerCFunctions(game -> state, game -> currentScene);
+    registerCFunctions(
+        game -> state,
+        game -> currentScene,
+        game -> loader,
+        game -> renderer,
+        game -> animations
+    );
 
     free(scenePath);
     free(entityPath);

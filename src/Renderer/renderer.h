@@ -18,6 +18,8 @@ SDL_Texture *surfaceToTexture(td_renderer, SDL_Surface *);
 
 void appendToRenderQueue(td_renderer, td_renderable);
 
+void clearRenderQueue(td_renderer);
+
 td_renderable createRenderableFromTexture(td_renderer, SDL_Texture *);
 
 td_renderable createRenderableFromSurface(td_renderer, SDL_Surface *);
@@ -27,6 +29,8 @@ void setCurrentCamera(td_renderer, td_camera);
 void setRenderableTextureRegion(td_renderable, SDL_Rect);
 
 void setRenderableSize(td_renderable, td_tuple);
+
+td_tuple getRenderablePosition(td_renderable);
 
 void setRenderablePosition(td_renderable, td_tuple);
 

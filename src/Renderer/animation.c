@@ -97,7 +97,7 @@ static void addFrameCallback(td_json json, void *callbackData) {
     dataCast -> index++;
 }
 
-td_animation createAnimationFromJson(td_json json, td_game game) {
+td_animation createAnimationFromJson(td_json json, td_resourceLoader loader, td_renderer renderer) {
     char *source = getJSONString(json, "source", NULL);
     int width = getJSONInt(json, "tile_dimensions.w", NULL);
     int height = getJSONInt(json, "tile_dimensions.h", NULL);
@@ -110,12 +110,12 @@ td_animation createAnimationFromJson(td_json json, td_game game) {
     char *fullAssetName = malloc(strlen(source) + strlen(ASSET_DIR) + 1);
     sprintf(fullAssetName, "%s%s", ASSET_DIR, source);
     // Load asset using asset name and create renderable
-    SDL_Surface *surface =  loadSurfaceResource(getResourceLoader(game), fullAssetName);
-    SDL_Texture *texture = surfaceToTexture(getRenderer(game), surface);
+    SDL_Surface *surface =  loadSurfaceResource(loader, fullAssetName);
+    SDL_Texture *texture = surfaceToTexture(renderer, surface);
     struct addFrameCallbackData callbackData = { 0, frames };
     jsonArrayForEach(json, "frames", addFrameCallback, &callbackData);
     td_animation animation = createAnimation(
-        getRenderer(game),
+        renderer,
         (SDL_Rect) { 0, 0, width, height },
         (td_tuple) { worldWidth, worldHeight },
         texture,

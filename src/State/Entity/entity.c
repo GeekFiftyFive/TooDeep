@@ -37,12 +37,21 @@ void moveCollider(void *entryData, void *callbackData, char *key) {
     setBoxColliderPosition(collider, position);
 }
 
-void playAnimation(td_entity entity, char *animationName) {
+void playAnimation(td_entity entity, td_animation animation) {
     setAnimationPlaying(entity -> animation, false);
-    td_animation animation = (td_animation) getFromHashMap(entity -> animations, animationName);
     setAnimationPlaying(animation, true);
     entity -> animation = animation;
+    td_tuple renderablePosition = getRenderablePosition(entity -> renderable);
     entity -> renderable = getRenderableFromAnimation(animation);
+    setRenderablePosition(entity -> renderable, renderablePosition);
+}
+
+td_animation getAnimationFromEntity(td_entity entity, const char *name) {
+    return getFromHashMap(entity -> animations, (char *) name);
+}
+
+void setAnimation(td_entity entity, td_animation animation) {
+    entity -> animation = animation;
 }
 
 void addAnimation(td_entity entity, td_animation animation, char *name) {

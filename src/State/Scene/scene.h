@@ -28,6 +28,8 @@ td_camera getCameraByID(td_scene, char *);
 
 td_linkedList getEntities(td_scene);
 
+void addAnimationToScene(td_scene, td_animation, char *);
+
 void destroyScene(td_scene);
 
 #endif

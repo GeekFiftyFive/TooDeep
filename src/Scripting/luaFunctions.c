@@ -154,7 +154,35 @@ int luaGetCamera(lua_State *state) {
     return 1;
 }
 
-void registerCFunctions(lua_State *state, td_scene scene) {
+int luaPlayAnimation(lua_State *state) {
+    td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(4));
+    td_resourceLoader loader = (td_resourceLoader) lua_topointer(state, lua_upvalueindex(3));
+    td_renderer renderer = (td_renderer) lua_topointer(state, lua_upvalueindex(2));
+    td_hashMap animations = (td_hashMap) lua_topointer(state, lua_upvalueindex(1));
+
+    td_entity entity = (td_entity) lua_topointer(state, 1);
+    const char *animationName = luaL_checkstring(state, 2);
+
+    td_animation animation = getAnimationFromEntity(entity, animationName);
+
+    if(!animation) {
+        td_json json = (td_json) getFromHashMap(animations, (char *) animationName);
+        animation = createAnimationFromJson(json, loader, renderer);
+        addAnimation(entity, animation, (char *) animationName);
+        addAnimationToScene(scene, animation, animationName);
+    }
+
+    playAnimation(entity, animation);
+    return 1;
+}
+
+void registerCFunctions(
+    lua_State *state,
+    td_scene scene,
+    td_resourceLoader loader,
+    td_renderer renderer,
+    td_hashMap animations
+) {
     lua_pushlightuserdata(state, scene);
     lua_pushcclosure(state, luaGetEntity, 1);
     lua_setglobal(state, "getEntity");
@@ -162,6 +190,13 @@ void registerCFunctions(lua_State *state, td_scene scene) {
     lua_pushlightuserdata(state, scene);
     lua_pushcclosure(state, luaGetCamera, 1);
     lua_setglobal(state, "getCamera");
+
+    lua_pushlightuserdata(state, animations);
+    lua_pushlightuserdata(state, renderer);
+    lua_pushlightuserdata(state, loader);
+    lua_pushlightuserdata(state, scene);
+    lua_pushcclosure(state, luaPlayAnimation, 4);
+    lua_setglobal(state, "playAnimation");
 
     lua_pushcfunction(state, luaGetCameraPosition);
     lua_setglobal(state, "getCameraPosition");

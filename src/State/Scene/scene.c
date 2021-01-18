@@ -202,31 +202,6 @@ void addCollisionHullCallback(td_json json, void *data) {
     append(callbackData -> mutableColliders, collider, name);
 }
 
-static td_renderable createRenderableForEntity(td_json json, struct callbackData *data) {
-    // Get asset name
-    char *assetName = getJSONString(json, "start_look.asset", NULL);
-
-    if(!assetName) {
-        // Get animation name
-        char *animationName = getJSONString(json, "start_look.animation", NULL);
-        td_json animationJSON = getAnimation(data -> game, animationName);
-        char *name = getJSONString(animationJSON, "name", NULL);
-
-        td_animation animation = createAnimationFromJson(animationJSON, data -> game);
-
-        appendWithFree(data -> animations, animation, name, destroyAnimation);
-        return getRenderableFromAnimation(animation);
-    } else {
-        char *fullAssetName = malloc(strlen(assetName) + strlen(ASSET_DIR) + 1);
-        sprintf(fullAssetName, "%s%s", ASSET_DIR, assetName);
-
-        // Load asset using asset name and create renderable
-        SDL_Surface *startLook =  loadSurfaceResource(getResourceLoader(data -> game), fullAssetName);
-        free(fullAssetName);
-        return createRenderableFromSurface(getRenderer(data -> game), startLook);
-    }
-}
-
 // TODO: JSON error handling, refactor
 void entityCallback(td_json json, void *data) {
     struct callbackData *dataCast = (struct callbackData*) data;
@@ -235,7 +210,35 @@ void entityCallback(td_json json, void *data) {
     char *entityType = getJSONString(json, "entity_type", NULL);
     td_json entityJSON = getEntity(dataCast -> game, entityType);
 
-    td_renderable renderable = createRenderableForEntity(entityJSON, dataCast);
+    td_renderable renderable;
+    td_animation animation = NULL;
+
+    char *animationName = NULL;
+    char *assetName = getJSONString(json, "start_look.asset", NULL);
+
+    if(!assetName) {
+        // Get animation name
+        animationName = getJSONString(entityJSON, "start_look.animation", NULL);
+        td_json animationJSON = getAnimation(dataCast -> game, animationName);
+        char *name = getJSONString(animationJSON, "name", NULL);
+
+        animation = createAnimationFromJson(
+            animationJSON,
+            getResourceLoader(dataCast -> game),
+            getRenderer(dataCast -> game)
+        );
+
+        appendWithFree(dataCast -> animations, animation, name, destroyAnimation);
+        renderable = getRenderableFromAnimation(animation);
+    } else {
+        char *fullAssetName = malloc(strlen(assetName) + strlen(ASSET_DIR) + 1);
+        sprintf(fullAssetName, "%s%s", ASSET_DIR, assetName);
+
+        // Load asset using asset name and create renderable
+        SDL_Surface *startLook =  loadSurfaceResource(getResourceLoader(dataCast -> game), fullAssetName);
+        free(fullAssetName);
+        renderable = createRenderableFromSurface(getRenderer(dataCast -> game), startLook);
+    }
 
     // Get world position of entity
     float x = (float) getJSONDouble(json, "start_pos.x", NULL);
@@ -252,6 +255,10 @@ void entityCallback(td_json json, void *data) {
 
     // Create entity
     td_entity entity = createEntity(entityID, renderable);
+    if(animation) {
+        addAnimation(entity, animation, animationName);
+        setAnimation(entity, animation);
+    }
     setEntityPosition(entity, pos);
     enableEntityGravity(entity, gravityEnabled);
     char *layerName = getJSONString(json, "render_info.layer", NULL); 
@@ -541,6 +548,10 @@ td_camera getCameraByID(td_scene scene, char *ID) {
 
 td_linkedList getEntities(td_scene scene) {
     return scene -> entities;
+}
+
+void addAnimationToScene(td_scene scene, td_animation animation, char *name) {
+    appendWithFree(scene -> animations, animation, name, destroyAnimation);
 }
 
 void destroyScene(td_scene scene) {

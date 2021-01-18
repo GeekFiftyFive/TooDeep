@@ -2,7 +2,7 @@
     "name": "rocket",
     "start_look": {
         "type": "texture",
-        "animation": "rocket_flight"
+        "animation": "rocket_idle"
     },
     "behavior": {
         "on_update": {

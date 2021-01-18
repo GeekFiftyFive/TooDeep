@@ -109,6 +109,12 @@ void appendToRenderQueue(td_renderer renderer, td_renderable renderable) {
     char *key = stringifyInt(queueLength + 1);
 
     append(renderer -> renderQueue, renderable, key);
+    free(key);
+}
+
+void clearRenderQueue(td_renderer renderer) {
+    destroyLinkedList(renderer -> renderQueue);
+    renderer -> renderQueue = createLinkedList();
 }
 
 td_renderable createRenderableFromTexture(td_renderer renderer, SDL_Texture *texture) {
@@ -150,6 +156,10 @@ void setRenderableTextureRegion(td_renderable renderable, SDL_Rect region) {
 
 void setRenderableSize(td_renderable renderable, td_tuple size) {
     renderable -> size = size;
+}
+
+td_tuple getRenderablePosition(td_renderable renderable) {
+    return renderable -> pos;
 }
 
 void setRenderablePosition(td_renderable renderable, td_tuple pos) {

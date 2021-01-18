@@ -9,7 +9,11 @@ typedef struct td_entity *td_entity;
 
 td_entity createEntity(char *, td_renderable);
 
-void playAnimation(td_entity, char *);
+void playAnimation(td_entity, td_animation);
+
+td_animation getAnimationFromEntity(td_entity, const char *);
+
+void setAnimation(td_entity, td_animation);
 
 void addAnimation(td_entity, td_animation, char *);
 

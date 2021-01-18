@@ -2,8 +2,9 @@
 #define ANIMATION
 
 #include "renderer.h"
-#include "../IO/gameLoader.h"
 #include "../JSON/jsonParser.h"
+#include "../IO/resourceLoader.h"
+#include "../Renderer/renderer.h"
 
 typedef struct td_animation *td_animation;
 
@@ -15,7 +16,7 @@ td_renderable getRenderableFromAnimation(td_animation);
 
 void iterateAnimation(td_animation);
 
-td_animation createAnimationFromJson(td_json, td_game);
+td_animation createAnimationFromJson(td_json, td_resourceLoader, td_renderer);
 
 void destroyAnimation(td_animation);
 
