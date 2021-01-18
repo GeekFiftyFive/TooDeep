@@ -1,0 +1,11 @@
+{
+    "name": "rocket_idle",
+    "source": "rocket_sprite_sheet.png",
+    "tile_dimensions": {
+        "w": 149,
+        "h": 255
+    },
+    "frames": [1],
+    "loop": true,
+    "frame_rate": 1
+}
