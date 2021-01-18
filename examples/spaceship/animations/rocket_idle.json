@@ -5,6 +5,10 @@
         "w": 149,
         "h": 255
     },
+    "world_dimensions": {
+        "w": 149,
+        "h": 255
+    },
     "frames": [1],
     "loop": true,
     "frame_rate": 1

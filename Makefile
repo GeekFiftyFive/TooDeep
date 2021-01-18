@@ -31,7 +31,7 @@ tooDeep: obj/main.o\
 		 obj/keyboardEvents.o\
 		 obj/physics.o\
 		 obj/boxCollision.o\
-		 obj/camera.o
+		 obj/camera.o\
 		 obj/animation.o
 			cc $(ARGS) -o tooDeep obj/main.o\
 				obj/renderer.o\

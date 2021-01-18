@@ -36,6 +36,8 @@ void setRenderSpace(td_renderable, td_renderSpace);
 
 void renderFrame(td_renderer);
 
+SDL_Rect getTextureRegion(SDL_Texture *, SDL_Rect, int);
+
 void destroyRenderer(td_renderer);
 
 void destroyRenderable(td_renderable);

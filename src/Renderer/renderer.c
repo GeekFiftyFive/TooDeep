@@ -210,6 +210,21 @@ void renderFrame(td_renderer renderer) {
     SDL_RenderClear(renderer -> renderer);
 }
 
+SDL_Rect getTextureRegion(SDL_Texture *texture, SDL_Rect dimensions, int index) {
+    int w, h;
+    SDL_QueryTexture(texture, NULL, NULL, &w, &h);
+    SDL_Rect region = dimensions;
+    if(index * dimensions.w > w) {
+        // Wrap
+        region.x = (index - 1) - (w / dimensions.w);
+        region.y = h * ((int) (index / (w / dimensions.w)));
+    } else {
+        region.x = (index - 1) * dimensions.w;
+        region.y = 0;    
+    }
+    return region;
+}
+
 /*
     Frees a td_renderer pointer
 */

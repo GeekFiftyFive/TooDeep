@@ -2,7 +2,7 @@
     "name": "rocket",
     "start_look": {
         "type": "texture",
-        "asset": "rocket.png"
+        "animation": "rocket_flight"
     },
     "behavior": {
         "on_update": {
@@ -53,8 +53,8 @@
                 "name": "main",
                 "x": 0.0,
                 "y": 0.0,
-                "w": 136.0,
-                "h": 180.0
+                "w": 149.0,
+                "h": 255.0
             }
         ],
         "gravity_enabled": true

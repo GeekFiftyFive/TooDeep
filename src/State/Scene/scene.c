@@ -8,6 +8,7 @@
 #include "../../Events/keyboardEvents.h"
 #include "../../DataStructures/Box/box.h"
 #include "../../Physics/boxCollision.h"
+#include "../../Renderer/animation.h"
 
 // TODO: This need A LOT of cleaning up!
 
@@ -20,6 +21,7 @@ struct td_scene {
     td_linkedList mutableColliders;
     td_linkedList immutableColliders;
     td_linkedList cameras;
+    td_linkedList animations;
 };
 
 struct callbackData {
@@ -31,6 +33,7 @@ struct callbackData {
     char *entityID;
     td_linkedList mutableColliders;
     td_linkedList immutableColliders;
+    td_linkedList animations;
 };
 
 struct tilesetCallbackData {
@@ -54,6 +57,11 @@ struct addCollisionHullCallbackData {
 struct addCameraCallbackData {
     td_linkedList cameras;
     td_renderer renderer;
+};
+
+struct addFrameCallbackData {
+    int index;
+    int *frames;
 };
 
 void layerCallback(td_json json, void *data) {
@@ -199,6 +207,67 @@ void addCollisionHullCallback(td_json json, void *data) {
     append(callbackData -> mutableColliders, collider, name);
 }
 
+static void addFrameCallback(td_json json, void *callbackData) {
+    struct addFrameCallbackData *dataCast = (struct addFrameCallbackData*) callbackData;
+    int index = dataCast -> index;
+    int frameNumber = getJSONInt(json, NULL, NULL);
+    dataCast -> frames[index] = frameNumber;
+    dataCast -> index++;
+}
+
+static td_renderable createRenderableForEntity(td_json json, struct callbackData *data) {
+    // Get asset name
+    char *assetName = getJSONString(json, "start_look.asset", NULL);
+
+    if(!assetName) {
+        // Get animation name
+        char *animationName = getJSONString(json, "start_look.animation", NULL);
+        td_json animationJSON = getAnimation(data -> game, animationName);
+
+        char *source = getJSONString(animationJSON, "source", NULL);
+        int width = getJSONInt(animationJSON, "tile_dimensions.w", NULL);
+        int height = getJSONInt(animationJSON, "tile_dimensions.h", NULL);
+        float worldWidth = getJSONDouble(animationJSON, "world_dimensions.w", NULL);
+        float worldHeight = getJSONDouble(animationJSON, "world_dimensions.h", NULL);
+        int frameCount = getJSONArrayLength(animationJSON, "frames");
+        int *frames = malloc(sizeof(int) * frameCount);
+        bool loop = getJSONBool(animationJSON, "loop", NULL);
+        int frameRate = getJSONInt(animationJSON, "frame_rate", NULL);
+        char *name = getJSONString(animationJSON, "name", NULL);
+
+        char *fullAssetName = malloc(strlen(source) + strlen(ASSET_DIR) + 1);
+        sprintf(fullAssetName, "%s%s", ASSET_DIR, source);
+
+        // Load asset using asset name and create renderable
+        SDL_Surface *surface =  loadSurfaceResource(getResourceLoader(data -> game), fullAssetName);
+        SDL_Texture *texture = surfaceToTexture(getRenderer(data -> game), surface);
+
+        struct addFrameCallbackData callbackData = { 0, frames };
+        jsonArrayForEach(animationJSON, "frames", addFrameCallback, &callbackData);
+        td_animation animation = createAnimation(
+            getRenderer(data -> game),
+            (SDL_Rect) { 0, 0, width, height },
+            (td_tuple) { worldWidth, worldHeight },
+            texture,
+            frames,
+            frameCount,
+            frameRate,
+            loop
+        );
+
+        appendWithFree(data -> animations, animation, name, destroyAnimation);
+        return getRenderableFromAnimation(animation);
+    } else {
+        char *fullAssetName = malloc(strlen(assetName) + strlen(ASSET_DIR) + 1);
+        sprintf(fullAssetName, "%s%s", ASSET_DIR, assetName);
+
+        // Load asset using asset name and create renderable
+        SDL_Surface *startLook =  loadSurfaceResource(getResourceLoader(data -> game), fullAssetName);
+        free(fullAssetName);
+        return createRenderableFromSurface(getRenderer(data -> game), startLook);
+    }
+}
+
 // TODO: JSON error handling, refactor
 void entityCallback(td_json json, void *data) {
     struct callbackData *dataCast = (struct callbackData*) data;
@@ -207,15 +276,7 @@ void entityCallback(td_json json, void *data) {
     char *entityType = getJSONString(json, "entity_type", NULL);
     td_json entityJSON = getEntity(dataCast -> game, entityType);
 
-    // Get asset name
-    char *assetName = getJSONString(entityJSON, "start_look.asset", NULL);
-    char *fullAssetName = malloc(strlen(assetName) + strlen(ASSET_DIR) + 1);
-    sprintf(fullAssetName, "%s%s", ASSET_DIR, assetName);
-
-    // Load asset using asset name and create renderable
-    SDL_Surface *startLook =  loadSurfaceResource(getResourceLoader(dataCast -> game), fullAssetName);
-    free(fullAssetName);
-    td_renderable renderable = createRenderableFromSurface(getRenderer(dataCast -> game), startLook);
+    td_renderable renderable = createRenderableForEntity(entityJSON, dataCast);
 
     // Get world position of entity
     float x = (float) getJSONDouble(json, "start_pos.x", NULL);
@@ -246,21 +307,6 @@ void entityCallback(td_json json, void *data) {
     // Add entitiy to corresponding layer
     td_linkedList layer = dataCast -> layers[*layerIndex];
     append(layer, entity, getEntityID(entity));
-}
-
-static SDL_Rect getTextureRegion(SDL_Texture *texture, SDL_Rect dimensions, int index) {
-    int w, h;
-    SDL_QueryTexture(texture, NULL, NULL, &w, &h);
-    SDL_Rect region = dimensions;
-    if(index * dimensions.w > w) {
-        // Wrap
-        region.x = (index - 1) - (w / dimensions.w);
-        region.y = h * ((int) (index / (w / dimensions.w)));
-    } else {
-        region.x = (index - 1) * dimensions.w;
-        region.y = 0;    
-    }
-    return region;
 }
 
 void tileIndexCallback(td_json json, void *data) {
@@ -400,6 +446,7 @@ td_scene buildScene(td_game game, char *sceneName) {
     td_linkedList immutableColliders = createLinkedList();
     td_linkedList mutableColliders = createLinkedList();
     td_linkedList cameras = createLinkedList();
+    td_linkedList animations = createLinkedList();
 
     struct callbackData layerData = {
         0,
@@ -409,7 +456,8 @@ td_scene buildScene(td_game game, char *sceneName) {
         behaviors,
         NULL,
         mutableColliders,
-        immutableColliders
+        immutableColliders,
+        animations
     };
 
     struct addCameraCallbackData cameraCallbackData = { cameras, getRenderer(game) };
@@ -434,6 +482,7 @@ td_scene buildScene(td_game game, char *sceneName) {
     scene -> immutableColliders = immutableColliders;
     scene -> mutableColliders = mutableColliders;
     scene -> cameras = cameras;
+    scene -> animations = animations;
 
     destroyHashMap(layerIndexes);
 
@@ -465,6 +514,15 @@ void immutableColliderCallback(void *entryData, void *callbackData, char *key) {
 void mutableColliderCallback(void *entryData, void *callbackData, char *key) {
     td_linkedList immutableColiders = (td_linkedList) callbackData;
     listForEach(immutableColiders, immutableColliderCallback, entryData);
+}
+
+void iterateAnimationsCallback(void *entryData, void *callbackData, char *key) {
+    td_animation animation = (td_animation) entryData;
+    iterateAnimation(animation);
+}
+
+void iterateAnimations(td_scene scene) {
+    listForEach(scene -> animations, iterateAnimationsCallback, NULL);
 }
 
 void resolveCollisions(td_scene scene) {
@@ -531,6 +589,7 @@ void destroyScene(td_scene scene) {
     destroyLinkedList(scene -> mutableColliders);
     destroyLinkedList(scene -> immutableColliders);
     destroyLinkedList(scene -> cameras);
+    destroyLinkedList(scene -> animations);
     destroyHashMap(scene -> behaviors);
     free(scene);
 }

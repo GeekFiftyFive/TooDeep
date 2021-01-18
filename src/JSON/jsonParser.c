@@ -50,6 +50,10 @@ int getJSONInt(td_json json, char *field, td_jsonError *error) {
     if(error) *(error) = JSON_NO_ERROR;
     td_json obj = getJSONObject(json, field, error);
 
+    if(!obj) {
+        return 0;
+    }
+
     if(!cJSON_IsNumber(obj)) {
         logWarn("field at %s is not a number!\n", field);
         if(error) *(error) = JSON_ERROR;
@@ -62,6 +66,10 @@ int getJSONInt(td_json json, char *field, td_jsonError *error) {
 bool getJSONBool(td_json json, char *field, td_jsonError *error) {
     if(error) *(error) = JSON_NO_ERROR;
     td_json obj = getJSONObject(json, field, error);
+
+    if(!obj) {
+        return false;
+    }
 
     if(!cJSON_IsBool(obj)) {
         logWarn("field at %s is not a boolean!\n", field);
@@ -76,6 +84,10 @@ double getJSONDouble(td_json json, char *field, td_jsonError *error) {
     if(error) *(error) = JSON_NO_ERROR;
     td_json obj = getJSONObject(json, field, error);
 
+    if(!obj) {
+        return 0;
+    }
+
     if(!cJSON_IsNumber(obj)) {
         logWarn("field at %s is not a number!\n", field);
         if(error) *(error) = JSON_ERROR;
@@ -89,6 +101,10 @@ char *getJSONString(td_json json, char *field, td_jsonError *error) {
     if(error) *(error) = JSON_NO_ERROR;
 
     td_json obj = field ? getJSONObject(json, field, error) : json;
+
+    if(!obj) {
+        return NULL;
+    }
 
     if(!cJSON_IsString(obj)) {
         logWarn("field at %s is not a string!\n", field);

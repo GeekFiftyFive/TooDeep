@@ -16,6 +16,7 @@
 #define SCENES_PATH "scenes"
 #define ENTITIES_PATH "entities"
 #define TILESETS_PATH "tilesets"
+#define ANIMATIONS_PATH "animations"
 
 struct td_game {
     td_resourceLoader loader;
@@ -24,6 +25,7 @@ struct td_game {
     td_scene currentScene;
     td_hashMap entities;
     td_hashMap tilesets;
+    td_hashMap animations;
     td_json manifest;
     int entityCount;
     lua_State *state;
@@ -101,6 +103,7 @@ td_game loadGameFromDirectory(char *path, td_renderer renderer) {
     game -> scenes = createHashMap(10);
     game -> entities = createHashMap(10);
     game -> tilesets = createHashMap(10);
+    game -> animations = createHashMap(10);
     game -> keymap = loadKeymap(game -> loader);
 
     char *scenePath = concatPath(path, SCENES_PATH);
@@ -114,6 +117,10 @@ td_game loadGameFromDirectory(char *path, td_renderer renderer) {
     char *tilesetPath = concatPath(path, TILESETS_PATH);
     mapData.map = game -> tilesets;
     iterateOverDir(tilesetPath, true, addJsonToHashmapCallback, &mapData);
+
+    char *animationPath = concatPath(path, ANIMATIONS_PATH);
+    mapData.map = game -> animations;
+    iterateOverDir(animationPath, true, addJsonToHashmapCallback, &mapData);
 
     td_jsonError err;
     char *startSceneName = getJSONString(game -> manifest, "start_scene", &err);
@@ -149,6 +156,7 @@ void executeTick(td_game game, int delta) {
     physicsUpdate(game -> currentScene, delta);
     resolveCollisions(game -> currentScene);
     executeUpdateBehaviors(game -> state, game -> currentScene);
+    iterateAnimations(game -> currentScene);
 }
 
 void executeEvent(td_game game, SDL_Event e) {
@@ -175,6 +183,10 @@ td_json getTileset(td_game game, char *tilesetName) {
     return (td_json) getFromHashMap(game -> tilesets, tilesetName);
 }
 
+td_json getAnimation(td_game game, char *animationName) {
+    return (td_json) getFromHashMap(game -> animations, animationName);
+}
+
 td_resourceLoader getResourceLoader(td_game game) {
     return game -> loader;
 }
@@ -195,6 +207,7 @@ void destroyGame(td_game game) {
     destroyHashMap(game -> entities);
     destroyHashMap(game -> keymap);
     destroyHashMap(game -> tilesets);
+    destroyHashMap(game -> animations);
     destroyScene(game -> currentScene);
     lua_close(game -> state);
     freeJson(game -> manifest);
