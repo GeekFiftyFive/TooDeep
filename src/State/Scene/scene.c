@@ -157,11 +157,7 @@ void handleCollision(td_collision collision, void *data) {
 
     if(bottomRight.y >= collidingHull.y || topLeft.y <= collidingHull.y - collidingHull.h) {
         // Collided in the y axis
-        if(bottomRight.y >= collidingHull.y) {
-            delta.y = -collision.intrusion.y;
-        } else {
-            delta.y = -collision.intrusion.y;
-        }
+        delta.y = -collision.intrusion.y;
         newVelocity.y = 0.0;
     } else {
         // Collided in the x axis
