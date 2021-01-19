@@ -16,21 +16,32 @@
             "script": "move.lua",
             "variables": {
                 "x": -0.5,
-                "y": 0.0
+                "y": 0.0,
+                "direction": "left"
             }
         },
         "move_right": {
             "script": "move.lua",
             "variables": {
                 "x": 0.5,
-                "y": 0.0
+                "y": 0.0,
+                "direction": "right"
             }
         },
-        "stop_moving": {
+        "stop_moving_left": {
             "script": "move.lua",
             "variables": {
                 "x": 0.0,
-                "y": 0.0
+                "y": 0.0,
+                "direction": "left"
+            }
+        },
+        "stop_moving_right": {
+            "script": "move.lua",
+            "variables": {
+                "x": 0.0,
+                "y": 0.0,
+                "direction": "right"
             }
         },
         "thrust": {
