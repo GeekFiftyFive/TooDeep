@@ -6,7 +6,7 @@ then
     setEntityVelocity(entity, x, velocity["y"])
 end
 
-if(x > 0.0 or -1 * x > 0.0)
+if(math.abs(x) > 0.0)
 then
     setEntityVelocity(entity, x, velocity["y"])
 end
