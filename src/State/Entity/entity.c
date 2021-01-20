@@ -102,6 +102,10 @@ td_tuple getPositionDelta(td_entity entity) {
     return entity -> posDelta;
 }
 
+td_boxCollider getCollisionHull(td_entity entity, char *name) {
+    return getFromList(entity -> collisionHulls, name);
+}
+
 void entityPhysicsUpdate(void *data, void *callbackData, char *key) {
     td_entity entity = (td_entity) data;
     int delta = *((int*) callbackData);

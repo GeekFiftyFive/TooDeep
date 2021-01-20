@@ -66,6 +66,15 @@
                 "y": 0.0,
                 "w": 149.0,
                 "h": 255.0
+            },
+            {
+                "type": "box",
+                "name": "bottom",
+                "intangible": true,
+                "x": 0.0,
+                "y": -255.0,
+                "w": 149.0,
+                "h": 1.0
             }
         ],
         "gravity_enabled": true

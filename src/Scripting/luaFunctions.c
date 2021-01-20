@@ -176,6 +176,17 @@ int luaPlayAnimation(lua_State *state) {
     return 1;
 }
 
+int luaCheckCollision(lua_State *state) {
+    td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(1));
+    td_entity entity = (td_entity) lua_topointer(state, 1);
+    const char *colliderName = luaL_checkstring(state, 2);
+    td_boxCollider collider = getCollisionHull(entity, (char *) colliderName);
+    bool collided = checkWorldCollisions(collider, getWorldColliders(scene));
+
+    lua_pushboolean(state, collided);
+    return 1;
+}
+
 void registerCFunctions(
     lua_State *state,
     td_scene scene,
@@ -190,6 +201,10 @@ void registerCFunctions(
     lua_pushlightuserdata(state, scene);
     lua_pushcclosure(state, luaGetCamera, 1);
     lua_setglobal(state, "getCamera");
+
+    lua_pushlightuserdata(state, scene);
+    lua_pushcclosure(state, luaCheckCollision, 1);
+    lua_setglobal(state, "checkCollision");
 
     lua_pushlightuserdata(state, animations);
     lua_pushlightuserdata(state, renderer);

@@ -37,6 +37,8 @@ void addCollisionHull(td_entity, td_boxCollider, char *);
 
 td_tuple getPositionDelta(td_entity);
 
+td_boxCollider getCollisionHull(td_entity, char *);
+
 void entityPhysicsUpdate(void *, void *, char *);
 
 void destroyEntity(td_entity);

@@ -18,9 +18,13 @@ void executeUpdateBehaviors(lua_State *, td_scene);
 
 void iterateAnimations(td_scene);
 
+bool checkWorldCollisions(td_boxCollider, td_linkedList);
+
 void resolveCollisions(td_scene);
 
 void executeEventBehaviors(lua_State *, td_scene, td_hashMap, SDL_Event);
+
+td_linkedList getWorldColliders(td_scene);
 
 td_entity getEntityByID(td_scene, char *);
 

@@ -59,6 +59,11 @@ struct addCameraCallbackData {
     td_renderer renderer;
 };
 
+struct checkWorldCollisionsCallbackData {
+    td_boxCollider collider;
+    bool collided;
+};
+
 void layerCallback(td_json json, void *data) {
     struct callbackData *dataCast = (struct callbackData*) data;
     dataCast -> layers[dataCast -> index] = createLinkedList();
@@ -181,6 +186,7 @@ void addCollisionHullCallback(td_json json, void *data) {
     float y = (float) getJSONDouble(json, "y", NULL);
     float w = (float) getJSONDouble(json, "w", NULL);
     float h = (float) getJSONDouble(json, "h", NULL);
+    bool intangible = getJSONBool(json, "intangible", NULL);
     char *name = getJSONString(json, "name", NULL);
     td_box hull = {
         entityStartPosition.x + x,
@@ -189,8 +195,10 @@ void addCollisionHullCallback(td_json json, void *data) {
         h
     };
     td_boxCollider collider = createBoxCollider(hull);
-    registerBoxColliderCallback(collider, handleCollision);
-    registerBoxColliderCallbackData(collider, callbackData -> entity);
+    if(!intangible) {
+        registerBoxColliderCallback(collider, handleCollision);
+        registerBoxColliderCallbackData(collider, callbackData -> entity);
+    }
 
     char *nameCpy = malloc(strlen(name) + 1);
     strcpy(nameCpy, name);
@@ -469,14 +477,22 @@ void executeUpdateBehaviors(lua_State *state, td_scene scene) {
 }
 
 void immutableColliderCallback(void *entryData, void *callbackData, char *key) {
-    td_boxCollider mutableCollider = (td_boxCollider) callbackData;
+    td_boxCollider mutableCollider = ((struct checkWorldCollisionsCallbackData*) callbackData) -> collider;
     td_boxCollider immutableCollider = (td_boxCollider) entryData;
-    checkCollision(mutableCollider, immutableCollider);
+    bool collided = checkCollision(mutableCollider, immutableCollider);
+    if(collided) {
+        ((struct checkWorldCollisionsCallbackData*) callbackData) -> collided = true;
+    }
+}
+
+bool checkWorldCollisions(td_boxCollider collider, td_linkedList colliders) {
+    struct checkWorldCollisionsCallbackData callbackData = { collider, false };
+    listForEach(colliders, immutableColliderCallback, &callbackData);
+    return callbackData.collided;
 }
 
 void mutableColliderCallback(void *entryData, void *callbackData, char *key) {
-    td_linkedList immutableColiders = (td_linkedList) callbackData;
-    listForEach(immutableColiders, immutableColliderCallback, entryData);
+    checkWorldCollisions((td_boxCollider) entryData, (td_linkedList) callbackData);
 }
 
 void iterateAnimationsCallback(void *entryData, void *callbackData, char *key) {
@@ -533,6 +549,10 @@ void executeEventBehaviors(lua_State *state, td_scene scene, td_hashMap keymap, 
         default:
             break;
     }
+}
+
+td_linkedList getWorldColliders(td_scene scene) {
+    return scene -> immutableColliders;
 }
 
 td_entity getEntityByID(td_scene scene, char *ID) {
