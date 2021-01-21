@@ -26,6 +26,8 @@ td_renderable createRenderableFromSurface(td_renderer, SDL_Surface *);
 
 void setCurrentCamera(td_renderer, td_camera);
 
+void setRenderableFlip(td_renderable, SDL_RendererFlip);
+
 void setRenderableTextureRegion(td_renderable, SDL_Rect);
 
 void setRenderableSize(td_renderable, td_tuple);

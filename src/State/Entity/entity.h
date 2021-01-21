@@ -5,6 +5,8 @@
 #include "../../Physics/boxCollision.h"
 #include "../../Renderer/animation.h"
 
+typedef enum {TD_NO_FLIP, TD_HORIZONTAL_FLIP, TD_VERTICAL_FLIP} td_entityFlip;
+
 typedef struct td_entity *td_entity;
 
 td_entity createEntity(char *, td_renderable);
@@ -18,6 +20,8 @@ void setAnimation(td_entity, td_animation);
 void addAnimation(td_entity, td_animation, char *);
 
 void setEntityPosition(td_entity, td_tuple);
+
+void setEntityFlip(td_entity, td_entityFlip);
 
 void setEntityVelocity(td_entity, td_tuple);
 

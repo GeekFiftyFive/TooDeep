@@ -15,6 +15,7 @@ struct td_entity {
     td_tuple posDelta; // TODO: Find a better way of tracking this
     td_animation animation;
     td_hashMap animations;
+    td_entityFlip flip;
 };
 
 td_entity createEntity(char *ID, td_renderable renderable) {
@@ -26,6 +27,7 @@ td_entity createEntity(char *ID, td_renderable renderable) {
     entity -> posDelta = (td_tuple) { 0.0, 0.0 };
     entity -> animation = NULL;
     entity -> animations = createHashMap(10);
+    entity -> flip = TD_NO_FLIP;
     return entity;
 }
 
@@ -68,6 +70,22 @@ void setEntityPosition(td_entity entity, td_tuple position) {
 
 td_tuple getEntityPosition(td_entity entity) {
     return getPhysicsObjectPosition(entity -> physicsObject);
+}
+
+static SDL_RendererFlip flipConversion(td_entityFlip flip) {
+    switch(flip) {
+        case TD_NO_FLIP:
+            return SDL_FLIP_NONE;
+        case TD_HORIZONTAL_FLIP:
+            return SDL_FLIP_HORIZONTAL;
+        case TD_VERTICAL_FLIP:
+            return SDL_FLIP_VERTICAL;
+    }
+}
+
+void setEntityFlip(td_entity entity, td_entityFlip flip) {
+    entity -> flip = flip;
+    setRenderableFlip(entity -> renderable, flipConversion(flip));
 }
 
 void setEntityVelocity(td_entity entity, td_tuple position) {

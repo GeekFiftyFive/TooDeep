@@ -23,6 +23,7 @@ struct td_renderable {
     td_tuple size;
     td_renderSpace space;
     SDL_Rect *textureRegion;
+    SDL_RendererFlip flip;
 };
 
 /*
@@ -132,6 +133,7 @@ td_renderable createRenderableFromTexture(td_renderer renderer, SDL_Texture *tex
     renderable -> size.y = (float) h;
     renderable -> space  = WORLD_SPACE;
     renderable -> textureRegion = NULL;
+    renderable -> flip = SDL_FLIP_NONE;
 
     return renderable;
 }
@@ -144,6 +146,10 @@ td_renderable createRenderableFromSurface(td_renderer renderer, SDL_Surface *sur
 
 void setCurrentCamera(td_renderer renderer, td_camera camera) {
     renderer -> camera = camera;
+}
+
+void setRenderableFlip(td_renderable renderable, SDL_RendererFlip flip) {
+    renderable -> flip = flip;
 }
 
 void setRenderableTextureRegion(td_renderable renderable, SDL_Rect region) {
@@ -204,10 +210,10 @@ void drawRenderable(void *renderableData, void *rendererData, char *key) {
         renderer -> renderer,
         renderable -> texture,
         renderable -> textureRegion,
-        &drawArea, 
+        &drawArea,
         0,
         NULL,
-        SDL_FLIP_NONE
+        renderable -> flip
     );
 }
 

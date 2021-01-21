@@ -164,7 +164,6 @@ void handleCollision(td_collision collision, void *data) {
         // Collided in the y axis
         delta.y = -collision.intrusion.y;
         newVelocity.y = 0.0;
-        // TODO: Give option to not reset y velocity on colision
     } else {
         // Collided in the x axis
         if(bottomRight.x <= collidingHull.x) {
@@ -172,9 +171,10 @@ void handleCollision(td_collision collision, void *data) {
         } else {
             delta.x = -collision.intrusion.x;
         }
-        // TODO: Give option to reset x velocity on colision
+        newVelocity.x = 0.0;
     }
 
+    printTuple(addTuple(position, delta));
     setEntityPosition(entity, addTuple(position, delta));
     setEntityVelocity(entity, newVelocity);
 }
