@@ -174,7 +174,6 @@ void handleCollision(td_collision collision, void *data) {
         newVelocity.x = 0.0;
     }
 
-    printTuple(addTuple(position, delta));
     setEntityPosition(entity, addTuple(position, delta));
     setEntityVelocity(entity, newVelocity);
 }
