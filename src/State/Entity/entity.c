@@ -15,6 +15,7 @@ struct td_entity {
     td_tuple posDelta; // TODO: Find a better way of tracking this
     td_animation animation;
     td_hashMap animations;
+    td_linkedList renderables;
     td_entityFlip flip;
 };
 
@@ -28,6 +29,7 @@ td_entity createEntity(char *ID, td_renderable renderable) {
     entity -> animation = NULL;
     entity -> animations = createHashMap(10);
     entity -> flip = TD_NO_FLIP;
+    entity -> renderables = createLinkedList();
     return entity;
 }
 
@@ -56,7 +58,23 @@ void setAnimation(td_entity entity, td_animation animation) {
     entity -> animation = animation;
 }
 
+static SDL_RendererFlip flipConversion(td_entityFlip flip) {
+    switch(flip) {
+        case TD_NO_FLIP:
+            return SDL_FLIP_NONE;
+        case TD_HORIZONTAL_FLIP:
+            return SDL_FLIP_HORIZONTAL;
+        case TD_VERTICAL_FLIP:
+            return SDL_FLIP_VERTICAL;
+    }
+
+    return SDL_FLIP_NONE;
+}
+
 void addAnimation(td_entity entity, td_animation animation, char *name) {
+    td_renderable renderable = getRenderableFromAnimation(animation); 
+    setRenderableFlip(renderable, flipConversion(entity -> flip));
+    append(entity -> renderables, renderable, name);
     insertIntoHashMap(entity -> animations, name, animation, NULL);
 }
 
@@ -72,20 +90,17 @@ td_tuple getEntityPosition(td_entity entity) {
     return getPhysicsObjectPosition(entity -> physicsObject);
 }
 
-static SDL_RendererFlip flipConversion(td_entityFlip flip) {
-    switch(flip) {
-        case TD_NO_FLIP:
-            return SDL_FLIP_NONE;
-        case TD_HORIZONTAL_FLIP:
-            return SDL_FLIP_HORIZONTAL;
-        case TD_VERTICAL_FLIP:
-            return SDL_FLIP_VERTICAL;
-    }
+void flipCallback(void *entryData, void *callbackData, char *key) {
+    SDL_RendererFlip flip = *((SDL_RendererFlip*) callbackData);
+    td_renderable renderable = (td_renderable) entryData;
+    setRenderableFlip(renderable, flip);
 }
 
 void setEntityFlip(td_entity entity, td_entityFlip flip) {
     entity -> flip = flip;
-    setRenderableFlip(entity -> renderable, flipConversion(flip));
+    SDL_RendererFlip sdlFlip = flipConversion(flip);
+    setRenderableFlip(entity -> renderable, sdlFlip);
+    listForEach(entity -> renderables, flipCallback, &sdlFlip);
 }
 
 void setEntityVelocity(td_entity entity, td_tuple position) {
@@ -139,6 +154,7 @@ void destroyEntity(td_entity entity) {
     destroyRenderable(entity -> renderable);
     destroyPhysicsObject(entity -> physicsObject);
     destroyLinkedList(entity -> collisionHulls);
+    destroyLinkedList(entity -> renderables);
     destroyHashMap(entity -> animations);
     free(entity);
 }

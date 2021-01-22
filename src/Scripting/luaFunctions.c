@@ -187,6 +187,14 @@ int luaCheckCollision(lua_State *state) {
     return 1;
 }
 
+int luaFlipEntityHorizontal(lua_State *state) {
+    td_entity entity = (td_entity) lua_topointer(state, 1);
+    bool flip = lua_toboolean(state, 2);
+    td_entityFlip flipEnum = flip ? TD_HORIZONTAL_FLIP : TD_NO_FLIP;
+    setEntityFlip(entity, flipEnum);
+    return 1;
+}
+
 void registerCFunctions(
     lua_State *state,
     td_scene scene,
@@ -233,4 +241,7 @@ void registerCFunctions(
 
     lua_pushcfunction(state, luaApplyForceToEntity);
     lua_setglobal(state, "applyForceToEntity");
+
+    lua_pushcfunction(state, luaFlipEntityHorizontal);
+    lua_setglobal(state, "flipEntityHorizontal");
 }
