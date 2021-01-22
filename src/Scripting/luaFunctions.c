@@ -8,8 +8,8 @@
 
 typedef struct td_script_variable {
     char *name;
-    td_script_val_type type;
-    td_script_val value;
+    td_scriptValType type;
+    td_scriptVal value;
 } *td_script_variable;
 
 struct td_script {
@@ -28,7 +28,7 @@ void destroyScript(td_script script) {
     destroyLinkedList(script -> variables);
 }
 
-void registerVariable(td_script script, char *name, td_script_val_type type, td_script_val value) {
+void registerVariable(td_script script, char *name, td_scriptValType type, td_scriptVal value) {
     td_script_variable variable = malloc(sizeof(struct td_script_variable));
     variable -> type = type;
     variable -> value  = value;

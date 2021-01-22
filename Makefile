@@ -32,7 +32,8 @@ tooDeep: obj/main.o\
 		 obj/physics.o\
 		 obj/boxCollision.o\
 		 obj/camera.o\
-		 obj/animation.o
+		 obj/animation.o\
+		 obj/entityState.o
 			cc $(ARGS) -o tooDeep obj/main.o\
 				obj/renderer.o\
 				obj/eventLoop.o\
@@ -60,6 +61,7 @@ tooDeep: obj/main.o\
 				obj/boxCollision.o\
 				obj/camera.o\
 				obj/animation.o\
+				obj/entityState.o\
 				$(LIBS)
 
 obj/main.o: src/main.c
@@ -112,6 +114,9 @@ obj/scene.o: src/State/Scene/scene.c src/State/Scene/scene.h
 
 obj/entity.o: src/State/Entity/entity.c src/State/Entity/entity.h
 			cc $(ARGS) -c src/State/Entity/entity.c -o obj/entity.o
+
+obj/entityState.o: src/State/EntityState/entityState.c src/State/EntityState/entityState.h
+			cc $(ARGS) -c src/State/EntityState/entityState.c -o obj/entityState.o
 
 obj/tuple.o: src/DataStructures/Tuple/tuple.c src/DataStructures/Tuple/tuple.h
 			cc $(ARGS) -c src/DataStructures/Tuple/tuple.c -o obj/tuple.o

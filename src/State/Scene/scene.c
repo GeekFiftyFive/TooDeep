@@ -85,8 +85,8 @@ void layerCallback(td_json json, void *data) {
 void registerVariableCallback(td_json json, void *data) {
     td_script script = (td_script) data;
     td_jsonType jsonType = getJSONType(json);
-    td_script_val_type variableType;
-    td_script_val val;
+    td_scriptValType variableType;
+    td_scriptVal val;
 
     switch(jsonType) {
         case JSON_NUMBER: {
@@ -134,7 +134,7 @@ void behaviourCallback(td_json json, void *data) {
     char *scriptContent = loadPlaintextResource(getResourceLoader(dataCast -> game), fullScriptName);
     td_script script = createScript(scriptContent);
     jsonObjectForEach(json, "variables", registerVariableCallback, script);
-    td_script_val entityIDVal;
+    td_scriptVal entityIDVal;
     entityIDVal.stringVal = dataCast -> entityID;
     registerVariable(script, "entityID", STRING, entityIDVal);
 
