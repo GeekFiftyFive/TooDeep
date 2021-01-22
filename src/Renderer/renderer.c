@@ -31,6 +31,10 @@ struct td_renderable {
     SDL must have bee initialised before this can be called.
 */
 td_renderer initRenderer(char *title, int width, int height) {
+    if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")){
+        logError( "Could not set texture scaling method SDL_Error: %s\n", SDL_GetError());
+    }
+
     int err = SDL_Init(SDL_INIT_VIDEO);
 
     if(err) {
