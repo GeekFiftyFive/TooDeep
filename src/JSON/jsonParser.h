@@ -21,6 +21,8 @@ double getJSONDouble(td_json, char *, td_jsonError *);
 
 char *getJSONString(td_json, char *, td_jsonError *);
 
+bool jsonFieldExists(td_json, char *);
+
 void jsonArrayForEach(td_json, char *, void (*callback)(td_json, void *), void *);
 
 void jsonObjectForEach(td_json, char *, void (*callback)(td_json, void *), void *);

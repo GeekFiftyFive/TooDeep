@@ -19,6 +19,8 @@ void setAnimation(td_entity, td_animation);
 
 void addAnimation(td_entity, td_animation, char *);
 
+void setEntityGravityAcceleration(td_entity, float);
+
 void setEntityPosition(td_entity, td_tuple);
 
 void setEntityFlip(td_entity, td_entityFlip);

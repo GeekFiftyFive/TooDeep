@@ -115,6 +115,12 @@ char *getJSONString(td_json json, char *field, td_jsonError *error) {
     return obj -> valuestring;
 }
 
+bool jsonFieldExists(td_json json, char *field) {
+    td_jsonError error = JSON_NO_ERROR;
+    getJSONObject(json, field, &error);
+    return (error != JSON_ERROR);
+}
+
 void jsonArrayForEach(td_json json, char *field, void (*callback)(td_json, void *), void *data) {
     td_json obj = getJSONObject(json, field, NULL);
 

@@ -260,6 +260,10 @@ void entityCallback(td_json json, void *data) {
     }
     setEntityPosition(entity, pos);
     enableEntityGravity(entity, gravityEnabled);
+    if(jsonFieldExists(entityJSON, "physics.gravity_acceleration")) {
+        float gravityAccleration = (float) getJSONDouble(entityJSON, "physics.gravity_acceleration", NULL);
+        setEntityGravityAcceleration(entity, gravityAccleration);
+    }
     char *layerName = getJSONString(json, "render_info.layer", NULL); 
     int *layerIndex = getFromHashMap(dataCast -> layerIndexes, layerName);
 

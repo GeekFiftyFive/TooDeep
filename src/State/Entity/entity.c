@@ -78,6 +78,10 @@ void addAnimation(td_entity entity, td_animation animation, char *name) {
     insertIntoHashMap(entity -> animations, name, animation, NULL);
 }
 
+void setEntityGravityAcceleration(td_entity entity, float gravityAcceleration) {
+    setPhysicsObjectGravityAcceleration(entity -> physicsObject, gravityAcceleration);
+}
+
 void setEntityPosition(td_entity entity, td_tuple position) {
     td_tuple currentPosition = getPhysicsObjectPosition(entity -> physicsObject);
     setPhysicsObjectPosition(entity -> physicsObject, position);
