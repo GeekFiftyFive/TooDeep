@@ -166,12 +166,7 @@ void handleCollision(td_collision collision, void *data) {
         newVelocity.y = 0.0;
     } else {
         // Collided in the x axis
-        if(bottomRight.x <= collidingHull.x) {
-            delta.x = collision.intrusion.x;
-        } else {
-            delta.x = -collision.intrusion.x;
-        }
-        newVelocity.x = 0.0;
+        delta.x = -collision.intrusion.x;
     }
 
     setEntityPosition(entity, addTuple(position, delta));
