@@ -234,16 +234,10 @@ SDL_Rect getTextureRegion(SDL_Texture *texture, SDL_Rect dimensions, int index) 
     int w, h;
     SDL_QueryTexture(texture, NULL, NULL, &w, &h);
     SDL_Rect region = dimensions;
-    if(index * dimensions.w > w) {
-        int tilesPerRow = w / dimensions.w;
-        int row = ceil((float) index / tilesPerRow);
-        // Wrap
-        region.x = ((index - 1) % tilesPerRow) * dimensions.w;
-        region.y = dimensions.h * (row - 1);
-    } else {
-        region.x = (index - 1) * dimensions.w;
-        region.y = 0;    
-    }
+    int tilesPerRow = w / dimensions.w;
+    int row = ceil((float) index / tilesPerRow);
+    region.x = ((index - 1) % tilesPerRow) * dimensions.w;
+    region.y = dimensions.h * (row - 1);
     return region;
 }
 
