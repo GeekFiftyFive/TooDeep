@@ -525,6 +525,9 @@ void executeEventBehaviors(lua_State *state, td_scene scene, td_hashMap keymap, 
                 break;
             }
             td_linkedList keyBehaviors = (td_linkedList) getFromHashMap(scene -> behaviors, action);
+            if(!keyBehaviors) {
+                break;
+            }
             listForEach(keyBehaviors, executeBehaviorCallback, state);
             break;
         }
@@ -542,6 +545,9 @@ void executeEventBehaviors(lua_State *state, td_scene scene, td_hashMap keymap, 
                 break;
             }
             td_linkedList keyBehaviors = (td_linkedList) getFromHashMap(scene -> behaviors, action);
+            if(!keyBehaviors) {
+                break;
+            }
             listForEach(keyBehaviors, executeBehaviorCallback, state);
             break;
         }

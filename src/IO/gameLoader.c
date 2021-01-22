@@ -49,22 +49,28 @@ void addJsonToHashmapCallback(char *path, void *rawData) {
     else insertIntoHashMap(data -> map, nameCpy, parsed, freeJson);
 }
 
+static char *getAction(td_json json, char* actionName) {
+    char *action = getJSONString(json, actionName, NULL);
+
+    if(!action) {
+        return NULL;
+    }
+
+    char *actionCopy = malloc(strlen(action) + 1);
+    strcpy(actionCopy, action);
+    return actionCopy;
+}
+
 void keymapCallback(td_json json, void *data) {
     td_hashMap keymap = (td_hashMap) data;
     char *fieldName = getFieldName(json);
 
-    char *downAction = getJSONString(json, "down", NULL);
-    char *downActionCopy = malloc(strlen(downAction) + 1);
-
-    char *upAction = getJSONString(json, "up", NULL);
-    char *upActionCopy = malloc(strlen(upAction) + 1);
-
-    strcpy(downActionCopy, downAction);
-    strcpy(upActionCopy, upAction);
+    char *downAction = getAction(json, "down");
+    char *upAction = getAction(json, "up");
 
     td_keymap map = malloc(sizeof(struct td_keymap));
-    map -> up = upActionCopy;
-    map -> down = downActionCopy;
+    map -> up = upAction;
+    map -> down = downAction;
 
     insertIntoHashMap(keymap, fieldName, map, destroyKeymap);
 }
