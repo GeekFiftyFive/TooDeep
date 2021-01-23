@@ -260,6 +260,21 @@ int luaSetEntityStateValue(lua_State *state) {
     return 1;
 }
 
+int luaGetEntityGravity(lua_State *state) {
+    td_entity entity = (td_entity) lua_topointer(state, 1);
+    float gravityAccel = getEntityGravityAccleration(entity);
+
+    lua_pushnumber(state, gravityAccel);
+    return 1;
+}
+
+int luaSetEntityGravity(lua_State *state) {
+    td_entity entity = (td_entity) lua_topointer(state, 1);
+    float gravityAccel = luaL_checknumber(state, 2);
+    setEntityGravityAcceleration(entity, gravityAccel);
+    return 1;
+}
+
 void registerCFunctions(
     lua_State *state,
     td_scene scene,
@@ -315,4 +330,10 @@ void registerCFunctions(
 
     lua_pushcfunction(state, luaSetEntityStateValue);
     lua_setglobal(state, "setEntityStateValue");
+
+    lua_pushcfunction(state, luaSetEntityGravity);
+    lua_setglobal(state, "setEntityGravity");
+
+    lua_pushcfunction(state, luaGetEntityGravity);
+    lua_setglobal(state, "getEntityGravity");
 }

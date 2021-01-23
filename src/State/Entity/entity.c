@@ -84,6 +84,10 @@ void addAnimation(td_entity entity, td_animation animation, char *name) {
     insertIntoHashMap(entity -> animations, name, animation, NULL);
 }
 
+float getEntityGravityAccleration(td_entity entity) {
+    return getPhysicsObjectGravityAccleration(entity -> physicsObject);
+}
+
 void setEntityGravityAcceleration(td_entity entity, float gravityAcceleration) {
     setPhysicsObjectGravityAcceleration(entity -> physicsObject, gravityAcceleration);
 }

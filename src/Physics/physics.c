@@ -38,6 +38,10 @@ td_tuple getPhysicsObjectVelocity(td_physicsObject physicsObject) {
     return physicsObject -> velocity;
 }
 
+float getPhysicsObjectGravityAccleration(td_physicsObject physicsObject) {
+    return physicsObject -> gravityAccel;
+}
+
 void setPhysicsObjectGravityAcceleration(td_physicsObject physicsObject, float gravity) {
     physicsObject -> gravityAccel = gravity;
 }
