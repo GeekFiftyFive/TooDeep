@@ -195,6 +195,71 @@ int luaFlipEntityHorizontal(lua_State *state) {
     return 1;
 }
 
+int luaGetEntityStateValue(lua_State *state) {
+    td_entity entity = (td_entity) lua_topointer(state, 1);
+    const char *name = luaL_checkstring(state, 2);
+    td_entityState eState = getEntityState(entity);
+    td_scriptValType type = entityStateCheckType(eState, (char *) name);
+
+    switch(type) {
+        case NIL:
+            lua_pushnil(state);
+            break;
+        case FLOAT:
+            lua_pushnumber(state, getFloatFromState(eState, name));
+            break;
+        case INT:
+            lua_pushnumber(state, getIntFromState(eState, name));
+            break;
+        case BOOL:
+            lua_pushboolean(state, getBoolFromState(eState, name));
+            break;
+        case STRING:
+            lua_pushstring(state, getStringFromState(eState, name));
+            break;
+    }
+
+    return 1;
+}
+
+static void pushInt(lua_State *state, td_entityState eState, char *name) {
+    int iVal = lua_tointeger(state, 3);
+    td_scriptVal val;
+    val.intVal = iVal;
+    insertIntoState(eState, name, INT, val);
+}
+
+int luaSetEntityStateValue(lua_State *state) {
+    td_entity entity = (td_entity) lua_topointer(state, 1);
+    const char *name = luaL_checkstring(state, 2);
+    td_entityState eState = getEntityState(entity);
+
+    if(lua_isinteger(state, 3)) {
+        pushInt(state, eState, name);
+    } else if(lua_isnumber(state, 3)) {
+        if(entityStateCheckType(eState, name) == INT) {
+            pushInt(state, eState, name);
+        } else {
+            float fVal = lua_tonumber(state, 3);
+            td_scriptVal val;
+            val.floatVal = fVal;
+            insertIntoState(eState, name, FLOAT, val);
+        }
+    } else if(lua_isboolean(state, 3)) {
+        bool bVal = lua_toboolean(state, 3);
+        td_scriptVal val;
+        val.booleanVal = bVal;
+        insertIntoState(eState, name, BOOL, val);
+    } else if(lua_isstring(state, 3)) {
+        char *sVal = lua_tostring(state, 3);
+        td_scriptVal val;
+        val.stringVal = sVal;
+        insertIntoState(eState, name, STRING, val);
+    }
+
+    return 1;
+}
+
 void registerCFunctions(
     lua_State *state,
     td_scene scene,
@@ -244,4 +309,10 @@ void registerCFunctions(
 
     lua_pushcfunction(state, luaFlipEntityHorizontal);
     lua_setglobal(state, "flipEntityHorizontal");
+
+    lua_pushcfunction(state, luaGetEntityStateValue);
+    lua_setglobal(state, "getEntityStateValue");
+
+    lua_pushcfunction(state, luaSetEntityStateValue);
+    lua_setglobal(state, "setEntityStateValue");
 }

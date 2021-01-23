@@ -17,6 +17,7 @@ struct td_entity {
     td_hashMap animations;
     td_linkedList renderables;
     td_entityFlip flip;
+    td_entityState state;
 };
 
 td_entity createEntity(char *ID, td_renderable renderable) {
@@ -30,7 +31,12 @@ td_entity createEntity(char *ID, td_renderable renderable) {
     entity -> animations = createHashMap(10);
     entity -> flip = TD_NO_FLIP;
     entity -> renderables = createLinkedList();
+    entity -> state = createEntityState();
     return entity;
+}
+
+td_entityState getEntityState(td_entity entity) {
+    return entity -> state;
 }
 
 void moveCollider(void *entryData, void *callbackData, char *key) {
@@ -160,5 +166,6 @@ void destroyEntity(td_entity entity) {
     destroyLinkedList(entity -> collisionHulls);
     destroyLinkedList(entity -> renderables);
     destroyHashMap(entity -> animations);
+    destroyEntityState(entity -> state);
     free(entity);
 }

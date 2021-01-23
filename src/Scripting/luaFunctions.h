@@ -2,19 +2,11 @@
 #define TD_LUA_FUNCTIONS
 
 #include <lua.h>
+#include "luaValues.h"
 #include "../State/Scene/scene.h"
 #include "../IO/resourceLoader.h"
 #include "../DataStructures/HashMap/hashMap.h"
 #include "../Renderer/renderer.h"
-
-typedef enum { FLOAT, INT, BOOL, STRING } td_scriptValType;
-
-typedef union td_scriptVal {
-    float floatVal;
-    int intVal;
-    bool booleanVal;
-    char *stringVal;
-} td_scriptVal;
 
 typedef struct td_script *td_script;
 

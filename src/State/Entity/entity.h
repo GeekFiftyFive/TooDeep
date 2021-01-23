@@ -1,6 +1,7 @@
 #ifndef ENTITY
 #define ENTITY
 
+#include "../EntityState/entityState.h"
 #include "../../Renderer/renderer.h"
 #include "../../Physics/boxCollision.h"
 #include "../../Renderer/animation.h"
@@ -10,6 +11,8 @@ typedef enum {TD_NO_FLIP, TD_HORIZONTAL_FLIP, TD_VERTICAL_FLIP} td_entityFlip;
 typedef struct td_entity *td_entity;
 
 td_entity createEntity(char *, td_renderable);
+
+td_entityState getEntityState(td_entity);
 
 void playAnimation(td_entity, td_animation);
 

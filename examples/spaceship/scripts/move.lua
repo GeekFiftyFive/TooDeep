@@ -10,7 +10,7 @@ if(math.abs(x) > 0.0)
 then
     if(checkCollision(entity, "bottom"))
     then
-       return 
+       return
     end
     setEntityVelocity(entity, x, velocity["y"])
 end
