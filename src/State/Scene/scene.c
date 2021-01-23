@@ -167,7 +167,7 @@ void handleCollision(td_collision collision, void *data) {
     } else {
         // Collided in the x axis
         delta.x = -collision.intrusion.x;
-        newVelocity.x = 0.0;
+        //newVelocity.x = 0.0;
     }
 
     setEntityPosition(entity, addTuple(position, delta));
