@@ -95,3 +95,7 @@ void setBoxColliderPosition(td_boxCollider collider, td_tuple position) {
     collider -> hull.x = position.x;
     collider -> hull.y = position.y;
 }
+
+td_tuple getBoxColliderDimensions(td_boxCollider collider) {
+    return (td_tuple) { collider -> hull.w, collider -> hull.h };
+}

@@ -40,6 +40,8 @@ void updateRenderablePosition(td_renderable, td_tuple);
 
 void setRenderSpace(td_renderable, td_renderSpace);
 
+void addDebugRect(td_renderer, td_tuple, td_tuple);
+
 void renderFrame(td_renderer);
 
 SDL_Rect getTextureRegion(SDL_Texture *, SDL_Rect, int);

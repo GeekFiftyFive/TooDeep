@@ -5,6 +5,11 @@
 #include "../IO/logger.h"
 #include "../State/Entity/entity.h"
 
+#ifndef RENDER_DEBUG_DATA
+#define RENDER_DEBUG_DATA false
+#endif
+#define debug(x) if(RENDER_DEBUG_DATA) x
+
 void startEventLoop(td_game game) {
     bool quit = false;
     SDL_Event e;
@@ -14,6 +19,7 @@ void startEventLoop(td_game game) {
     int prevTicks = SDL_GetTicks();
 
     copySceneToRenderQueue(game);
+    debug(createDebugRenderables(game));
 
     while(!quit) {
         quit = e.type == SDL_QUIT;
@@ -23,6 +29,7 @@ void startEventLoop(td_game game) {
         // e.g. when an animation begins playing
         clearRenderQueue(getRenderer(game));
         copySceneToRenderQueue(game);
+        debug(createDebugRenderables(game));
         executeTick(game, SDL_GetTicks() - prevTicks);
         while(SDL_PollEvent(&e)) {
             executeEvent(game, e);

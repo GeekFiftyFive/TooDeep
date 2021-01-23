@@ -14,6 +14,8 @@ td_scene buildScene(td_game, char *);
 
 void physicsUpdate(td_scene, int);
 
+void forAllColliders(td_scene, void *, void *);
+
 void executeUpdateBehaviors(lua_State *, td_scene);
 
 void iterateAnimations(td_scene);

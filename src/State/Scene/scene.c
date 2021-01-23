@@ -493,6 +493,15 @@ void mutableColliderCallback(void *entryData, void *callbackData, char *key) {
     checkWorldCollisions((td_boxCollider) entryData, (td_linkedList) callbackData);
 }
 
+void resolveCollisions(td_scene scene) {
+    listForEach(scene -> mutableColliders, mutableColliderCallback, scene -> immutableColliders);
+}
+
+void forAllColliders(td_scene scene, void *callbackFunction, void *callbackData) {
+    listForEach(scene -> immutableColliders, callbackFunction, callbackData);
+    listForEach(scene -> mutableColliders, callbackFunction, callbackData);
+}
+
 void iterateAnimationsCallback(void *entryData, void *callbackData, char *key) {
     td_animation animation = (td_animation) entryData;
     iterateAnimation(animation);
@@ -500,10 +509,6 @@ void iterateAnimationsCallback(void *entryData, void *callbackData, char *key) {
 
 void iterateAnimations(td_scene scene) {
     listForEach(scene -> animations, iterateAnimationsCallback, NULL);
-}
-
-void resolveCollisions(td_scene scene) {
-    listForEach(scene -> mutableColliders, mutableColliderCallback, scene -> immutableColliders);
 }
 
 void executeEventBehaviors(lua_State *state, td_scene scene, td_hashMap keymap, SDL_Event e) {

@@ -12,6 +12,7 @@ struct td_renderer {
     SDL_Window *window;
     SDL_Renderer *renderer;
     td_linkedList renderQueue;
+    td_linkedList debugLayer;
     td_camera camera;
     float scaleFactor;
     SDL_Rect frameDimensions;
@@ -24,6 +25,10 @@ struct td_renderable {
     td_renderSpace space;
     SDL_Rect *textureRegion;
     SDL_RendererFlip flip;
+};
+
+struct td_debugRenderable {
+    SDL_Rect rect;
 };
 
 /*
@@ -82,6 +87,7 @@ td_renderer initRenderer(char *title, int width, int height) {
     renderer -> scaleFactor = (float) width / BASE_WIDTH;
     renderer -> camera = NULL;
     renderer -> frameDimensions = (SDL_Rect) { 0, 0, width, height };
+    renderer -> debugLayer = createLinkedList();
 
     return renderer;
 }
@@ -119,7 +125,9 @@ void appendToRenderQueue(td_renderer renderer, td_renderable renderable) {
 
 void clearRenderQueue(td_renderer renderer) {
     destroyLinkedList(renderer -> renderQueue);
+    destroyLinkedList(renderer -> debugLayer);
     renderer -> renderQueue = createLinkedList();
+    renderer -> debugLayer = createLinkedList();
 }
 
 td_renderable createRenderableFromTexture(td_renderer renderer, SDL_Texture *texture) {
@@ -204,7 +212,14 @@ SDL_Rect scaleRect(td_tuple pos, td_tuple size, td_renderer renderer) {
     return scaled;
 }
 
-void drawRenderable(void *renderableData, void *rendererData, char *key) {
+void addDebugRect(td_renderer renderer, td_tuple pos, td_tuple size) {
+    struct td_debugRenderable *renderable = malloc(sizeof(struct td_debugRenderable));
+    SDL_Rect rect = scaleRect(pos, size, renderer);
+    renderable -> rect = rect;
+    appendWithFree(renderer -> debugLayer, renderable, NULL, free);
+}
+
+static void drawRenderable(void *renderableData, void *rendererData, char *key) {
     td_renderable renderable = (td_renderable) renderableData;
     td_renderer renderer = (td_renderer) rendererData;
 
@@ -221,13 +236,26 @@ void drawRenderable(void *renderableData, void *rendererData, char *key) {
     );
 }
 
-void renderFrame(td_renderer renderer) {
+static void resetDrawColor(td_renderer renderer) {
     SDL_SetRenderDrawColor(renderer -> renderer, 66, 134, 244, 0xFF );
+}
 
+static void drawDebugRenderable(void *renderableData, void *rendererData, char *key) {
+    struct td_debugRenderable *renderable = (struct td_debugRenderable *) renderableData;
+    td_renderer renderer = (td_renderer) rendererData;
+
+    SDL_SetRenderDrawColor(renderer -> renderer, 0xFF, 0x0, 0xFF, 0xFF );
+    SDL_RenderDrawRect(renderer -> renderer, &renderable -> rect);
+    resetDrawColor(renderer);
+}
+
+void renderFrame(td_renderer renderer) {
+    resetDrawColor(renderer);
+    SDL_RenderClear(renderer -> renderer);
     listForEach(renderer -> renderQueue, drawRenderable, renderer);
+    listForEach(renderer -> debugLayer, drawDebugRenderable, renderer);
 
     SDL_RenderPresent(renderer -> renderer);
-    SDL_RenderClear(renderer -> renderer);
 }
 
 SDL_Rect getTextureRegion(SDL_Texture *texture, SDL_Rect dimensions, int index) {
@@ -248,6 +276,7 @@ void destroyRenderer(td_renderer renderer) {
     SDL_DestroyWindow(renderer -> window);
     SDL_DestroyRenderer(renderer -> renderer);
     destroyLinkedList(renderer -> renderQueue);
+    destroyLinkedList(renderer -> debugLayer);
     free(renderer);
 }
 

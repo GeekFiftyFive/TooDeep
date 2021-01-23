@@ -30,8 +30,13 @@ td_linkedList createLinkedList() {
 void appendWithFree(td_linkedList list, void *data, char *key, void *freeFunc) {
     // Create a new node to store the data
     td_listNode node = malloc(sizeof(struct td_listNode));
-    char *keyCopy = malloc(strlen(key) + 1);
-    node -> key = strcpy(keyCopy, key);
+    if(key) {
+        char *keyCopy = malloc(strlen(key) + 1);
+        node -> key = strcpy(keyCopy, key);
+    } else {
+        node -> key = NULL;
+    }
+    
     node -> data = data;
     node -> freeFunc = freeFunc;
 
@@ -145,7 +150,9 @@ void destroyLinkedList(td_linkedList list) {
         if(current -> freeFunc) {
             current -> freeFunc(current -> data);
         }
-        free(current -> key);
+        if(current -> key) {
+            free(current -> key);
+        }
         td_listNode next = current -> next;
         free(current);
         current = next;

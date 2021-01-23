@@ -164,6 +164,18 @@ void copySceneToRenderQueue(td_game game) {
     listForEach(getEntities(game -> currentScene), copyCallback, game -> renderer);
 }
 
+static void createDebugRenderableCallback(void *elementData, void *callbackData, char *key) {
+    td_boxCollider collider = (td_boxCollider) elementData;
+    td_renderer renderer = (td_renderer) callbackData;
+    td_tuple pos = getBoxColliderPosition(collider);
+    td_tuple size = getBoxColliderDimensions(collider);
+    addDebugRect(renderer, pos, size);
+}
+
+void createDebugRenderables(td_game game) {
+   forAllColliders(game -> currentScene, createDebugRenderableCallback, game -> renderer);
+}
+
 void executeTick(td_game game, int delta) {
     physicsUpdate(game -> currentScene, delta);
     resolveCollisions(game -> currentScene);
