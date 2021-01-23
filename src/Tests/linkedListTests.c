@@ -5,6 +5,7 @@
 
 #define EXPECTED_STRING "A -> B -> C"
 #define CONCAT_EXPECTED_STRING "A -> B -> C -> D -> E -> F"
+#define REMOVE_EXPECTED_STRING "B -> C -> E"
 
 void testCallback(void *nodeData, void *accData, char *key) {
     // Dereference data
@@ -63,6 +64,15 @@ int runLinkedListTests() {
     
     // Test the length of the list
     failedTests += assert(3, listLength(list), "listLength");
+
+    // Remove items from list
+    removeFromList(concatinated, "A");
+    removeFromList(concatinated, "D");
+    removeFromList(concatinated, "F");
+
+    stringList = listToString(concatinated);
+    failedTests += assertString(REMOVE_EXPECTED_STRING, stringList, "removeFromList");
+    free(stringList);
 
     // Destroy the lists
     destroyLinkedList(list);

@@ -11,6 +11,10 @@ void append(td_linkedList, void *, char *);
 
 void appendList(td_linkedList, td_linkedList);
 
+void removeFromListMatchPointer(td_linkedList, void *);
+
+void removeFromList(td_linkedList, char *);
+
 void dangerouslyAddFreeFunc(td_linkedList, void *);
 
 void *getFromList(td_linkedList, char *);

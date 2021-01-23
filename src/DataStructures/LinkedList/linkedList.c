@@ -70,6 +70,62 @@ void appendList(td_linkedList dest, td_linkedList src) {
     listForEach(src, appendListCallback, dest);
 }
 
+void removeNode(td_linkedList list, td_listNode node) {
+    if(list -> head == node) {
+        if(list -> length == 1) {
+            list -> head = NULL;
+        } else {
+            list -> head = node -> next;
+        }
+    }
+    if(list -> tail == node) {
+        if(list -> length == 1) {
+            list -> tail = NULL;
+        } else {
+            list -> tail = node -> prev;
+        }
+    }
+    td_listNode next = node -> next;
+    td_listNode prev = node -> prev;
+    next -> prev = prev;
+    prev -> next = next;
+    if(node -> freeFunc) {
+        node -> freeFunc(node -> data);
+    }
+    if(node -> key) {
+        free(node -> key);
+    }
+    list -> length--;
+}
+
+void removeFromListMatchPointer(td_linkedList list, void *ptr) {
+    if(!list -> head) return;
+
+    td_listNode current = list -> head;
+
+    do {
+        if(ptr == current -> data) {
+            removeNode(list, current);
+            return;
+        }
+        current = current -> next;
+    } while(current != list -> head);
+}
+
+void removeFromList(td_linkedList list, char *key) {
+    if(!list -> head) return;
+
+    td_listNode current = list -> head;
+
+    do {
+        if(strcmp(current -> key, key) == 0) {
+            removeNode(list, current);
+            return;
+        }
+        current = current -> next;
+    } while(current != list -> head);
+}
+
 void dangerouslyAddFreeFunc(td_linkedList list, void *freeFunc) {
     if(list -> length == 0) return;
     td_listNode current = list -> head;

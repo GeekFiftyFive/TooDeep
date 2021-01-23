@@ -33,7 +33,8 @@ tooDeep: obj/main.o\
 		 obj/boxCollision.o\
 		 obj/camera.o\
 		 obj/animation.o\
-		 obj/entityState.o
+		 obj/entityState.o\
+		 obj/luaCallback.o
 			cc $(ARGS) -o tooDeep obj/main.o\
 				obj/renderer.o\
 				obj/eventLoop.o\
@@ -62,6 +63,7 @@ tooDeep: obj/main.o\
 				obj/camera.o\
 				obj/animation.o\
 				obj/entityState.o\
+				obj/luaCallback.o\
 				$(LIBS)
 
 obj/main.o: src/main.c
@@ -132,6 +134,9 @@ obj/stringUtils.o: src/Utils/stringUtils.c src/Utils/stringUtils.h
 
 obj/luaFunctions.o: src/Scripting/luaFunctions.c src/Scripting/luaFunctions.h
 			cc $(ARGS) -c src/Scripting/luaFunctions.c -o obj/luaFunctions.o
+
+obj/luaCallback.o: src/Scripting/luaCallback.c src/Scripting/luaCallback.h
+			cc $(ARGS) -c src/Scripting/luaCallback.c -o obj/luaCallback.o
 
 obj/keyboardEvents.o: src/Events/keyboardEvents.c src/Events/keyboardEvents.h
 			cc $(ARGS) -c src/Events/keyboardEvents.c -o obj/keyboardEvents.o

@@ -125,9 +125,9 @@ void appendToRenderQueue(td_renderer renderer, td_renderable renderable) {
 
 void clearRenderQueue(td_renderer renderer) {
     destroyLinkedList(renderer -> renderQueue);
-    destroyLinkedList(renderer -> debugLayer);
+    //destroyLinkedList(renderer -> debugLayer);
     renderer -> renderQueue = createLinkedList();
-    renderer -> debugLayer = createLinkedList();
+    //renderer -> debugLayer = createLinkedList();
 }
 
 td_renderable createRenderableFromTexture(td_renderer renderer, SDL_Texture *texture) {

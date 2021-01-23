@@ -16,6 +16,8 @@ void destroyScript(td_script);
 
 void registerVariable(td_script, char *, td_scriptValType, td_scriptVal);
 
+void executeCallback(lua_State *, int);
+
 void registerCFunctions(lua_State *, td_scene, td_resourceLoader, td_renderer, td_hashMap);
 
 void executeScript(lua_State *, td_script);

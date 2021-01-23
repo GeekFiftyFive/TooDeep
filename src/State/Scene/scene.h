@@ -24,6 +24,10 @@ bool checkWorldCollisions(td_boxCollider, td_linkedList);
 
 void resolveCollisions(td_scene);
 
+void registerTimeout(td_scene, int, float);
+
+void executeTimeouts(lua_State *, td_scene);
+
 void executeEventBehaviors(lua_State *, td_scene, td_hashMap, SDL_Event);
 
 td_linkedList getWorldColliders(td_scene);

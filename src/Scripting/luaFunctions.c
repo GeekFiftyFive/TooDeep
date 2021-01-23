@@ -275,6 +275,26 @@ int luaSetEntityGravity(lua_State *state) {
     return 1;
 }
 
+int luaSetTimeout(lua_State *state) {
+    td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(1));
+    float timeout = luaL_checknumber(state, 2);
+    lua_pop(state, 1);
+    int reference = luaL_ref(state, LUA_REGISTRYINDEX);
+
+    registerTimeout(scene, reference, timeout);
+
+    return 1;
+}
+
+void executeCallback(lua_State *state, int reference) {
+    lua_rawgeti(state, LUA_REGISTRYINDEX, reference);
+    lua_pushvalue(state, 1);
+
+    if(lua_pcall(state, 0, 0, 0)) {
+        logError("There was an error executing the callback: %s\n", lua_tostring(state, -1));
+    }
+}
+
 void registerCFunctions(
     lua_State *state,
     td_scene scene,
@@ -300,6 +320,10 @@ void registerCFunctions(
     lua_pushlightuserdata(state, scene);
     lua_pushcclosure(state, luaPlayAnimation, 4);
     lua_setglobal(state, "playAnimation");
+
+    lua_pushlightuserdata(state, scene);
+    lua_pushcclosure(state, luaSetTimeout, 1);
+    lua_setglobal(state, "setTimeout");
 
     lua_pushcfunction(state, luaGetCameraPosition);
     lua_setglobal(state, "getCameraPosition");

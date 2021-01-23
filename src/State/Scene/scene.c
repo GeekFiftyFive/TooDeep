@@ -9,6 +9,7 @@
 #include "../../DataStructures/Box/box.h"
 #include "../../Physics/boxCollision.h"
 #include "../../Renderer/animation.h"
+#include "../../Scripting/luaCallback.h"
 
 // TODO: This need A LOT of cleaning up!
 
@@ -22,6 +23,7 @@ struct td_scene {
     td_linkedList immutableColliders;
     td_linkedList cameras;
     td_linkedList animations;
+    td_linkedList timeouts;
 };
 
 struct callbackData {
@@ -62,6 +64,11 @@ struct addCameraCallbackData {
 struct checkWorldCollisionsCallbackData {
     td_boxCollider collider;
     bool collided;
+};
+
+struct executeTimeoutCallbackData {
+    td_linkedList toRemove;
+    lua_State *state;
 };
 
 void layerCallback(td_json json, void *data) {
@@ -167,7 +174,6 @@ void handleCollision(td_collision collision, void *data) {
     } else {
         // Collided in the x axis
         delta.x = -collision.intrusion.x;
-        //newVelocity.x = 0.0;
     }
 
     setEntityPosition(entity, addTuple(position, delta));
@@ -453,12 +459,41 @@ td_scene buildScene(td_game game, char *sceneName) {
     scene -> mutableColliders = mutableColliders;
     scene -> cameras = cameras;
     scene -> animations = animations;
+    scene -> timeouts = createLinkedList();
 
     destroyHashMap(layerIndexes);
 
     free(layers);
 
     return scene;
+}
+
+void registerTimeout(td_scene scene, int reference, float timeout) {
+    td_luaCallback callback = createLuaCallback(reference, SDL_GetTicks(), timeout);
+    append(scene -> timeouts, callback, NULL);
+}
+
+void executeTimeoutCallback(void *entryData, void *callbackData, char *key) {
+    td_luaCallback callback = (td_luaCallback) entryData;
+    lua_State *state = ((struct executeTimeoutCallbackData*) callbackData) -> state;
+    td_linkedList toRemove = ((struct executeTimeoutCallbackData*) callbackData) -> toRemove;
+    if(shouldTriggerLuaCallback(callback, SDL_GetTicks())) {
+        executeCallback(state, getLuaCallbackReference(callback));
+        appendWithFree(toRemove, entryData, NULL, destroyLuaCallback);
+    }
+}
+
+void removeTimeoutCallback(void *entryData, void *callbackData, char *key) {
+    td_linkedList timeouts = (td_linkedList) callbackData;
+    removeFromListMatchPointer(timeouts, entryData);
+}
+
+void executeTimeouts(lua_State *state, td_scene scene) {
+    td_linkedList toRemove = createLinkedList();
+    struct executeTimeoutCallbackData callbackData = { toRemove, state };
+    listForEach(scene -> timeouts, executeTimeoutCallback, &callbackData);
+    listForEach(toRemove, removeTimeoutCallback, scene -> timeouts);
+    destroyLinkedList(toRemove);
 }
 
 void executeBehaviorCallback(void *entryData, void *callbackData, char *key) {
@@ -587,6 +622,7 @@ void destroyScene(td_scene scene) {
     destroyLinkedList(scene -> immutableColliders);
     destroyLinkedList(scene -> cameras);
     destroyLinkedList(scene -> animations);
+    destroyLinkedList(scene -> timeouts);
     destroyHashMap(scene -> behaviors);
     free(scene);
 }

@@ -14,3 +14,9 @@ then
     end
     setEntityVelocity(entity, x, velocity["y"])
 end
+
+function helloWorld()
+    print("Hello, world")
+end
+
+setTimeout(helloWorld, 5)

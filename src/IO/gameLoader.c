@@ -181,6 +181,7 @@ void executeTick(td_game game, int delta) {
     resolveCollisions(game -> currentScene);
     executeUpdateBehaviors(game -> state, game -> currentScene);
     iterateAnimations(game -> currentScene);
+    //executeTimeouts(game -> state, game -> currentScene);
 }
 
 void executeEvent(td_game game, SDL_Event e) {
