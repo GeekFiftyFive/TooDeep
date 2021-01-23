@@ -198,7 +198,10 @@ int listLength(td_linkedList list) {
 }
 
 void destroyLinkedList(td_linkedList list) {
-    if(list -> length == 0) return;
+    if(list -> length == 0) {
+        free(list);
+        return;
+    }
 
     td_listNode current = list -> head;
 
