@@ -33,12 +33,13 @@ void startEventLoop(td_game game) {
         clearRenderQueue(getRenderer(game));
         copySceneToRenderQueue(game);
         debug(createDebugRenderables(game));
-        executeTick(game, SDL_GetTicks() - prevTicks);
+        int delta = SDL_GetTicks() - prevTicks;
+        prevTicks = SDL_GetTicks();
+        executeTick(game, delta);
         while(SDL_PollEvent(&e)) {
             executeEvent(game, e);
         }
         acc++;
-        prevTicks = SDL_GetTicks();
         if(SDL_GetTicks() - startCount > 1000) {
             logDebug("FPS: %d\n", acc);
             acc = 0;
