@@ -15,6 +15,12 @@ td_tuple getCameraPosition(td_camera);
 
 void setCameraPosition(td_camera, td_tuple);
 
+td_tuple getCameraVelocity(td_camera);
+
+void setCameraVelocity(td_camera, td_tuple);
+
+void updateCameraPosition(td_camera, int);
+
 void destroyCamera(td_camera);
 
 #endif

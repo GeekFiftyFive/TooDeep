@@ -32,6 +32,18 @@ void setCameraPosition(td_camera camera, td_tuple position) {
     setPhysicsObjectPosition(camera -> physicsObject, position);
 }
 
+td_tuple getCameraVelocity(td_camera camera) {
+    return getPhysicsObjectVelocity(camera -> physicsObject);
+}
+
+void setCameraVelocity(td_camera camera, td_tuple velocity) {
+    setPhysicsObjectVelocity(camera -> physicsObject, velocity);
+}
+
+void updateCameraPosition(td_camera camera, int delta) {
+    updatePhysicsObject(camera -> physicsObject, delta);
+}
+
 void destroyCamera(td_camera camera) {
     free(camera);
 }

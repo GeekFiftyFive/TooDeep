@@ -127,8 +127,15 @@ void registerVariableCallback(td_json json, void *data) {
     registerVariable(script, getFieldName(json), variableType, val);
 }
 
+void cameraPhysicsUpdate(void *entryData, void *callbackData, char *key) {
+    int delta = *((int*) callbackData);
+    td_camera camera = (td_camera) entryData;
+    updateCameraPosition(camera, delta);
+}
+
 void physicsUpdate(td_scene scene, int delta) {
     listForEach(scene -> entities, entityPhysicsUpdate, &delta);
+    listForEach(scene -> cameras, cameraPhysicsUpdate, &delta);
 }
 
 void behaviourCallback(td_json json, void *data) {
