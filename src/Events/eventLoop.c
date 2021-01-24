@@ -15,14 +15,17 @@ void startEventLoop(td_game game) {
     SDL_Event e;
 
     int acc = 0;
-    int count = 0;
     int prevTicks = SDL_GetTicks();
+    int startCount = prevTicks;
 
     copySceneToRenderQueue(game);
     debug(createDebugRenderables(game));
 
     while(!quit) {
         quit = e.type == SDL_QUIT;
+        if(SDL_GetTicks() == prevTicks) {
+            continue;
+        }
         renderFrame(getRenderer(game));
         // FIXME: Doing this is overkill. Should just swap at renderables
         // that need to be swapped out when they need to be swapped out
@@ -35,13 +38,11 @@ void startEventLoop(td_game game) {
             executeEvent(game, e);
         }
         acc++;
-        count += SDL_GetTicks() - prevTicks;
         prevTicks = SDL_GetTicks();
-        if(acc == 100) {
-            float avgTime = (count / 100);
-            logDebug("FPS: %f\n", 1000 / avgTime);
+        if(SDL_GetTicks() - startCount > 1000) {
+            logDebug("FPS: %d\n", acc);
             acc = 0;
-            count = 0;
+            startCount = SDL_GetTicks();
         }
     }
 }
