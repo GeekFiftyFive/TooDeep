@@ -54,6 +54,9 @@ td_animation createAnimation(
 }
 
 void setAnimationPlaying(td_animation animation, bool playing) {
+    if(!animation -> playing && playing) {
+        animation -> index = 0;
+    }
     animation -> playing = playing;
 }
 
