@@ -95,6 +95,20 @@ int luaSetEntityPosition(lua_State *state) {
     return 1;   
 }
 
+int luaSetCameraZoom(lua_State *state) {
+    td_camera camera = (td_camera) lua_topointer(state, 1);
+    float zoom = luaL_checknumber(state, 2);
+    setCameraZoom(camera, zoom);
+    return 1;
+}
+
+int luaGetCameraZoom(lua_State *state) {
+    td_camera camera = (td_camera) lua_topointer(state, 1);
+    float zoom = getCameraZoom(camera);
+    lua_pushnumber(state, zoom);
+    return 1;
+}
+
 int luaGetCameraPosition(lua_State *state) {
     td_camera camera = (td_camera) lua_topointer(state, 1);
     td_tuple position = getCameraPosition(camera);
@@ -346,6 +360,12 @@ void registerCFunctions(
 
     lua_pushcfunction(state, luaSetCameraPosition);
     lua_setglobal(state, "setCameraPosition");
+
+    lua_pushcfunction(state, luaGetCameraZoom);
+    lua_setglobal(state, "getCameraZoom");
+
+    lua_pushcfunction(state, luaSetCameraZoom);
+    lua_setglobal(state, "setCameraZoom");
 
     lua_pushcfunction(state, luaGetCameraVelocity);
     lua_setglobal(state, "getCameraVelocity");
