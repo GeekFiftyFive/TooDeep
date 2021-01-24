@@ -11,7 +11,7 @@ struct td_animation {
     int fps;
     bool loop;
     bool playing;
-    uint lastUpdate;
+    unsigned int lastUpdate;
     td_renderable renderable;
     SDL_Texture *texture;
     SDL_Rect dimensions;

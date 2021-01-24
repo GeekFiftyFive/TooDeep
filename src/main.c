@@ -1,3 +1,4 @@
+#define SDL_MAIN_HANDLED
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>

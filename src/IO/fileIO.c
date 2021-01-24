@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include "fileIO.h"
 
 // Workaround for bogus Intellisense error
@@ -28,8 +30,10 @@ char *readFile(const char *path) {
     return buffer;
 }
 
-static bool isDirectory(struct dirent *ep) {
-    return ep -> d_type == DT_DIR;
+static bool isDirectory(char *path) {
+    struct stat path_stat;
+    stat(path, &path_stat);
+    return S_ISDIR(path_stat.st_mode);
 }
 
 static bool isRelative(struct dirent *ep) {
@@ -45,7 +49,7 @@ int iterateOverDir(char *path, bool recurse, void (*callback)(char *, void *), v
     if(dp) {
         while((ep = readdir(dp))) {
             char *fullPath = concatPath(path, ep -> d_name);
-            if(!isDirectory(ep)) {
+            if(!isDirectory(fullPath)) {
                 count++;
                 callback(fullPath, data);
             } else if(recurse && !isRelative(ep)) {
