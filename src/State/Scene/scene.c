@@ -111,8 +111,7 @@ void registerVariableCallback(td_json json, void *data) {
         }
         case JSON_BOOL:
             variableType = BOOL;
-            // FIX-ME Implement method for getting boolean value from JSON and use it here
-            val.booleanVal = true;
+            val.booleanVal = getJSONBool(json, NULL, NULL);
             break;
         case JSON_STRING:
             variableType = STRING;
