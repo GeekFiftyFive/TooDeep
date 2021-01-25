@@ -71,6 +71,11 @@ struct executeTimeoutCallbackData {
     lua_State *state;
 };
 
+struct addBehaviourCallbackData {
+    char *fieldName;
+    struct callbackData *data;
+};
+
 void layerCallback(td_json json, void *data) {
     struct callbackData *dataCast = (struct callbackData*) data;
     dataCast -> layers[dataCast -> index] = createLinkedList();
@@ -137,28 +142,42 @@ void physicsUpdate(td_scene scene, int delta) {
     listForEach(scene -> cameras, cameraPhysicsUpdate, &delta);
 }
 
+void loadBehaviour(td_json json, struct callbackData *data, char *fieldName) {
+    char *scriptName = getJSONString(json, "script", NULL);
+    char *fullScriptName = malloc(strlen(scriptName) + strlen(SCRIPT_DIR) + 1);
+    sprintf(fullScriptName, "%s%s", SCRIPT_DIR, scriptName);
+    char *scriptContent = loadPlaintextResource(getResourceLoader(data -> game), fullScriptName);
+    td_script script = createScript(scriptContent);
+    jsonObjectForEach(json, "variables", registerVariableCallback, script);
+    td_scriptVal entityIDVal;
+    entityIDVal.stringVal = data -> entityID;
+    registerVariable(script, "entityID", STRING, entityIDVal);
+
+    td_linkedList actionList = getFromHashMap(data -> behaviors, fieldName);
+
+    if(!actionList) {
+        actionList = createLinkedList();
+        insertIntoHashMap(data -> behaviors, fieldName, actionList, destroyLinkedList);    
+    }
+
+    appendWithFree(actionList, script, fullScriptName, destroyScript);
+}
+
+void loadBehaviourCallback(td_json json, void *data) {
+    struct addBehaviourCallbackData *callbackData = (struct addBehaviourCallbackData *) data;
+    loadBehaviour(json, callbackData -> data, callbackData -> fieldName);
+}
+
 void behaviourCallback(td_json json, void *data) {
     char *fieldName = getFieldName(json);
     struct callbackData *dataCast = (struct callbackData*) data;
 
-    char *scriptName = getJSONString(json, "script", NULL);
-    char *fullScriptName = malloc(strlen(scriptName) + strlen(SCRIPT_DIR) + 1);
-    sprintf(fullScriptName, "%s%s", SCRIPT_DIR, scriptName);
-    char *scriptContent = loadPlaintextResource(getResourceLoader(dataCast -> game), fullScriptName);
-    td_script script = createScript(scriptContent);
-    jsonObjectForEach(json, "variables", registerVariableCallback, script);
-    td_scriptVal entityIDVal;
-    entityIDVal.stringVal = dataCast -> entityID;
-    registerVariable(script, "entityID", STRING, entityIDVal);
-
-    td_linkedList actionList = getFromHashMap(dataCast -> behaviors, fieldName);
-
-    if(!actionList) {
-        actionList = createLinkedList();
-        insertIntoHashMap(dataCast -> behaviors, fieldName, actionList, destroyLinkedList);    
+    if(isJSONFieldArray(json, NULL)) {
+        struct addBehaviourCallbackData behaviourCallbackData = { fieldName, dataCast };
+        jsonArrayForEach(json, NULL, loadBehaviourCallback, &behaviourCallbackData);
+    } else {
+        loadBehaviour(json, dataCast, fieldName);
     }
-
-    appendWithFree(actionList, script, fullScriptName, destroyScript);
 }
 
 void handleCollision(td_collision collision, void *data) {

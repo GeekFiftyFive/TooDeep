@@ -121,6 +121,11 @@ bool jsonFieldExists(td_json json, char *field) {
     return (error != JSON_ERROR);
 }
 
+bool isJSONFieldArray(td_json json, char *field) {
+    td_json obj = getJSONObject(json, field, NULL);
+    return cJSON_IsArray(obj);
+}
+
 void jsonArrayForEach(td_json json, char *field, void (*callback)(td_json, void *), void *data) {
     td_json obj = getJSONObject(json, field, NULL);
 
