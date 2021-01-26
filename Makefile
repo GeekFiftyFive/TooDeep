@@ -35,7 +35,8 @@ tooDeep: obj/main.o\
 		 obj/animation.o\
 		 obj/entityState.o\
 		 obj/luaCallback.o\
-		 obj/stateMachine.o
+		 obj/stateMachine.o\
+		 obj/stateMachineTests.o
 			cc $(ARGS) -o tooDeep obj/main.o\
 				obj/renderer.o\
 				obj/eventLoop.o\
@@ -66,6 +67,7 @@ tooDeep: obj/main.o\
 				obj/entityState.o\
 				obj/luaCallback.o\
 				obj/stateMachine.o\
+				obj/stateMachineTests.o\
 				$(LIBS)
 
 obj/main.o: src/main.c
@@ -157,6 +159,9 @@ obj/animation.o: src/Renderer/animation.c src/Renderer/animation.h
 
 obj/stateMachine.o: src/State/StateMachine/stateMachine.c src/State/StateMachine/stateMachine.h
 			cc $(ARGS) -c src/State/StateMachine/stateMachine.c -o obj/stateMachine.o
+
+obj/stateMachineTests.o: src/Tests/stateMachineTests.c src/Tests/stateMachineTests.h
+			cc $(ARGS) -c src/Tests/stateMachineTests.c -o obj/stateMachineTests.o
 
 clean:
 	rm -rf obj/* && rm tooDeep

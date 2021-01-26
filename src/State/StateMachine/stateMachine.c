@@ -40,7 +40,7 @@ td_stateMachine createStateMachine() {
 
 void destroyStateMachineNode(td_stateMachineNode node);
 void destroyStateMachineConnection(td_stateMachineConnection connection);
-void destroyStateMachineCondition(td_stateMachineCondition);
+void destroyStateMachineCondition(struct td_stateMachineCondition *condition);
 
 td_stateMachineNode createStateMachineNode(td_stateMachine stateMachine, char *id, bool current) {
     td_stateMachineNode node = malloc(sizeof(struct td_stateMachineNode));

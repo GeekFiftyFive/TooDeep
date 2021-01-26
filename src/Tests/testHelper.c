@@ -7,6 +7,7 @@
 #include "resourceLoaderTests.h"
 #include "tupleTests.h"
 #include "stringUtilsTests.h"
+#include "stateMachineTests.h"
 #include "../IO/logger.h"
 
 int runTests() {
@@ -18,6 +19,7 @@ int runTests() {
     testFailures += runResourceLoaderTests();
     testFailures += runTupleTests();
     testFailures += runStringUtilsTests();
+    testFailures += runStateMachineTests();
 
     if(testFailures) {
         logError("%d tests failed!\n", testFailures);
