@@ -2,10 +2,12 @@
 #include <strings.h>
 #include "stateMachine.h"
 #include "../../DataStructures/LinkedList/linkedList.h"
+#include "../../DataStructures/HashMap/hashMap.h"
 
 struct td_stateMachine {
     td_stateMachineNode currentNode;
     td_linkedList nodes;
+    td_hashMap variables;
 };
 
 struct td_stateMachineNode {
@@ -30,10 +32,16 @@ struct td_stateMachineCondition {
     bool isFloat;
 };
 
+struct td_stateMachineValueType {
+    union td_stateMachineValue value;
+    bool ifFloat;
+};
+
 td_stateMachine createStateMachine() {
     td_stateMachine stateMachine = malloc(sizeof(struct td_stateMachine));
 
     stateMachine -> nodes = createLinkedList();
+    stateMachine -> variables = createHashMap();
 
     return stateMachine;
 }
@@ -77,6 +85,26 @@ static void addCondition(td_stateMachineConnection connection, char *varName, un
     appendWithFree(connection -> conditions, condition, NULL, destroyStateMachineCondition);
 }
 
+void addStateMachineFloatVariable(td_stateMachine stateMachine, char *name, float value) {
+    struct td_stateMachineValueType *valueType = malloc(sizeof(struct td_stateMachineValueType));
+    valueType -> isFloat = true;
+    
+    union td_stateMachineValue val;
+    val.fVal = value;
+    valueType -> value = val;
+    insertIntoHashMap(stateMachine -> variables, name, valueType, free);
+}
+
+void addStateMachineIntVariable(td_stateMachine stateMachine, char *name, int value) {
+    struct td_stateMachineValueType *valueType = malloc(sizeof(struct td_stateMachineValueType));
+    valueType -> isFloat = false;
+    
+    union td_stateMachineValue val;
+    val.iVal = value;
+    valueType -> value = val;
+    insertIntoHashMap(stateMachine -> variables, name, valueType, free);
+}
+
 void addStateMachineFloatCondition(td_stateMachineConnection connection, char *varName, float value, td_stateMachineOperation op) {
     union td_stateMachineValue val;
     val.fVal = value;
@@ -107,5 +135,6 @@ void destroyStateMachineNode(td_stateMachineNode node) {
 
 void destroyStateMachine(td_stateMachine stateMachine) {
     destroyLinkedList(stateMachine -> nodes);
+    destroyHashMap(stateMachine -> variables);
     free(stateMachine);
 }

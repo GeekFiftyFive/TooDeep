@@ -13,6 +13,10 @@ td_stateMachine createStateMachine();
 
 td_stateMachineNode createStateMachineNode(td_stateMachine, char *, bool);
 
+void addStateMachineFloatVariable(td_stateMachine, char *, float);
+
+void addStateMachineIntVariable(td_stateMachine, char *, int);
+
 void addStateMachineConnection(td_stateMachineNode, td_stateMachineNode);
 
 void addStateMachineFloatCondition(td_stateMachineConnection, char *, float, td_stateMachineOperation);
