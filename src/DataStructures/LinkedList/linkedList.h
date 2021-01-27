@@ -3,6 +3,8 @@
 
 typedef struct td_linkedList *td_linkedList;
 
+typedef struct td_iterator *td_iterator;
+
 td_linkedList createLinkedList();
 
 void appendWithFree(td_linkedList, void *, char *, void *);
@@ -24,6 +26,12 @@ void listForEach(td_linkedList, void (*callback)(void *, void *, char *), void *
 char *listToString(td_linkedList);
 
 int listLength(td_linkedList);
+
+td_iterator getIterator(td_linkedList);
+
+void *iteratorNext(td_iterator);
+
+void destroyIterator(td_iterator);
 
 void destroyLinkedList(td_linkedList);
 

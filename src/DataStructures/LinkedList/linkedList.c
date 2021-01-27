@@ -19,6 +19,13 @@ struct td_listNode {
     td_listNode next;
 };
 
+struct td_iterator {
+    td_listNode current;
+    td_listNode start;
+    int length;
+    int index;
+};
+
 td_linkedList createLinkedList() {
     td_linkedList list = malloc(sizeof(struct td_linkedList));
     list -> head = NULL;
@@ -195,6 +202,32 @@ char *listToString(td_linkedList list) {
 
 int listLength(td_linkedList list) {
     return list -> length;
+}
+
+td_iterator getIterator(td_linkedList list) {
+    td_iterator iterator = malloc(sizeof(struct td_iterator));
+    iterator -> current = NULL;
+    iterator -> start = list -> head;
+    iterator -> length = list -> length;
+    iterator -> index = 0;
+    return iterator;
+}
+
+void *iteratorNext(td_iterator iterator) {
+    if(!iterator -> current) {
+        iterator -> current = iterator -> start;
+    } else if(iterator -> length - 1 == iterator -> index) {
+        return NULL;
+    } else {
+        iterator -> current = iterator -> current -> next;
+        iterator -> index++;
+    }
+
+    return iterator -> current -> data;
+}
+
+void destroyIterator(td_iterator iterator) {
+    free(iterator);
 }
 
 void destroyLinkedList(td_linkedList list) {

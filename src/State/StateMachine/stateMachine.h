@@ -17,11 +17,17 @@ void addStateMachineFloatVariable(td_stateMachine, char *, float);
 
 void addStateMachineIntVariable(td_stateMachine, char *, int);
 
-void addStateMachineConnection(td_stateMachineNode, td_stateMachineNode);
+td_stateMachineConnection addStateMachineConnection(td_stateMachineNode, td_stateMachineNode);
 
 void addStateMachineFloatCondition(td_stateMachineConnection, char *, float, td_stateMachineOperation);
 
 void addStateMachineIntCondition(td_stateMachineConnection, char *, int, td_stateMachineOperation);
+
+void updateStateMachineFloatCondition(td_stateMachine, char *, float);
+
+void updateStateMachineIntCondition(td_stateMachine, char *, int);
+
+char *getCurrentStateId(td_stateMachine);
 
 void destroyStateMachine(td_stateMachine);
 
