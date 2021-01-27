@@ -6,7 +6,7 @@ int runStateMachineTests() {
     td_stateMachine machine = createStateMachine();
 
     addStateMachineIntVariable(machine, "count", 0);
-    addStateMachineIntVariable(machine, "float", 0);
+    addStateMachineFloatVariable(machine, "float", 6);
 
     td_stateMachineNode start = createStateMachineNode(machine, "start", true);
     td_stateMachineNode end = createStateMachineNode(machine, "end", false);
@@ -16,6 +16,7 @@ int runStateMachineTests() {
     td_stateMachineConnection connection3 = addStateMachineConnection(start, middle);
     addStateMachineIntCondition(connection, "count", 5, TD_GT);
     addStateMachineIntCondition(connection2, "count", 1, TD_EQ);
+    addStateMachineFloatCondition(connection2, "float", 5, TD_LT);
     addStateMachineFloatCondition(connection3, "float", 10.5, TD_GT);
 
     for(int i = 0; i <= 5; i++) {
@@ -29,6 +30,9 @@ int runStateMachineTests() {
     assertString("end", state, "State machine condition met");
 
     updateStateMachineIntCondition(machine, "count", 1);
+    state = getCurrentStateId(machine);
+    assertString("end", state, "State machine condition not met");
+    updateStateMachineFloatCondition(machine, "float", 1);
     state = getCurrentStateId(machine);
     assertString("start", state, "State machine condition met");
 
