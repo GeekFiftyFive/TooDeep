@@ -141,7 +141,6 @@ static void connectionCallback(void *entryData, void *callbackData, char *key) {
     td_iterator iterator = getIterator(connection -> conditions);
     struct td_stateMachineCondition *condition = NULL;
     bool followConnection = true;
-    td_iterator test = getIterator(connection -> conditions);
 
     while((condition = (struct td_stateMachineCondition *) iteratorNext(iterator))) {
         struct td_stateMachineValueType *valueType =
