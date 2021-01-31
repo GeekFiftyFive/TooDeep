@@ -316,6 +316,22 @@ int luaSetTimeout(lua_State *state) {
     return 1;
 }
 
+int luaSetStateMachineValue(lua_State *state) {
+    td_entity entity = (td_entity) lua_topointer(state, 1);
+    const char *name = luaL_checkstring(state, 2);
+    td_stateMachine machine = getAnimationStateMachine(entity);
+
+    if(lua_isinteger(state, 3)) {
+
+    } else if(lua_isnumber(state, 3)) {
+
+    } else if(lua_isboolean(state, 3)) {
+
+    }
+
+    return 1;
+}
+
 void executeCallback(lua_State *state, int reference) {
     lua_rawgeti(state, LUA_REGISTRYINDEX, reference);
     lua_pushvalue(state, 1);
@@ -402,4 +418,7 @@ void registerCFunctions(
 
     lua_pushcfunction(state, luaGetEntityGravity);
     lua_setglobal(state, "getEntityGravity");
+
+    lua_pushcfunction(state, luaSetStateMachineValue);
+    lua_setglobal(state, "setStateMachineValue");
 }
