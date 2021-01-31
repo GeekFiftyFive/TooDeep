@@ -325,6 +325,8 @@ int luaSetStateMachineValue(lua_State *state) {
     const char *name = luaL_checkstring(state, 2);
     td_stateMachine machine = getAnimationStateMachine(entity);
 
+    char *existingState = getCurrentStateId(machine);
+
     if(lua_isinteger(state, 3)) {
         int value = lua_tointeger(state, 3);
         updateStateMachineIntCondition(machine, name, value);
@@ -351,7 +353,9 @@ int luaSetStateMachineValue(lua_State *state) {
         addAnimationToScene(scene, animation, animationName);
     }
 
-    playAnimation(entity, animation);
+    if(strcmp(existingState, animationName) != 0) {
+        playAnimation(entity, animation);
+    }
 
     return 1;
 }
