@@ -23,7 +23,9 @@ char *getJSONString(td_json, char *, td_jsonError *);
 
 bool jsonFieldExists(td_json, char *);
 
-bool isJSONFieldArray(td_json json, char *field);
+bool isJSONFieldArray(td_json, char *);
+
+bool isJSONFieldBoolean(td_json, char *);
 
 void jsonArrayForEach(td_json, char *, void (*callback)(td_json, void *), void *);
 

@@ -16,18 +16,18 @@
             "conditions": [
                 {
                     "variable": "flying",
-                    "comparison": "eq",
+                    "comparison": "=",
                     "value": true
                 }
             ]
         },
         {
             "start": "rocket_flight",
-            "end": "rocket_start",
+            "end": "rocket_idle",
             "conditions": [
                 {
                     "variable": "flying",
-                    "comparison": "eq",
+                    "comparison": "=",
                     "value": false
                 }
             ]

@@ -25,6 +25,10 @@ void addStateMachineFloatCondition(td_stateMachineConnection, char *, float, td_
 
 void addStateMachineIntCondition(td_stateMachineConnection, char *, int, td_stateMachineOperation);
 
+bool isStateMachineVariableInt(td_stateMachine, char *);
+
+bool isStateMachineVariableFloat(td_stateMachine, char *);
+
 void updateStateMachineFloatCondition(td_stateMachine, char *, float);
 
 void updateStateMachineIntCondition(td_stateMachine, char *, int);

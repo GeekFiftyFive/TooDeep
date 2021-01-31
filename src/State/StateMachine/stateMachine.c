@@ -129,6 +129,15 @@ void addStateMachineIntCondition(td_stateMachineConnection connection, char *var
     addCondition(connection, varName, val, false, op);
 }
 
+bool isStateMachineVariableInt(td_stateMachine stateMachine, char *name) {
+    struct td_stateMachineValueType *var = getFromHashMap(stateMachine -> variables, name);
+    return !var -> isFloat;
+}
+
+bool isStateMachineVariableFloat(td_stateMachine stateMachine, char *name) {
+    return !isStateMachineVariableInt(stateMachine, name);
+}
+
 static bool checkIntCondition(int actual, int target, td_stateMachineOperation op) {
     checkCondition(actual, target, op);
     return false;
