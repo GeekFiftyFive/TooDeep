@@ -1,0 +1,35 @@
+{
+    "name": "rocket_state_machine",
+    "animations": ["rocket_idle", "rocket_flight"],
+    "variables": [
+        {
+            "name": "flying",
+            "type": "integer",
+            "start_value": 0
+        }
+    ],
+    "connections": [
+        {
+            "start": "rocket_idle",
+            "end": "rocket_flight",
+            "conditions": [
+                {
+                    "variable": "flying",
+                    "comparison": "eq",
+                    "value": 1
+                }
+            ]
+        },
+        {
+            "start": "rocket_flight",
+            "end": "rocket_start",
+            "conditions": [
+                {
+                    "variable": "flying",
+                    "comparison": "eq",
+                    "value": 0
+                }
+            ]
+        }
+    ]
+}
