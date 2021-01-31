@@ -1,9 +1,9 @@
 local entity = getEntity(entityID)
 if(thrust < 0.001)
 then
-    playAnimation(entity, "rocket_idle")
+    setStateMachineValue(entity, "flying", false)
 else
-    playAnimation(entity, "rocket_flight")
+    setStateMachineValue(entity, "flying", true)
 end
 
 applyForceToEntity(entity, 0, thrust)
