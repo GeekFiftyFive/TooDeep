@@ -17,6 +17,7 @@
 #define ENTITIES_PATH "entities"
 #define TILESETS_PATH "tilesets"
 #define ANIMATIONS_PATH "animations"
+#define STATE_MACHINES_PATH "statemachines"
 
 struct td_game {
     td_resourceLoader loader;
@@ -26,6 +27,7 @@ struct td_game {
     td_hashMap entities;
     td_hashMap tilesets;
     td_hashMap animations;
+    td_hashMap stateMachines;
     td_json manifest;
     int entityCount;
     lua_State *state;
@@ -110,6 +112,7 @@ td_game loadGameFromDirectory(char *path, td_renderer renderer) {
     game -> entities = createHashMap(10);
     game -> tilesets = createHashMap(10);
     game -> animations = createHashMap(10);
+    game -> stateMachines = createHashMap(10);
     game -> keymap = loadKeymap(game -> loader);
 
     char *scenePath = concatPath(path, SCENES_PATH);
@@ -127,6 +130,10 @@ td_game loadGameFromDirectory(char *path, td_renderer renderer) {
     char *animationPath = concatPath(path, ANIMATIONS_PATH);
     mapData.map = game -> animations;
     iterateOverDir(animationPath, true, addJsonToHashmapCallback, &mapData);
+
+    char *stateMachinePath = concatPath(path, STATE_MACHINES_PATH);
+    mapData.map = game -> stateMachines;
+    iterateOverDir(stateMachinePath, true, addJsonToHashmapCallback, &mapData);
 
     td_jsonError err;
     char *startSceneName = getJSONString(game -> manifest, "start_scene", &err);
@@ -212,6 +219,10 @@ td_json getAnimation(td_game game, char *animationName) {
     return (td_json) getFromHashMap(game -> animations, animationName);
 }
 
+td_json getStateMachine(td_game game, char *stateMachineName) {
+    return (td_json) getFromHashMap(game -> stateMachines, stateMachineName);
+}
+
 td_resourceLoader getResourceLoader(td_game game) {
     return game -> loader;
 }
@@ -233,6 +244,7 @@ void destroyGame(td_game game) {
     destroyHashMap(game -> keymap);
     destroyHashMap(game -> tilesets);
     destroyHashMap(game -> animations);
+    destroyHashMap(game -> stateMachines);
     destroyScene(game -> currentScene);
     lua_close(game -> state);
     freeJson(game -> manifest);

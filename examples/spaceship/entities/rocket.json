@@ -2,7 +2,7 @@
     "name": "rocket",
     "start_look": {
         "type": "animation",
-        "animation": "rocket_idle"
+        "animation_state_machine": "rocket_state_machine"
     },
     "behavior": {
         "on_update": {

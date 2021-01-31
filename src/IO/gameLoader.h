@@ -31,6 +31,8 @@ td_json getTileset(td_game, char*);
 
 td_json getAnimation(td_game, char *);
 
+td_json getStateMachine(td_game, char *);
+
 td_resourceLoader getResourceLoader(td_game);
 
 td_renderer getRenderer(td_game);

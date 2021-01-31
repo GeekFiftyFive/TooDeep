@@ -10,6 +10,8 @@
 #include "../../Physics/boxCollision.h"
 #include "../../Renderer/animation.h"
 #include "../../Scripting/luaCallback.h"
+#include "../../State/StateMachine/stateMachine.h"
+#include "../../JSON/Loaders/stateMachineLoader.h"
 
 // TODO: This need A LOT of cleaning up!
 
@@ -250,6 +252,15 @@ void entityCallback(td_json json, void *data) {
     if(!assetName) {
         // Get animation name
         animationName = getJSONString(entityJSON, "start_look.animation", NULL);
+        if(!animationName) {
+            char *stateMachineName = getJSONString(entityJSON, "start_look.animation_state_machine", NULL);
+            td_json stateMachineJSON = getStateMachine(dataCast -> game, stateMachineName);
+            td_stateMachine machine = loadStateMachineFromJSON(stateMachineJSON);
+            // TODO: Store the statemachine somewhere
+            animationName = getCurrentStateId(machine);
+            //TODO: When this is actually stored remove this
+            destroyStateMachine(machine);
+        }
         td_json animationJSON = getAnimation(dataCast -> game, animationName);
         char *name = getJSONString(animationJSON, "name", NULL);
 
