@@ -245,6 +245,7 @@ void entityCallback(td_json json, void *data) {
 
     td_renderable renderable;
     td_animation animation = NULL;
+    td_stateMachine machine = NULL;
 
     char *animationName = NULL;
     char *assetName = getJSONString(json, "start_look.asset", NULL);
@@ -255,11 +256,8 @@ void entityCallback(td_json json, void *data) {
         if(!animationName) {
             char *stateMachineName = getJSONString(entityJSON, "start_look.animation_state_machine", NULL);
             td_json stateMachineJSON = getStateMachine(dataCast -> game, stateMachineName);
-            td_stateMachine machine = loadStateMachineFromJSON(stateMachineJSON);
-            // TODO: Store the statemachine somewhere
+            machine = loadStateMachineFromJSON(stateMachineJSON);
             animationName = getCurrentStateId(machine);
-            //TODO: When this is actually stored remove this
-            destroyStateMachine(machine);
         }
         td_json animationJSON = getAnimation(dataCast -> game, animationName);
         char *name = getJSONString(animationJSON, "name", NULL);
@@ -300,6 +298,9 @@ void entityCallback(td_json json, void *data) {
     if(animation) {
         addAnimation(entity, animation, animationName);
         setAnimation(entity, animation);
+    }
+    if(machine) {
+        addAnimationStateMachine(entity, machine);
     }
     setEntityPosition(entity, pos);
     enableEntityGravity(entity, gravityEnabled);

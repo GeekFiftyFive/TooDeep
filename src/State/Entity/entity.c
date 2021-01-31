@@ -12,12 +12,13 @@ struct td_entity {
     td_renderable renderable;
     td_physicsObject physicsObject;
     td_linkedList collisionHulls;
-    td_tuple posDelta; // TODO: Find a better way of tracking this
+    td_tuple posDelta;
     td_animation animation;
     td_hashMap animations;
     td_linkedList renderables;
     td_entityFlip flip;
     td_entityState state;
+    td_stateMachine animationStateMachine;
 };
 
 td_entity createEntity(char *ID, td_renderable renderable) {
@@ -32,6 +33,7 @@ td_entity createEntity(char *ID, td_renderable renderable) {
     entity -> flip = TD_NO_FLIP;
     entity -> renderables = createLinkedList();
     entity -> state = createEntityState();
+    entity -> animationStateMachine = NULL;
     return entity;
 }
 
@@ -82,6 +84,14 @@ void addAnimation(td_entity entity, td_animation animation, char *name) {
     setRenderableFlip(renderable, flipConversion(entity -> flip));
     append(entity -> renderables, renderable, name);
     insertIntoHashMap(entity -> animations, name, animation, NULL);
+}
+
+void addAnimationStateMachine(td_entity entity, td_stateMachine stateMachine) {
+    entity -> animationStateMachine = stateMachine;
+}
+
+td_stateMachine getAnimationStateMachine(td_entity entity) {
+    return entity -> animationStateMachine;
 }
 
 float getEntityGravityAccleration(td_entity entity) {
@@ -171,5 +181,10 @@ void destroyEntity(td_entity entity) {
     destroyLinkedList(entity -> renderables);
     destroyHashMap(entity -> animations);
     destroyEntityState(entity -> state);
+    
+    if(entity -> animationStateMachine) {
+        destroyStateMachine(entity -> animationStateMachine);
+    }
+
     free(entity);
 }

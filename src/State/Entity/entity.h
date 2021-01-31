@@ -5,6 +5,7 @@
 #include "../../Renderer/renderer.h"
 #include "../../Physics/boxCollision.h"
 #include "../../Renderer/animation.h"
+#include "../StateMachine/stateMachine.h"
 
 typedef enum {TD_NO_FLIP, TD_HORIZONTAL_FLIP, TD_VERTICAL_FLIP} td_entityFlip;
 
@@ -21,6 +22,10 @@ td_animation getAnimationFromEntity(td_entity, const char *);
 void setAnimation(td_entity, td_animation);
 
 void addAnimation(td_entity, td_animation, char *);
+
+void addAnimationStateMachine(td_entity, td_stateMachine);
+
+td_stateMachine getAnimationStateMachine(td_entity);
 
 float getEntityGravityAccleration(td_entity);
 
