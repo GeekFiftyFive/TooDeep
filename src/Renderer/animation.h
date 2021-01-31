@@ -1,5 +1,5 @@
 #ifndef TD_ANIMATION
-#define ANIMATION
+#define TD_ANIMATION
 
 #include "renderer.h"
 #include "../JSON/jsonParser.h"
