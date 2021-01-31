@@ -13,6 +13,8 @@ td_stateMachine createStateMachine();
 
 td_stateMachineNode createStateMachineNode(td_stateMachine, char *, bool);
 
+td_stateMachineNode getStateMachineNode(td_stateMachine, char *);
+
 void addStateMachineFloatVariable(td_stateMachine, char *, float);
 
 void addStateMachineIntVariable(td_stateMachine, char *, int);

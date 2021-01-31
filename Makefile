@@ -36,7 +36,8 @@ tooDeep: obj/main.o\
 		 obj/entityState.o\
 		 obj/luaCallback.o\
 		 obj/stateMachine.o\
-		 obj/stateMachineTests.o
+		 obj/stateMachineTests.o\
+		 obj/stateMachineLoader.o
 			cc $(ARGS) -o tooDeep obj/main.o\
 				obj/renderer.o\
 				obj/eventLoop.o\
@@ -68,6 +69,7 @@ tooDeep: obj/main.o\
 				obj/luaCallback.o\
 				obj/stateMachine.o\
 				obj/stateMachineTests.o\
+				obj/stateMachineLoader.o\
 				$(LIBS)
 
 obj/main.o: src/main.c
@@ -111,6 +113,9 @@ obj/logger.o: src/IO/logger.c src/IO/logger.h
 
 obj/jsonParser.o: src/JSON/jsonParser.c src/JSON/jsonParser.h
 			cc $(ARGS) -c src/JSON/jsonParser.c -o obj/jsonParser.o
+
+obj/stateMachineLoader.o: src/JSON/Loaders/stateMachineLoader.c src/JSON/Loaders/stateMachineLoader.h
+			cc $(ARGS) -c src/JSON/Loaders/stateMachineLoader.c -o obj/stateMachineLoader.o
 
 obj/gameLoader.o: src/IO/gameLoader.c src/IO/gameLoader.h
 			cc $(ARGS) -c src/IO/gameLoader.c -o obj/gameLoader.o

@@ -1,11 +1,12 @@
 {
     "name": "rocket_state_machine",
     "animations": ["rocket_idle", "rocket_flight"],
+    "default_animation": "rocket_idle",
     "variables": [
         {
             "name": "flying",
-            "type": "integer",
-            "start_value": 0
+            "type": "boolean",
+            "start_value": false
         }
     ],
     "connections": [
@@ -16,7 +17,7 @@
                 {
                     "variable": "flying",
                     "comparison": "eq",
-                    "value": 1
+                    "value": true
                 }
             ]
         },
@@ -27,7 +28,7 @@
                 {
                     "variable": "flying",
                     "comparison": "eq",
-                    "value": 0
+                    "value": false
                 }
             ]
         }

@@ -65,9 +65,13 @@ td_stateMachineNode createStateMachineNode(td_stateMachine stateMachine, char *i
 
     node -> connections = createLinkedList();
 
-    appendWithFree(stateMachine -> nodes, node, NULL, destroyStateMachineNode);
+    appendWithFree(stateMachine -> nodes, node, idCpy, destroyStateMachineNode);
 
     return node;
+}
+
+td_stateMachineNode getStateMachineNode(td_stateMachine stateMachine, char *id) {
+    return getFromList(stateMachine -> nodes, id);
 }
 
 td_stateMachineConnection addStateMachineConnection(td_stateMachineNode src, td_stateMachineNode dst) {
