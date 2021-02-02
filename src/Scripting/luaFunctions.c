@@ -58,8 +58,10 @@ void pushVariableCallback(void *elementData, void *callbackData, char *key) {
     }
 }
 
-void executeScript(lua_State *state, td_script script) {
+void executeScript(lua_State *state, td_script script, td_eventAttributes eventAttributes) {
     listForEach(script -> variables, pushVariableCallback, state);
+
+    mapToLuaTable(eventAttributes, state);
 
     if (luaL_loadstring(state, script -> content) == LUA_OK) {
         if (lua_pcall(state, 0, 1, 0) == LUA_OK) {

@@ -535,7 +535,10 @@ void executeTimeouts(lua_State *state, td_scene scene) {
 
 void executeBehaviorCallback(void *entryData, void *callbackData, char *key) {
     lua_State *state = (lua_State*) callbackData;
-    executeScript(state, (td_script) entryData);
+    // TODO: Move this and actuall add event attributes
+    td_eventAttributes eventAttributes = createEventAttributes();
+    executeScript(state, (td_script) entryData, eventAttributes);
+    destroyEventAttributes(eventAttributes);
 }
 
 void executeUpdateBehaviors(lua_State *state, td_scene scene) {
