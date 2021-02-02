@@ -535,7 +535,6 @@ void executeTimeouts(lua_State *state, td_scene scene) {
 
 void executeBehaviorCallback(void *entryData, void *callbackData, char *key) {
     lua_State *state = (lua_State*) callbackData;
-    // TODO: Move this and actuall add event attributes
     td_eventAttributes eventAttributes = createEventAttributes();
     executeScript(state, (td_script) entryData, eventAttributes);
     destroyEventAttributes(eventAttributes);
@@ -547,7 +546,18 @@ void executeUpdateBehaviors(lua_State *state, td_scene scene) {
     if(!updateBehaviors) {
         return;
     }
-    listForEach(updateBehaviors, executeBehaviorCallback, state);
+
+    td_eventAttributes eventAttributes = createEventAttributes();
+
+    td_iterator iterator = getIterator(updateBehaviors);
+    td_script script;
+
+    while ((script = iteratorNext(iterator))) {
+        executeScript(state, script, eventAttributes);
+    }
+
+    destroyEventAttributes(eventAttributes);
+    destroyIterator(iterator);
 }
 
 void immutableColliderCallback(void *entryData, void *callbackData, char *key) {
