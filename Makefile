@@ -37,7 +37,8 @@ tooDeep: obj/main.o\
 		 obj/luaCallback.o\
 		 obj/stateMachine.o\
 		 obj/stateMachineTests.o\
-		 obj/stateMachineLoader.o
+		 obj/stateMachineLoader.o\
+		 obj/eventAttributes.o
 			cc $(ARGS) -o tooDeep obj/main.o\
 				obj/renderer.o\
 				obj/eventLoop.o\
@@ -70,6 +71,7 @@ tooDeep: obj/main.o\
 				obj/stateMachine.o\
 				obj/stateMachineTests.o\
 				obj/stateMachineLoader.o\
+				obj/eventAttributes.o\
 				$(LIBS)
 
 obj/main.o: src/main.c
@@ -143,6 +145,9 @@ obj/stringUtils.o: src/Utils/stringUtils.c src/Utils/stringUtils.h
 
 obj/luaFunctions.o: src/Scripting/luaFunctions.c src/Scripting/luaFunctions.h
 			cc $(ARGS) -c src/Scripting/luaFunctions.c -o obj/luaFunctions.o
+
+obj/eventAttributes.o: src/Scripting/eventAttributes.c src/Scripting/eventAttributes.h
+			cc $(ARGS) -c src/Scripting/eventAttributes.c -o obj/eventAttributes.o
 
 obj/luaCallback.o: src/Scripting/luaCallback.c src/Scripting/luaCallback.h
 			cc $(ARGS) -c src/Scripting/luaCallback.c -o obj/luaCallback.o
