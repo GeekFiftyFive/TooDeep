@@ -16,7 +16,7 @@ void physicsUpdate(td_scene, int);
 
 void forAllColliders(td_scene, void *, void *);
 
-void executeUpdateBehaviors(lua_State *, td_scene);
+void executeUpdateBehaviors(lua_State *, td_scene, int);
 
 void iterateAnimations(td_scene);
 

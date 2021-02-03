@@ -30,12 +30,32 @@ void registerEventAttribute(td_eventAttributes eventAttributes, td_scriptValType
     appendWithFree(eventAttributes -> variables, attribute, name, free);
 }
 
-void mapValueCallback(void *entryData, void *callbackData, char *key) {
+static void mapValueCallback(void *entryData, void *callbackData, char *key) {
+    struct td_attribute *attribute = (struct td_attribute *) entryData;
+    lua_State *state = (lua_State*) callbackData;
 
+    lua_pushstring(state, key);
+
+    if(attribute -> valType == INT) {
+        lua_pushinteger(state, attribute -> val.intVal);
+    } else if(attribute -> valType == FLOAT) {
+        lua_pushnumber(state, attribute -> val.floatVal);
+    } else if(attribute -> valType == BOOL) {
+        lua_pushboolean(state, attribute -> val.booleanVal);
+    } else if(attribute -> valType == STRING) {
+        lua_pushstring(state, attribute -> val.stringVal);
+    }
+
+    lua_settable(state, -3);
 }
 
 void mapToLuaTable(td_eventAttributes eventAttributes, lua_State *state) {
+    if(!listLength(eventAttributes -> variables)) {
+        return;
+    }
+    lua_createtable(state, 0, listLength(eventAttributes -> variables));
     listForEach(eventAttributes -> variables, mapValueCallback, state);
+    lua_setglobal(state, "eventAttributes");
 }
 
 void destroyEventAttributes(td_eventAttributes eventAttributes) {

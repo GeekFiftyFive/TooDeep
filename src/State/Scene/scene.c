@@ -540,7 +540,7 @@ void executeBehaviorCallback(void *entryData, void *callbackData, char *key) {
     destroyEventAttributes(eventAttributes);
 }
 
-void executeUpdateBehaviors(lua_State *state, td_scene scene) {
+void executeUpdateBehaviors(lua_State *state, td_scene scene, int delta) {
     td_linkedList updateBehaviors = (td_linkedList) getFromHashMap(scene -> behaviors, "on_update");
 
     if(!updateBehaviors) {
@@ -548,6 +548,9 @@ void executeUpdateBehaviors(lua_State *state, td_scene scene) {
     }
 
     td_eventAttributes eventAttributes = createEventAttributes();
+    td_scriptVal val;
+    val.intVal = delta;
+    registerEventAttribute(eventAttributes, INT, val, "time_delta");
 
     td_iterator iterator = getIterator(updateBehaviors);
     td_script script;

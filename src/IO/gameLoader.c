@@ -186,7 +186,7 @@ void createDebugRenderables(td_game game) {
 void executeTick(td_game game, int delta) {
     physicsUpdate(game -> currentScene, delta);
     resolveCollisions(game -> currentScene);
-    executeUpdateBehaviors(game -> state, game -> currentScene);
+    executeUpdateBehaviors(game -> state, game -> currentScene, delta);
     iterateAnimations(game -> currentScene);
     executeTimeouts(game -> state, game -> currentScene);
 }
