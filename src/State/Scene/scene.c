@@ -623,7 +623,17 @@ void executeEventBehaviors(lua_State *state, td_scene scene, td_hashMap keymap, 
     if(!keyBehaviors) {
         return;
     }
-    listForEach(keyBehaviors, executeBehaviorCallback, state);
+    
+    td_eventAttributes eventAttributes = createEventAttributes();
+    td_iterator iterator = getIterator(keyBehaviors);
+    td_script script;
+
+    while ((script = iteratorNext(iterator))) {
+        executeScript(state, script, eventAttributes);
+    }
+    
+    destroyEventAttributes(eventAttributes);
+    destroyIterator(iterator);
 }
 
 td_linkedList getWorldColliders(td_scene scene) {
