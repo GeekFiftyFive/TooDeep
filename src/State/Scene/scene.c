@@ -600,50 +600,30 @@ void iterateAnimations(td_scene scene) {
 void executeEventBehaviors(lua_State *state, td_scene scene, td_hashMap keymap, SDL_Event e) {
     // Handle keyboard events
     // TODO: This should probably be moved to the keyboard events module
-    switch (e.type) {
-        case SDL_KEYDOWN: {
-            if(e.key.repeat != 0) {
-                break;
-            }
-            const char* keyname = keySymToString(e.key.keysym.sym);
-            td_keymap map = (td_keymap) getFromHashMap(keymap, (char *) keyname);
-            if(!map) {
-                break;
-            }
-            char *action = map -> down;
-            if(!action) {
-                break;
-            }
-            td_linkedList keyBehaviors = (td_linkedList) getFromHashMap(scene -> behaviors, action);
-            if(!keyBehaviors) {
-                break;
-            }
-            listForEach(keyBehaviors, executeBehaviorCallback, state);
-            break;
-        }
-        case SDL_KEYUP: {
-            if(e.key.repeat != 0) {
-                break;
-            }
-            const char* keyname = keySymToString(e.key.keysym.sym);
-            td_keymap map = (td_keymap) getFromHashMap(keymap, (char *) keyname);
-            if(!map) {
-                break;
-            }
-            char *action = map -> up;
-            if(!action) {
-                break;
-            }
-            td_linkedList keyBehaviors = (td_linkedList) getFromHashMap(scene -> behaviors, action);
-            if(!keyBehaviors) {
-                break;
-            }
-            listForEach(keyBehaviors, executeBehaviorCallback, state);
-            break;
-        }
-        default:
-            break;
+    if(e.key.repeat != 0) {
+        return;
     }
+    const char* keyname = keySymToString(e.key.keysym.sym);
+    td_keymap map = (td_keymap) getFromHashMap(keymap, (char *) keyname);
+    if(!map) {
+        return;
+    }
+    char *action;
+    if(e.type == SDL_KEYDOWN) {
+        action = map -> down;
+    } else if(e.type == SDL_KEYUP) {
+        action = map -> up;
+    } else {
+        return;
+    }
+    if(!action) {
+        return;
+    }
+    td_linkedList keyBehaviors = (td_linkedList) getFromHashMap(scene -> behaviors, action);
+    if(!keyBehaviors) {
+        return;
+    }
+    listForEach(keyBehaviors, executeBehaviorCallback, state);
 }
 
 td_linkedList getWorldColliders(td_scene scene) {
