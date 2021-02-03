@@ -16,6 +16,7 @@
 #define SCREEN_HEIGHT 720
 
 #define USER_CONFIG_NAME "td-user-config.json"
+#define MANIFEST "td-game.json"
 
 bool shouldRunTests(int argc, char *args[]) {
     for(int i = 0; i < argc; i++) {
@@ -34,6 +35,7 @@ int main(int argc, char *args[]) {
 
     td_resourceLoader loader = createResourceLoader(args[1]);
     char *configText = loadPlaintextResource(loader, USER_CONFIG_NAME);
+    char *manifestText = loadPlaintextResource(loader, MANIFEST);
 
     if(!configText) {
         logError("Cannot load config file\n");
@@ -42,14 +44,13 @@ int main(int argc, char *args[]) {
     }
 
     td_json config = jsonParse(configText);
-    //td_json manifest = getManifest(game);
+    td_json manifest = jsonParse(manifestText);
 
     int width = getJSONInt(config, "userConfig.resolution.w", NULL);
     int height = getJSONInt(config, "userConfig.resolution.h", NULL);
-
-    //char *title = getJSONString(manifest, "meta.title", NULL);
+    char *title = getJSONString(manifest, "meta.title", NULL);
     
-    td_renderer renderer = initRenderer("tooDeep", width, height);
+    td_renderer renderer = initRenderer(title, width, height);
 
     if(!renderer) return 1;
 
