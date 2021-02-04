@@ -214,6 +214,7 @@ int luaCheckCollision(lua_State *state) {
     const char *colliderName = luaL_checkstring(state, 2);
     td_boxCollider collider = getCollisionHull(entity, (char *) colliderName);
     bool collided = checkWorldCollisions(collider, getWorldColliders(scene));
+    collided = collided || checkWorldCollisions(collider, getEntityColliders(scene));
 
     lua_pushboolean(state, collided);
     return 1;

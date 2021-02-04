@@ -566,6 +566,9 @@ void executeUpdateBehaviors(lua_State *state, td_scene scene, int delta) {
 void immutableColliderCallback(void *entryData, void *callbackData, char *key) {
     td_boxCollider mutableCollider = ((struct checkWorldCollisionsCallbackData*) callbackData) -> collider;
     td_boxCollider immutableCollider = (td_boxCollider) entryData;
+    if(mutableCollider == immutableCollider) {
+        return;
+    }
     bool collided = checkCollision(mutableCollider, immutableCollider);
     if(collided) {
         ((struct checkWorldCollisionsCallbackData*) callbackData) -> collided = true;
@@ -641,6 +644,10 @@ void executeEventBehaviors(lua_State *state, td_scene scene, td_hashMap keymap, 
 
 td_linkedList getWorldColliders(td_scene scene) {
     return scene -> immutableColliders;
+}
+
+td_linkedList getEntityColliders(td_scene scene) {
+    return scene -> mutableColliders;
 }
 
 td_entity getEntityByID(td_scene scene, char *ID) {

@@ -32,6 +32,8 @@ void executeEventBehaviors(lua_State *, td_scene, td_hashMap, SDL_Event);
 
 td_linkedList getWorldColliders(td_scene);
 
+td_linkedList getEntityColliders(td_scene);
+
 td_entity getEntityByID(td_scene, char *);
 
 td_camera getCameraByID(td_scene, char *);

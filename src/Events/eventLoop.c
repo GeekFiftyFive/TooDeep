@@ -6,7 +6,7 @@
 #include "../State/Entity/entity.h"
 
 #ifndef RENDER_DEBUG_DATA
-#define RENDER_DEBUG_DATA false
+#define RENDER_DEBUG_DATA true
 #endif
 #define debug(x) if(RENDER_DEBUG_DATA) x
 

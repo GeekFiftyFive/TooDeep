@@ -6,8 +6,7 @@
     },
     "behavior": {
         "on_update": {
-            "script": "warp.lua",
-            "variables": {}
+            "script": "warp.lua"
         }
     },
     "physics": {
