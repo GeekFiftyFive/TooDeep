@@ -12,6 +12,18 @@
                 "space": "world_space",
                 "layer": "entities"
             }
+        },
+        {
+            "entity_id": "warp",
+            "entity_type": "warp",
+            "start_pos": {
+                "x": 1792.0,
+                "y": -256.0
+            },
+            "render_info": {
+                "space": "world_space",
+                "layer": "entities"
+            }
         }
     ],
     "tiled_regions": [

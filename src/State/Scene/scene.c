@@ -248,7 +248,7 @@ void entityCallback(td_json json, void *data) {
     td_stateMachine machine = NULL;
 
     char *animationName = NULL;
-    char *assetName = getJSONString(json, "start_look.asset", NULL);
+    char *assetName = getJSONString(entityJSON, "start_look.asset", NULL);
 
     if(!assetName) {
         // Get animation name
