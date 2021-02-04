@@ -20,7 +20,7 @@ void executeUpdateBehaviors(lua_State *, td_scene, int);
 
 void iterateAnimations(td_scene);
 
-bool checkWorldCollisions(td_boxCollider, td_linkedList);
+bool checkCollisions(td_boxCollider, td_linkedList);
 
 void resolveCollisions(td_scene);
 

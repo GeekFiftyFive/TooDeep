@@ -575,14 +575,14 @@ void immutableColliderCallback(void *entryData, void *callbackData, char *key) {
     }
 }
 
-bool checkWorldCollisions(td_boxCollider collider, td_linkedList colliders) {
+bool checkCollisions(td_boxCollider collider, td_linkedList colliders) {
     struct checkWorldCollisionsCallbackData callbackData = { collider, false };
     listForEach(colliders, immutableColliderCallback, &callbackData);
     return callbackData.collided;
 }
 
 void mutableColliderCallback(void *entryData, void *callbackData, char *key) {
-    checkWorldCollisions((td_boxCollider) entryData, (td_linkedList) callbackData);
+    checkCollisions((td_boxCollider) entryData, (td_linkedList) callbackData);
 }
 
 void resolveCollisions(td_scene scene) {
