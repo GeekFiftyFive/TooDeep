@@ -39,7 +39,7 @@ bool checkCollision(td_boxCollider collider1, td_boxCollider collider2, bool exe
         && collider2 -> parentEntityID
         && strcmp(collider1 -> parentEntityID, collider2 -> parentEntityID) == 0)
     {
-        return;
+        return false;
     }
 
     td_box col1Box = collider1 -> hull;
