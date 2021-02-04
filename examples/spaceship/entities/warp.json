@@ -1,0 +1,27 @@
+{
+    "name": "warp",
+    "start_look": {
+        "type": "texture",
+        "asset": "warp.png"
+    },
+    "behavior": {
+        "on_update": {
+            "script": "warp.lua",
+            "variables": {}
+        }
+    },
+    "physics": {
+        "gravity_enabled": false,
+        "collision_hulls": [
+            {
+                "type": "box",
+                "name": "warp_region",
+                "intangible": true,
+                "x": 0.0,
+                "y": 0.0,
+                "w": 128.0,
+                "h": 128.0
+            }
+        ]
+    }
+}
