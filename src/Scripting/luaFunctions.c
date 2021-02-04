@@ -213,8 +213,8 @@ int luaCheckCollision(lua_State *state) {
     td_entity entity = (td_entity) lua_topointer(state, 1);
     const char *colliderName = luaL_checkstring(state, 2);
     td_boxCollider collider = getCollisionHull(entity, (char *) colliderName);
-    bool collided = checkCollisions(collider, getWorldColliders(scene));
-    collided = collided || checkCollisions(collider, getEntityColliders(scene));
+    bool collided = checkCollisionsWithoutCallbacks(collider, getWorldColliders(scene));
+    collided = collided || checkCollisionsWithoutCallbacks(collider, getEntityColliders(scene));
 
     lua_pushboolean(state, collided);
     return 1;

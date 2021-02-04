@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "boxCollision.h"
 #include "../IO/logger.h"
 
@@ -6,6 +7,7 @@ struct td_boxCollider {
     td_box hull;
     void *callbackData;
     void (*callbackFunction)(td_collision, void *);
+    char *parentEntityID;
 };
 
 td_boxCollider createBoxCollider(td_box hull) {
@@ -14,6 +16,7 @@ td_boxCollider createBoxCollider(td_box hull) {
     collider -> hull = hull;
     collider -> callbackData = NULL;
     collider -> callbackFunction = NULL;
+    collider -> parentEntityID = NULL;
 
     return collider;
 }
@@ -26,7 +29,19 @@ void registerBoxColliderCallbackData(td_boxCollider collider, void *data) {
     collider -> callbackData = data;
 }
 
-bool checkCollision(td_boxCollider collider1, td_boxCollider collider2) {
+void setParentEntityID(td_boxCollider collider, char *parentEntityID) {
+    collider -> parentEntityID = parentEntityID;
+}
+
+bool checkCollision(td_boxCollider collider1, td_boxCollider collider2, bool executeCallbacks) {
+    if (
+        collider1 -> parentEntityID
+        && collider2 -> parentEntityID
+        && strcmp(collider1 -> parentEntityID, collider2 -> parentEntityID) == 0)
+    {
+        return;
+    }
+
     td_box col1Box = collider1 -> hull;
     td_box col2Box = collider2 -> hull;
     td_tuple col1Corner; // collider1 bottom right corner
@@ -69,13 +84,13 @@ bool checkCollision(td_boxCollider collider1, td_boxCollider collider2) {
     td_collision collision = { intrusion };
 
     if(intrusion.x && intrusion.y) {
-        if(collider1 -> callbackFunction) {
+        if(collider1 -> callbackFunction && executeCallbacks) {
             collision.hull = col1Box;
             collision.collidingHull = col2Box;
             collider1 -> callbackFunction(collision, collider1 -> callbackData);
         }
 
-        if(collider2 -> callbackFunction) {
+        if(collider2 -> callbackFunction && executeCallbacks) {
             collision.hull = col2Box;
             collision.collidingHull = col1Box;
             collider2 -> callbackFunction(collision, collider2 -> callbackData);

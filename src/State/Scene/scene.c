@@ -66,6 +66,7 @@ struct addCameraCallbackData {
 struct checkWorldCollisionsCallbackData {
     td_boxCollider collider;
     bool collided;
+    bool executeCallbacks;
 };
 
 struct executeTimeoutCallbackData {
@@ -227,6 +228,8 @@ void addCollisionHullCallback(td_json json, void *data) {
         registerBoxColliderCallback(collider, handleCollision);
         registerBoxColliderCallbackData(collider, callbackData -> entity);
     }
+
+    setParentEntityID(collider, getEntityID(callbackData -> entity));
 
     char *nameCpy = malloc(strlen(name) + 1);
     strcpy(nameCpy, name);
@@ -565,20 +568,29 @@ void executeUpdateBehaviors(lua_State *state, td_scene scene, int delta) {
 
 void immutableColliderCallback(void *entryData, void *callbackData, char *key) {
     td_boxCollider mutableCollider = ((struct checkWorldCollisionsCallbackData*) callbackData) -> collider;
+    bool executeCallbacks = ((struct checkWorldCollisionsCallbackData*) callbackData) -> executeCallbacks;
     td_boxCollider immutableCollider = (td_boxCollider) entryData;
     if(mutableCollider == immutableCollider) {
         return;
     }
-    bool collided = checkCollision(mutableCollider, immutableCollider);
+    bool collided = checkCollision(mutableCollider, immutableCollider, executeCallbacks);
     if(collided) {
         ((struct checkWorldCollisionsCallbackData*) callbackData) -> collided = true;
     }
 }
 
-bool checkCollisions(td_boxCollider collider, td_linkedList colliders) {
-    struct checkWorldCollisionsCallbackData callbackData = { collider, false };
+static bool checkCollisionsHelper(td_boxCollider collider, td_linkedList colliders, bool executeCallbacks) {
+    struct checkWorldCollisionsCallbackData callbackData = { collider, false, executeCallbacks };
     listForEach(colliders, immutableColliderCallback, &callbackData);
     return callbackData.collided;
+}
+
+bool checkCollisionsWithoutCallbacks(td_boxCollider collider, td_linkedList colliders) {
+    return checkCollisionsHelper(collider, colliders, false);
+}
+
+bool checkCollisions(td_boxCollider collider, td_linkedList colliders) {
+    return checkCollisionsHelper(collider, colliders, true);
 }
 
 void mutableColliderCallback(void *entryData, void *callbackData, char *key) {
