@@ -35,6 +35,12 @@ void startEventLoop(td_game game) {
         debug(createDebugRenderables(game));
         int delta = SDL_GetTicks() - prevTicks;
         prevTicks = SDL_GetTicks();
+        
+        // Maximum delta is 1/20th of a second
+        if(delta > 1000 / 20) {
+            delta = 1000 / 20;
+        }
+
         executeTick(game, delta);
         while(SDL_PollEvent(&e)) {
             executeEvent(game, e);
