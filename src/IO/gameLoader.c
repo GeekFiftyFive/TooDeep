@@ -6,7 +6,6 @@
 #include "fileIO.h"
 #include "logger.h"
 #include "../DataStructures/HashMap/hashMap.h"
-#include "../State/Scene/scene.h"
 #include "../State/Entity/entity.h"
 #include "../Utils/stringUtils.h"
 #include "../Scripting/luaFunctions.h"
@@ -149,13 +148,7 @@ td_game loadGameFromDirectory(char *path, td_renderer renderer) {
     game -> state = luaL_newstate();
     luaL_openlibs(game -> state);
 
-    registerCFunctions(
-        game -> state,
-        game -> currentScene,
-        game -> loader,
-        game -> renderer,
-        game -> animations
-    );
+    registerCFunctions(game -> state, game);
 
     free(scenePath);
     free(entityPath);
@@ -231,6 +224,14 @@ td_resourceLoader getResourceLoader(td_game game) {
 
 td_renderer getRenderer(td_game game) {
     return game -> renderer;
+}
+
+td_scene getCurrentScene(td_game game) {
+    return game -> currentScene;
+}
+
+void setCurrentScene(td_game game, td_scene scene) {
+    game -> currentScene = scene;
 }
 
 char *newEntityID(td_game game) {

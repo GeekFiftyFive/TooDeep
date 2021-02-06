@@ -2,10 +2,11 @@
 #define GAME_LOADER
 
 #include <lua.h>
+#include <SDL2/SDL.h>
 #include "resourceLoader.h"
 #include "../JSON/jsonParser.h"
 #include "../Renderer/renderer.h"
-#include <SDL2/SDL.h>
+#include "../State/Scene/scene.h"
 
 typedef struct td_game *td_game;
 
@@ -36,6 +37,10 @@ td_json getStateMachine(td_game, char *);
 td_resourceLoader getResourceLoader(td_game);
 
 td_renderer getRenderer(td_game);
+
+td_scene getCurrentScene(td_game);
+
+void setCurrentScene(td_game, td_scene);
 
 char *newEntityID(td_game);
 

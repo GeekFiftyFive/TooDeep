@@ -187,18 +187,19 @@ int luaGetCamera(lua_State *state) {
 }
 
 int luaPlayAnimation(lua_State *state) {
-    td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(4));
-    td_resourceLoader loader = (td_resourceLoader) lua_topointer(state, lua_upvalueindex(3));
-    td_renderer renderer = (td_renderer) lua_topointer(state, lua_upvalueindex(2));
-    td_hashMap animations = (td_hashMap) lua_topointer(state, lua_upvalueindex(1));
+    td_game game = (td_game) lua_topointer(state, lua_upvalueindex(1));
 
     td_entity entity = (td_entity) lua_topointer(state, 1);
     const char *animationName = luaL_checkstring(state, 2);
 
     td_animation animation = getAnimationFromEntity(entity, animationName);
+    td_resourceLoader loader = getResourceLoader(game);
+    td_scene scene = getCurrentScene(game);
+    td_renderer renderer = getRenderer(game);
 
     if(!animation) {
-        td_json json = (td_json) getFromHashMap(animations, (char *) animationName);
+        td_json json = getAnimation(game, (char *) animationName);
+        logInfo("%s\n", animationName);
         animation = createAnimationFromJson(json, loader, renderer);
         addAnimation(entity, animation, (char *) animationName);
         addAnimationToScene(scene, animation, animationName);
@@ -320,10 +321,7 @@ int luaSetTimeout(lua_State *state) {
 }
 
 int luaSetStateMachineValue(lua_State *state) {
-    td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(4));
-    td_resourceLoader loader = (td_resourceLoader) lua_topointer(state, lua_upvalueindex(3));
-    td_renderer renderer = (td_renderer) lua_topointer(state, lua_upvalueindex(2));
-    td_hashMap animations = (td_hashMap) lua_topointer(state, lua_upvalueindex(1));
+    td_game game = (td_game) lua_topointer(state, lua_upvalueindex(1));
     td_entity entity = (td_entity) lua_topointer(state, 1);
     const char *name = luaL_checkstring(state, 2);
     td_stateMachine machine = getAnimationStateMachine(entity);
@@ -348,9 +346,12 @@ int luaSetStateMachineValue(lua_State *state) {
 
     char *animationName = getCurrentStateId(machine);
     td_animation animation = getAnimationFromEntity(entity, animationName);
+    td_resourceLoader loader = getResourceLoader(game);
+    td_scene scene = getCurrentScene(game);
+    td_renderer renderer = getRenderer(game);
 
     if(!animation) {
-        td_json json = (td_json) getFromHashMap(animations, (char *) animationName);
+        td_json json = getAnimation(game, (char *) animationName);
         animation = createAnimationFromJson(json, loader, renderer);
         addAnimation(entity, animation, (char *) animationName);
         addAnimationToScene(scene, animation, animationName);
@@ -374,11 +375,10 @@ void executeCallback(lua_State *state, int reference) {
 
 void registerCFunctions(
     lua_State *state,
-    td_scene scene,
-    td_resourceLoader loader,
-    td_renderer renderer,
-    td_hashMap animations
+    td_game game
 ) {
+    td_scene scene = getCurrentScene(game);
+
     lua_pushlightuserdata(state, scene);
     lua_pushcclosure(state, luaGetEntity, 1);
     lua_setglobal(state, "getEntity");
@@ -391,18 +391,12 @@ void registerCFunctions(
     lua_pushcclosure(state, luaCheckCollision, 1);
     lua_setglobal(state, "checkCollision");
 
-    lua_pushlightuserdata(state, animations);
-    lua_pushlightuserdata(state, renderer);
-    lua_pushlightuserdata(state, loader);
-    lua_pushlightuserdata(state, scene);
-    lua_pushcclosure(state, luaPlayAnimation, 4);
+    lua_pushlightuserdata(state, game);
+    lua_pushcclosure(state, luaPlayAnimation, 1);
     lua_setglobal(state, "playAnimation");
 
-    lua_pushlightuserdata(state, animations);
-    lua_pushlightuserdata(state, renderer);
-    lua_pushlightuserdata(state, loader);
-    lua_pushlightuserdata(state, scene);
-    lua_pushcclosure(state, luaSetStateMachineValue, 4);
+    lua_pushlightuserdata(state, game);
+    lua_pushcclosure(state, luaSetStateMachineValue, 1);
     lua_setglobal(state, "setStateMachineValue");
 
     lua_pushlightuserdata(state, scene);
