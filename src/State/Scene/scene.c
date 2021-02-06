@@ -20,7 +20,6 @@ struct td_scene {
     td_linkedList cameras;
     td_linkedList animations;
     td_linkedList timeouts;
-    bool close;
 };
 
 struct checkWorldCollisionsCallbackData {
@@ -43,7 +42,6 @@ td_scene createScene() {
     scene -> cameras = createLinkedList();
     scene -> animations = createLinkedList();
     scene -> timeouts = createLinkedList();
-    scene -> close = false;
     return scene;
 }
 
@@ -65,10 +63,6 @@ td_linkedList getAnimations(td_scene scene) {
 
 td_linkedList getTimeouts(td_scene scene) {
     return scene -> timeouts;
-}
-
-void setSceneClose(td_scene scene, bool close) {
-    scene -> close = close;
 }
 
 static void cameraPhysicsUpdate(void *entryData, void *callbackData, char *key) {
@@ -134,10 +128,6 @@ void executeUpdateBehaviors(lua_State *state, td_scene scene, int delta) {
 
     while ((script = iteratorNext(iterator))) {
         executeScript(state, script, eventAttributes);
-        if(scene -> close) {
-            destroyScene(scene);
-            break;
-        }
     }
 
     destroyEventAttributes(eventAttributes);
@@ -226,10 +216,6 @@ void executeEventBehaviors(lua_State *state, td_scene scene, td_hashMap keymap, 
 
     while ((script = iteratorNext(iterator))) {
         executeScript(state, script, eventAttributes);
-        if(scene -> close) {
-            destroyScene(scene);
-            break;
-        }
     }
     
     destroyEventAttributes(eventAttributes);
@@ -257,7 +243,7 @@ void addAnimationToScene(td_scene scene, td_animation animation, char *name) {
 }
 
 void destroyScene(td_scene scene) {
-    destroyLinkedList(scene -> entities);
+    //destroyLinkedList(scene -> entities);
     destroyLinkedList(scene -> mutableColliders);
     destroyLinkedList(scene -> immutableColliders);
     destroyLinkedList(scene -> cameras);

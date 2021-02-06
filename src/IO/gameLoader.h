@@ -10,6 +10,8 @@
 
 typedef struct td_game *td_game;
 
+void setNextStage(td_game, char *);
+
 td_game loadGameFromDirectory(char *, td_renderer);
 
 void copySceneToRenderQueue(td_game);

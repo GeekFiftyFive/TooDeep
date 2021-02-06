@@ -32,12 +32,19 @@ struct td_game {
     int entityCount;
     lua_State *state;
     td_hashMap keymap;
+    char *nextStage;
 };
 
 struct callbackData {
     td_hashMap map;
     td_resourceLoader loader;
 };
+
+void setNextStage(td_game game, char *name) {
+    char *nameCpy = malloc(strlen(name) + 1);
+    strcpy(nameCpy, name);
+    game -> nextStage = nameCpy;
+}
 
 void addJsonToHashmapCallback(char *path, void *rawData) {
     struct callbackData *data = (struct callbackData*) rawData;
@@ -114,6 +121,7 @@ td_game loadGameFromDirectory(char *path, td_renderer renderer) {
     game -> animations = createHashMap(10);
     game -> stateMachines = createHashMap(10);
     game -> keymap = loadKeymap(game -> loader);
+    game -> nextStage = NULL;
 
     char *scenePath = concatPath(path, SCENES_PATH);
     struct callbackData mapData = {game -> scenes, game -> loader};
@@ -184,6 +192,17 @@ void executeTick(td_game game, int delta) {
     executeUpdateBehaviors(game -> state, game -> currentScene, delta);
     iterateAnimations(game -> currentScene);
     executeTimeouts(game -> state, game -> currentScene);
+    if(game -> nextStage) {
+        td_json json = getScene(game, game -> nextStage);
+        destroyScene(game -> currentScene);
+        game -> currentScene = loadSceneFromJSON(json, game);
+        free(game -> nextStage);
+        game -> nextStage = NULL;
+        lua_close(game -> state);
+        game -> state = luaL_newstate();
+        luaL_openlibs(game -> state);
+        registerCFunctions(game -> state, game);
+    }
 }
 
 void executeEvent(td_game game, SDL_Event e) {
