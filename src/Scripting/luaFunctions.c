@@ -370,10 +370,9 @@ int luaSetScene(lua_State *state) {
     const char *name = luaL_checkstring(state, 1);
 
     td_json json = getScene(game, name);
-    //td_scene scene = loadSceneFromJSON(json, game);
-    //destroyScene(getCurrentScene(game));
-    //setCurrentScene(game, scene);
-    //destroyScene(scene);
+    td_scene scene = loadSceneFromJSON(json, game);
+    setSceneClose(getCurrentScene(game), true);
+    setCurrentScene(game, scene);
 
     return 1;
 }

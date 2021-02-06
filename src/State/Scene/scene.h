@@ -22,6 +22,8 @@ td_linkedList getAnimations(td_scene);
 
 td_linkedList getTimeouts(td_scene);
 
+void setSceneClose(td_scene, bool);
+
 void physicsUpdate(td_scene, int);
 
 void forAllColliders(td_scene, void *, void *);
