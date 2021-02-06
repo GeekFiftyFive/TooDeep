@@ -38,6 +38,7 @@ tooDeep: obj/main.o\
 		 obj/stateMachine.o\
 		 obj/stateMachineTests.o\
 		 obj/stateMachineLoader.o\
+		 obj/sceneLoader.o\
 		 obj/eventAttributes.o
 			cc $(ARGS) -o tooDeep obj/main.o\
 				obj/renderer.o\
@@ -71,6 +72,7 @@ tooDeep: obj/main.o\
 				obj/stateMachine.o\
 				obj/stateMachineTests.o\
 				obj/stateMachineLoader.o\
+				obj/sceneLoader.o\
 				obj/eventAttributes.o\
 				$(LIBS)
 
@@ -118,6 +120,9 @@ obj/jsonParser.o: src/JSON/jsonParser.c src/JSON/jsonParser.h
 
 obj/stateMachineLoader.o: src/JSON/Loaders/stateMachineLoader.c src/JSON/Loaders/stateMachineLoader.h
 			cc $(ARGS) -c src/JSON/Loaders/stateMachineLoader.c -o obj/stateMachineLoader.o
+
+obj/sceneLoader.o: src/JSON/Loaders/sceneLoader.c src/JSON/Loaders/sceneLoader.h
+			cc $(ARGS) -c src/JSON/Loaders/sceneLoader.c -o obj/sceneLoader.o
 
 obj/gameLoader.o: src/IO/gameLoader.c src/IO/gameLoader.h
 			cc $(ARGS) -c src/IO/gameLoader.c -o obj/gameLoader.o
