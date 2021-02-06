@@ -1,0 +1,61 @@
+{
+    "name": "Scene 2",
+    "entities": [
+        {
+            "entity_id": "player",
+            "entity_type": "rocket",
+            "start_pos": {
+                "x": 128.0,
+                "y": -128.0
+            },
+            "render_info": {
+                "space": "world_space",
+                "layer": "entities"
+            }
+        }
+    ],
+    "tiled_regions": [
+        {
+            "tileset": "default_tileset",
+            "collision": true,
+            "layer": "foreground",
+            "start_point": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "tile_size": {
+                "w": 128.0,
+                "h": 128.0
+            },
+            "tiles": [
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            ]
+        }
+    ],
+    "cameras": [
+        {
+            "name": "default",
+            "default_camera": true,
+            "start_pos": {
+                "x": 960.0,
+                "y": -540.0
+            },
+            "zoom": 1.0
+        }
+    ],
+    "layers": [
+        "bg",
+        "foreground",
+        "entities",
+        "hud",
+        "menu"
+    ]
+}

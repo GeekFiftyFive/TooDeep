@@ -5,6 +5,7 @@
 #include "../DataStructures/LinkedList/linkedList.h"
 #include "../IO/logger.h"
 #include "../Renderer/camera.h"
+#include "../JSON/Loaders/sceneLoader.h"
 
 typedef struct td_script_variable {
     char *name;
@@ -364,6 +365,19 @@ int luaSetStateMachineValue(lua_State *state) {
     return 1;
 }
 
+int luaSetScene(lua_State *state) {
+    td_game game = (td_game) lua_topointer(state, lua_upvalueindex(1));
+    const char *name = luaL_checkstring(state, 1);
+
+    td_json json = getScene(game, name);
+    //td_scene scene = loadSceneFromJSON(json, game);
+    //destroyScene(getCurrentScene(game));
+    //setCurrentScene(game, scene);
+    //destroyScene(scene);
+
+    return 1;
+}
+
 void executeCallback(lua_State *state, int reference) {
     lua_rawgeti(state, LUA_REGISTRYINDEX, reference);
     lua_pushvalue(state, 1);
@@ -398,6 +412,10 @@ void registerCFunctions(
     lua_pushlightuserdata(state, game);
     lua_pushcclosure(state, luaSetStateMachineValue, 1);
     lua_setglobal(state, "setStateMachineValue");
+
+    lua_pushlightuserdata(state, game);
+    lua_pushcclosure(state, luaSetScene, 1);
+    lua_setglobal(state, "setScene");
 
     lua_pushlightuserdata(state, scene);
     lua_pushcclosure(state, luaSetTimeout, 1);
