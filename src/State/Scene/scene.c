@@ -243,7 +243,7 @@ void addAnimationToScene(td_scene scene, td_animation animation, char *name) {
 }
 
 void destroyScene(td_scene scene) {
-    //destroyLinkedList(scene -> entities);
+    destroyLinkedList(scene -> entities);
     destroyLinkedList(scene -> mutableColliders);
     destroyLinkedList(scene -> immutableColliders);
     destroyLinkedList(scene -> cameras);

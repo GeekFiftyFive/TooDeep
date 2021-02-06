@@ -175,13 +175,12 @@ void entityPhysicsUpdate(void *data, void *callbackData, char *key) {
 }
 
 void destroyEntity(td_entity entity) {
-    destroyRenderable(entity -> renderable);
     destroyPhysicsObject(entity -> physicsObject);
     destroyLinkedList(entity -> collisionHulls);
     destroyLinkedList(entity -> renderables);
     destroyHashMap(entity -> animations);
     destroyEntityState(entity -> state);
-    
+
     if(entity -> animationStateMachine) {
         destroyStateMachine(entity -> animationStateMachine);
     }
