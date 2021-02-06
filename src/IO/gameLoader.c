@@ -11,6 +11,7 @@
 #include "../Utils/stringUtils.h"
 #include "../Scripting/luaFunctions.h"
 #include "../Events/keyboardEvents.h"
+#include "../JSON/Loaders/sceneLoader.h"
 
 #define MANIFEST_NAME "td-game.json"
 #define SCENES_PATH "scenes"
@@ -141,7 +142,8 @@ td_game loadGameFromDirectory(char *path, td_renderer renderer) {
     if(err == JSON_ERROR) {
         logError("start_scene not defined in manifest\n");
     } else {
-        game -> currentScene = buildScene(game, startSceneName);
+        td_json json = (td_json) getFromHashMap(game -> scenes, startSceneName);
+        game -> currentScene = loadSceneFromJSON(json, game);
     }
 
     game -> state = luaL_newstate();

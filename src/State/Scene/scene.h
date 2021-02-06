@@ -2,15 +2,25 @@
 #define TD_SCENE
 
 #include <SDL2/SDL.h>
+#include <lua.h>
 #include "../Entity/entity.h"
-#include "../../IO/gameLoader.h"
 #include "../../DataStructures/LinkedList/linkedList.h"
 #include "../../DataStructures/HashMap/hashMap.h"
 #include "../../Renderer/camera.h"
 
 typedef struct td_scene *td_scene;
 
-td_scene buildScene(td_game, char *);
+td_scene createScene();
+
+td_linkedList getEntities(td_scene);
+
+td_hashMap getBehaviors(td_scene);
+
+td_linkedList getCameras(td_scene);
+
+td_linkedList getAnimations(td_scene);
+
+td_linkedList getTimeouts(td_scene);
 
 void physicsUpdate(td_scene, int);
 
@@ -39,8 +49,6 @@ td_linkedList getEntityColliders(td_scene);
 td_entity getEntityByID(td_scene, char *);
 
 td_camera getCameraByID(td_scene, char *);
-
-td_linkedList getEntities(td_scene);
 
 void addAnimationToScene(td_scene, td_animation, char *);
 
