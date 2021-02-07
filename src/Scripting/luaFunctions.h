@@ -10,6 +10,8 @@ typedef struct td_script *td_script;
 
 td_script createScript(char *);
 
+char *getScriptEntityID(td_script);
+
 void destroyScript(td_script);
 
 void registerVariable(td_script, char *, td_scriptValType, td_scriptVal);

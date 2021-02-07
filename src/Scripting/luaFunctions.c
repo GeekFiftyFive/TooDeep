@@ -1,5 +1,6 @@
 #include <lualib.h>
 #include <lauxlib.h>
+#include <string.h>
 #include "luaFunctions.h"
 #include "../State/Entity/entity.h"
 #include "../DataStructures/LinkedList/linkedList.h"
@@ -23,6 +24,19 @@ td_script createScript(char *content) {
     script -> content = content;
     script -> variables = createLinkedList();
     return script;
+}
+
+char *getScriptEntityID(td_script script) {
+    td_iterator iterator = getIterator(script -> variables);
+    struct td_script_variable *variable;
+
+    while((variable = iteratorNext(iterator))) {
+        if(strcmp(variable -> name, "entityID") == 0) {
+            return variable -> value.stringVal;
+        }
+    }
+
+    destroyIterator(iterator);
 }
 
 void destroyScript(td_script script) {
@@ -374,6 +388,14 @@ int luaSetScene(lua_State *state) {
     return 1;
 }
 
+int luaFireEvent(lua_State *state) {
+    td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(1));
+    td_entity entity = (td_entity) lua_topointer(state, 1);
+    const char *eventName = luaL_checkstring(state, 2);
+    pushFiredEvent(scene, eventName, entity);
+    return 1;
+}
+
 void executeCallback(lua_State *state, int reference) {
     lua_rawgeti(state, LUA_REGISTRYINDEX, reference);
     lua_pushvalue(state, 1);
@@ -416,6 +438,10 @@ void registerCFunctions(
     lua_pushlightuserdata(state, scene);
     lua_pushcclosure(state, luaSetTimeout, 1);
     lua_setglobal(state, "setTimeout");
+
+    lua_pushlightuserdata(state, scene);
+    lua_pushcclosure(state, luaFireEvent, 1);
+    lua_setglobal(state, "fireEvent");
 
     lua_pushcfunction(state, luaGetCameraPosition);
     lua_setglobal(state, "getCameraPosition");

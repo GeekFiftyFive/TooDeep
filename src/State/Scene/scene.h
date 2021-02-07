@@ -22,6 +22,10 @@ td_linkedList getAnimations(td_scene);
 
 td_linkedList getTimeouts(td_scene);
 
+void pushFiredEvent(td_scene, char *, td_entity);
+
+void executeFiredEvents(lua_State *, td_scene);
+
 void physicsUpdate(td_scene, int);
 
 void forAllColliders(td_scene, void *, void *);

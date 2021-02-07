@@ -192,6 +192,7 @@ void executeTick(td_game game, int delta) {
     executeUpdateBehaviors(game -> state, game -> currentScene, delta);
     iterateAnimations(game -> currentScene);
     executeTimeouts(game -> state, game -> currentScene);
+    executeFiredEvents(game -> state, game -> currentScene);
     if(game -> nextStage) {
         td_json json = getScene(game, game -> nextStage);
         destroyScene(game -> currentScene);

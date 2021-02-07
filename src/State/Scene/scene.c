@@ -20,6 +20,7 @@ struct td_scene {
     td_linkedList cameras;
     td_linkedList animations;
     td_linkedList timeouts;
+    td_linkedList firedEvents;
 };
 
 struct checkWorldCollisionsCallbackData {
@@ -33,6 +34,11 @@ struct executeTimeoutCallbackData {
     lua_State *state;
 };
 
+struct firedEvent {
+    char *eventName;
+    td_entity entity;
+};
+
 td_scene createScene() {
     td_scene scene = malloc(sizeof(struct td_scene));
     scene -> entities = createLinkedList();
@@ -42,6 +48,7 @@ td_scene createScene() {
     scene -> cameras = createLinkedList();
     scene -> animations = createLinkedList();
     scene -> timeouts = createLinkedList();
+    scene -> firedEvents = createLinkedList();
     return scene;
 }
 
@@ -63,6 +70,40 @@ td_linkedList getAnimations(td_scene scene) {
 
 td_linkedList getTimeouts(td_scene scene) {
     return scene -> timeouts;
+}
+
+void pushFiredEvent(td_scene scene, char *eventName, td_entity entity) {
+    char *nameCpy = malloc(strlen(eventName) + 1);
+    strcpy(nameCpy, eventName);
+    struct firedEvent *event = malloc(sizeof(struct firedEvent));
+    event -> eventName = nameCpy;
+    event -> entity = entity;
+    appendWithFree(scene -> firedEvents, event, nameCpy, free);
+}
+
+void executeFiredEvents(lua_State *state, td_scene scene) {
+    td_iterator eventsIterator = getIterator(scene -> firedEvents);
+
+    struct firedEvent *event;
+
+    while((event = (struct firedEvent*) iteratorNext(eventsIterator))) {
+        td_linkedList behaviors = (td_linkedList) getFromHashMap(scene -> behaviors, event -> eventName);
+        td_iterator behaviorIterator = getIterator(behaviors);
+        td_script script;
+        while((script = (td_script) iteratorNext(behaviorIterator))) {
+            char *entityID = getScriptEntityID(script);
+            if(strcmp(entityID, getEntityID(event -> entity)) == 0) {
+                td_eventAttributes eventAttributes = createEventAttributes();
+                executeScript(state, script, eventAttributes);
+                destroyEventAttributes(eventAttributes);
+            }
+        }
+        destroyIterator(behaviorIterator);
+    }
+
+    destroyIterator(eventsIterator);
+    destroyLinkedList(scene -> firedEvents);
+    scene -> firedEvents = createLinkedList();
 }
 
 static void cameraPhysicsUpdate(void *entryData, void *callbackData, char *key) {
@@ -249,6 +290,7 @@ void destroyScene(td_scene scene) {
     destroyLinkedList(scene -> cameras);
     destroyLinkedList(scene -> animations);
     destroyLinkedList(scene -> timeouts);
+    destroyLinkedList(scene -> firedEvents);
     destroyHashMap(scene -> behaviors);
     free(scene);
 }

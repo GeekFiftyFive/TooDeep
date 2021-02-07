@@ -223,6 +223,10 @@ void *iteratorNext(td_iterator iterator) {
         iterator -> index++;
     }
 
+    if(!iterator -> current) {
+        return NULL;
+    }
+
     return iterator -> current -> data;
 }
 
