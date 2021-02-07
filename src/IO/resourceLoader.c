@@ -38,7 +38,9 @@ static char *loadPlaintextResourceOpt(td_resourceLoader rl, char *path, bool sta
     char *fullPath = staticRes ? path : concatPath(rl -> basePath, path);
     char *plaintext = (char*) getFromHashMap(rl -> resources, fullPath);
     
-    if(plaintext) return plaintext;
+    if(plaintext) {
+        return plaintext;
+    }
 
     plaintext = rl -> plaintextLoader(fullPath);
 
@@ -64,7 +66,9 @@ char *loadPlaintextResource(td_resourceLoader rl, char *path) {
 SDL_Surface *loadSurfaceResource(td_resourceLoader rl, char *path) {
     SDL_Surface *surface = (SDL_Surface*) getFromHashMap(rl -> resources, path);
 
-    if(surface) return surface;
+    if(surface) {
+        return surface;
+    }
 
     char *fullPath = concatPath(rl -> basePath, path);
 

@@ -2,6 +2,7 @@
 #include <math.h>
 #include "renderer.h"
 #include "../DataStructures/LinkedList/linkedList.h"
+#include "../DataStructures/HashMap/hashMap.h"
 #include "../IO/logger.h"
 #include "../Utils/stringUtils.h"
 
@@ -15,6 +16,7 @@ struct td_renderer {
     td_camera camera;
     float scaleFactor;
     SDL_Rect frameDimensions;
+    td_hashMap textures;
 };
 
 struct td_renderable {
@@ -88,6 +90,7 @@ td_renderer initRenderer(char *title, int width, int height, bool fullscreen) {
     renderer -> camera = NULL;
     renderer -> frameDimensions = (SDL_Rect) { 0, 0, width, height };
     renderer -> debugLayer = createLinkedList();
+    renderer -> textures = createHashMap(10);
 
     return renderer;
 }
@@ -103,11 +106,23 @@ SDL_Texture *surfaceToTexture(td_renderer renderer, SDL_Surface *surface) {
     //Checks if something went wrong
     bool failure = false;
 
+    // FIXME: Just hash the pointer itself
+    char *name = stringifyInt((int) surface);
+
+    newTexture = getFromHashMap(renderer -> textures, name);
+    if(newTexture) {
+        return newTexture;
+    }
+
     //Create texture from surface pixels
     newTexture = SDL_CreateTextureFromSurface( renderer -> renderer, surface );
     if( newTexture == NULL ) {
         failure = true;
+    } else {
+        insertIntoHashMap(renderer -> textures, name, newTexture, SDL_DestroyTexture);
     }
+
+    free(name);
 
     if(failure) return NULL;
     else return newTexture;
@@ -277,11 +292,12 @@ void destroyRenderer(td_renderer renderer) {
     SDL_DestroyRenderer(renderer -> renderer);
     destroyLinkedList(renderer -> renderQueue);
     destroyLinkedList(renderer -> debugLayer);
+    destroyHashMap(renderer -> textures);
     free(renderer);
 }
 
 void destroyRenderable(td_renderable renderable) {
-    SDL_DestroyTexture(renderable -> texture);
+    // Texture should be destroyed by the renderer!
     if(renderable -> textureRegion) {
         free(renderable -> textureRegion);
     }
