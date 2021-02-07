@@ -251,7 +251,7 @@ void entityCallback(td_json json, void *data) {
     td_tuple pos = { x, y };
 
     // Get entity behavior
-    char *entityID = newEntityID(dataCast -> game);
+    char *entityID = getJSONString(json, "entity_id", NULL);
     dataCast -> entityID = entityID;
     jsonObjectForEach(entityJSON, "behavior", behaviourCallback, data);
 
