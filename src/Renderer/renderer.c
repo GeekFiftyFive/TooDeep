@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdbool.h>
 #include <math.h>
 #include "renderer.h"
 #include "../DataStructures/LinkedList/linkedList.h"
@@ -35,7 +34,7 @@ struct td_debugRenderable {
     Initialises the main window and returns the renderer struct.
     SDL must have bee initialised before this can be called.
 */
-td_renderer initRenderer(char *title, int width, int height) {
+td_renderer initRenderer(char *title, int width, int height, bool fullscreen) {
     if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")){
         logError( "Could not set texture scaling method SDL_Error: %s\n", SDL_GetError());
     }
@@ -66,6 +65,7 @@ td_renderer initRenderer(char *title, int width, int height) {
                                 width,
                                 height,
                                 SDL_WINDOW_SHOWN );
+    SDL_SetWindowFullscreen(window, fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
 
     if(!window) {
         logError("Unable to initialise the window: %s\n", SDL_GetError());

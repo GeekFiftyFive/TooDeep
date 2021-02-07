@@ -1,6 +1,7 @@
 #ifndef RENDERER__
 #define RENDERER__
 
+#include <stdbool.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "camera.h"
@@ -12,7 +13,7 @@ typedef struct td_renderer *td_renderer;
 
 typedef struct td_renderable *td_renderable;
 
-td_renderer initRenderer(char *, int,int);
+td_renderer initRenderer(char *, int, int, bool);
 
 SDL_Texture *surfaceToTexture(td_renderer, SDL_Surface *);
 

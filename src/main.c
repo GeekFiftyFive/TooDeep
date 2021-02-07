@@ -49,8 +49,9 @@ int main(int argc, char *args[]) {
     int width = getJSONInt(config, "userConfig.resolution.w", NULL);
     int height = getJSONInt(config, "userConfig.resolution.h", NULL);
     char *title = getJSONString(manifest, "meta.title", NULL);
+    bool fullscreen = getJSONBool(config, "userConfig.resolution.fullscreen", NULL);
     
-    td_renderer renderer = initRenderer(title, width, height);
+    td_renderer renderer = initRenderer(title, width, height, fullscreen);
 
     if(!renderer) return 1;
 
