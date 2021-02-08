@@ -29,6 +29,10 @@ void registerBoxColliderCallbackData(td_boxCollider collider, void *data) {
     collider -> callbackData = data;
 }
 
+char *getParentEntityID(td_boxCollider collider) {
+    return collider -> parentEntityID;
+}
+
 void setParentEntityID(td_boxCollider collider, char *parentEntityID) {
     collider -> parentEntityID = parentEntityID;
 }

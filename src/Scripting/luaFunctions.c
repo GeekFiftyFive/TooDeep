@@ -236,6 +236,59 @@ int luaCheckCollision(lua_State *state) {
     return 1;
 }
 
+int luaGetCollisions(lua_State *state) {
+    td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(1));
+    td_entity entity = (td_entity) lua_topointer(state, 1);
+    const char *colliderName = luaL_checkstring(state, 2);
+    td_boxCollider collider = getCollisionHull(entity, (char *) colliderName);
+    td_linkedList worldColliders = getCollisions(collider, getWorldColliders(scene));
+    td_linkedList entityColliders = getCollisions(collider, getEntityColliders(scene));
+    appendList(worldColliders, entityColliders);
+    destroyLinkedList(entityColliders);
+    td_iterator iterator = getIterator(worldColliders);
+    td_boxCollider collided;
+
+    lua_createtable(state, listLength(worldColliders), 0);
+    int i = 0;
+    while((collided = iteratorNext(iterator))) {
+        lua_pushinteger(state, i);
+
+        // Set Entity ID
+        lua_createtable(state, 0, 5);
+        lua_pushstring(state, "entityID");
+        lua_pushstring(state, getParentEntityID(collided));
+        lua_settable(state, -3);
+
+        // Set Collider X Position
+        lua_pushstring(state, "x");
+        lua_pushinteger(state, getBoxColliderPosition(collided).x);
+        lua_settable(state, -3);
+
+        // Set Collider Y Position
+        lua_pushstring(state, "y");
+        lua_pushinteger(state, getBoxColliderPosition(collided).y);
+        lua_settable(state, -3);
+
+        // Set Collider Width
+        lua_pushstring(state, "w");
+        lua_pushinteger(state, getBoxColliderDimensions(collided).x);
+        lua_settable(state, -3);
+
+        // Set Collider Height
+        lua_pushstring(state, "h");
+        lua_pushinteger(state, getBoxColliderDimensions(collided).y);
+        lua_settable(state, -3);
+
+        lua_settable(state, -3);
+
+        i++;
+    }
+    
+    destroyIterator(iterator);
+    destroyLinkedList(worldColliders);
+    return 1;
+}
+
 int luaFlipEntityHorizontal(lua_State *state) {
     td_entity entity = (td_entity) lua_topointer(state, 1);
     bool flip = lua_toboolean(state, 2);
@@ -422,6 +475,10 @@ void registerCFunctions(
     lua_pushlightuserdata(state, scene);
     lua_pushcclosure(state, luaCheckCollision, 1);
     lua_setglobal(state, "checkCollision");
+
+    lua_pushlightuserdata(state, scene);
+    lua_pushcclosure(state, luaGetCollisions, 1);
+    lua_setglobal(state, "getCollisions");
 
     lua_pushlightuserdata(state, game);
     lua_pushcclosure(state, luaPlayAnimation, 1);

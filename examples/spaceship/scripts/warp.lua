@@ -1,6 +1,9 @@
 local warp = getEntity(entityID)
 
-if(checkCollision(warp, "warp_region"))
+if (
+    getCollisions(warp, "warp_region")[0]
+    and getCollisions(warp, "warp_region")[0]["entityID"] == "player"
+)
 then
     setScene("Scene 2")
 end

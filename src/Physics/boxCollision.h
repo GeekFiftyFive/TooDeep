@@ -25,6 +25,8 @@ void registerBoxColliderCallback(td_boxCollider, void *);
 
 void registerBoxColliderCallbackData(td_boxCollider, void *);
 
+char *getParentEntityID(td_boxCollider);
+
 void setParentEntityID(td_boxCollider, char *);
 
 bool checkCollision(td_boxCollider, td_boxCollider, bool);
