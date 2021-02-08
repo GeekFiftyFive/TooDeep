@@ -1,6 +1,6 @@
 #ifndef TD_STRING_UTILS
 #define TD_STRING_UTILS
 
-char *stringifyInt(int);
+char *stringifyInt(unsigned int);
 
 #endif
