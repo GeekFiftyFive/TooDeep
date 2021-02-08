@@ -34,6 +34,8 @@ void executeUpdateBehaviors(lua_State *, td_scene, int);
 
 void iterateAnimations(td_scene);
 
+td_linkedList getCollisions(td_boxCollider, td_linkedList);
+
 bool checkCollisionsWithoutCallbacks(td_boxCollider, td_linkedList);
 
 bool checkCollisions(td_boxCollider, td_linkedList);

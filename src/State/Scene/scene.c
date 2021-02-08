@@ -188,6 +188,22 @@ void immutableColliderCallback(void *entryData, void *callbackData, char *key) {
     }
 }
 
+td_linkedList getCollisions(td_boxCollider collider, td_linkedList colliders) {
+    td_iterator iterator = getIterator(colliders);
+
+    td_boxCollider collider2;
+    td_linkedList collisions = createLinkedList();
+
+    while((collider2 = iteratorNext(iterator))) {
+        if(checkCollision(collider, collider2, false)) {
+            append(collisions, collider2, NULL);
+        }
+    }
+
+    destroyIterator(iterator);
+    return collisions;
+}
+
 static bool checkCollisionsHelper(td_boxCollider collider, td_linkedList colliders, bool executeCallbacks) {
     struct checkWorldCollisionsCallbackData callbackData = { collider, false, executeCallbacks };
     listForEach(colliders, immutableColliderCallback, &callbackData);
@@ -195,7 +211,10 @@ static bool checkCollisionsHelper(td_boxCollider collider, td_linkedList collide
 }
 
 bool checkCollisionsWithoutCallbacks(td_boxCollider collider, td_linkedList colliders) {
-    return checkCollisionsHelper(collider, colliders, false);
+    td_linkedList collisions = getCollisions(collider, colliders);
+    int length = listLength(collisions);
+    destroyLinkedList(collisions);
+    return (bool) length;
 }
 
 bool checkCollisions(td_boxCollider collider, td_linkedList colliders) {
