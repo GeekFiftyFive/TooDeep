@@ -275,7 +275,7 @@ int luaGetCollisions(lua_State *state) {
     td_iterator iterator = getIterator(worldColliders);
     td_boxCollider collided;
 
-    lua_createtable(state, listLength(worldColliders), 0);
+    lua_createtable(state, listLength(worldColliders) + listLength(entityColliders), 0);
     int i = 0;
     while((collided = iteratorNext(iterator))) {
         lua_pushinteger(state, i);
