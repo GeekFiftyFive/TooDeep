@@ -236,6 +236,35 @@ int luaCheckCollision(lua_State *state) {
     return 1;
 }
 
+static void pushCollider(lua_State *state, td_boxCollider collider, bool terrain) {
+    // Set Entity ID
+    lua_createtable(state, 0, 6);
+    lua_pushstring(state, "entityID");
+    lua_pushstring(state, getParentEntityID(collider));
+    lua_settable(state, -3);
+    // Set Collider X Position
+    lua_pushstring(state, "x");
+    lua_pushinteger(state, getBoxColliderPosition(collider).x);
+    lua_settable(state, -3);
+    // Set Collider Y Position
+    lua_pushstring(state, "y");
+    lua_pushinteger(state, getBoxColliderPosition(collider).y);
+    lua_settable(state, -3);
+    // Set Collider Width
+    lua_pushstring(state, "w");
+    lua_pushinteger(state, getBoxColliderDimensions(collider).x);
+    lua_settable(state, -3);
+    // Set Collider Height
+    lua_pushstring(state, "h");
+    lua_pushinteger(state, getBoxColliderDimensions(collider).y);
+    lua_settable(state, -3);
+    // Set Is Terrain
+    lua_pushstring(state, "isTerrain");
+    lua_pushboolean(state, terrain);
+    lua_settable(state, -3);
+    lua_settable(state, -3);
+}
+
 int luaGetCollisions(lua_State *state) {
     td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(1));
     td_entity entity = (td_entity) lua_topointer(state, 1);
@@ -243,8 +272,6 @@ int luaGetCollisions(lua_State *state) {
     td_boxCollider collider = getCollisionHull(entity, (char *) colliderName);
     td_linkedList worldColliders = getCollisions(collider, getWorldColliders(scene));
     td_linkedList entityColliders = getCollisions(collider, getEntityColliders(scene));
-    appendList(worldColliders, entityColliders);
-    destroyLinkedList(entityColliders);
     td_iterator iterator = getIterator(worldColliders);
     td_boxCollider collided;
 
@@ -252,39 +279,20 @@ int luaGetCollisions(lua_State *state) {
     int i = 0;
     while((collided = iteratorNext(iterator))) {
         lua_pushinteger(state, i);
-
-        // Set Entity ID
-        lua_createtable(state, 0, 5);
-        lua_pushstring(state, "entityID");
-        lua_pushstring(state, getParentEntityID(collided));
-        lua_settable(state, -3);
-
-        // Set Collider X Position
-        lua_pushstring(state, "x");
-        lua_pushinteger(state, getBoxColliderPosition(collided).x);
-        lua_settable(state, -3);
-
-        // Set Collider Y Position
-        lua_pushstring(state, "y");
-        lua_pushinteger(state, getBoxColliderPosition(collided).y);
-        lua_settable(state, -3);
-
-        // Set Collider Width
-        lua_pushstring(state, "w");
-        lua_pushinteger(state, getBoxColliderDimensions(collided).x);
-        lua_settable(state, -3);
-
-        // Set Collider Height
-        lua_pushstring(state, "h");
-        lua_pushinteger(state, getBoxColliderDimensions(collided).y);
-        lua_settable(state, -3);
-
-        lua_settable(state, -3);
-
+        pushCollider(state, collided, true);
         i++;
     }
     
     destroyIterator(iterator);
+    iterator = getIterator(entityColliders);
+    while((collided = iteratorNext(iterator))) {
+        lua_pushinteger(state, i);
+        pushCollider(state, collided, false);
+        i++;
+    }
+
+    destroyIterator(iterator);
+    destroyLinkedList(entityColliders);
     destroyLinkedList(worldColliders);
     return 1;
 }
