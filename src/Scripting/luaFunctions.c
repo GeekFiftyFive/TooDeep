@@ -81,6 +81,8 @@ void executeScript(lua_State *state, td_script script, td_eventAttributes eventA
     if (luaL_loadstring(state, script -> content) == LUA_OK) {
         if (lua_pcall(state, 0, 1, 0) == LUA_OK) {
             lua_pop(state, lua_gettop(state));
+        } else {
+            logError("There was an error executing the script: %s\n", lua_tostring(state, -1));
         }
     }
 }
@@ -276,7 +278,7 @@ int luaGetCollisions(lua_State *state) {
     td_boxCollider collided;
 
     lua_createtable(state, listLength(worldColliders) + listLength(entityColliders), 0);
-    int i = 0;
+    int i = 1;
     while((collided = iteratorNext(iterator))) {
         lua_pushinteger(state, i);
         pushCollider(state, collided, true);
