@@ -37,6 +37,7 @@ struct executeTimeoutCallbackData {
 struct firedEvent {
     char *eventName;
     td_entity entity;
+    td_eventAttributes attributes;
 };
 
 td_scene createScene() {
@@ -72,13 +73,21 @@ td_linkedList getTimeouts(td_scene scene) {
     return scene -> timeouts;
 }
 
-void pushFiredEvent(td_scene scene, char *eventName, td_entity entity) {
+static void destroyFiredEvent(struct firedEvent *event) {
+    if(event -> attributes) {
+        destroyEventAttributes(event -> attributes);
+    }
+    free(event);
+}
+
+void pushFiredEvent(td_scene scene, char *eventName, td_entity entity, td_eventAttributes attributes) {
     char *nameCpy = malloc(strlen(eventName) + 1);
     strcpy(nameCpy, eventName);
     struct firedEvent *event = malloc(sizeof(struct firedEvent));
     event -> eventName = nameCpy;
     event -> entity = entity;
-    appendWithFree(scene -> firedEvents, event, nameCpy, free);
+    event -> attributes = attributes;
+    appendWithFree(scene -> firedEvents, event, nameCpy, destroyFiredEvent);
 }
 
 void executeFiredEvents(lua_State *state, td_scene scene) {
@@ -93,9 +102,7 @@ void executeFiredEvents(lua_State *state, td_scene scene) {
         while((script = (td_script) iteratorNext(behaviorIterator))) {
             char *entityID = getScriptEntityID(script);
             if(strcmp(entityID, getEntityID(event -> entity)) == 0) {
-                td_eventAttributes eventAttributes = createEventAttributes();
-                executeScript(state, script, eventAttributes);
-                destroyEventAttributes(eventAttributes);
+                executeScript(state, script, event -> attributes);
             }
         }
         destroyIterator(behaviorIterator);

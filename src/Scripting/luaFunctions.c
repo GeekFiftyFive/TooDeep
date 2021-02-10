@@ -451,11 +451,46 @@ int luaSetScene(lua_State *state) {
     return 1;
 }
 
+static td_eventAttributes getEventAttributes(lua_State *state, int index) {
+    if(!lua_istable(state, index)) {
+        return NULL;
+    }
+
+    td_eventAttributes attributes = createEventAttributes();
+    lua_pushvalue(state, index);
+    lua_pushnil(state);
+    while(lua_next(state, -2)) {
+        lua_pushvalue(state, -2);
+        td_scriptVal val;
+        td_scriptValType type;
+        const char *key = lua_tostring(state, -1);
+        if(lua_isinteger(state, -2)) {
+            val.intVal = lua_tointeger(state, -2);
+            type = INT;
+        } else if(lua_isnumber(state, -2)) {
+            val.floatVal = lua_tonumber(state, -2);
+            type = FLOAT;
+        } else if(lua_isboolean(state, -2)) {
+            val.booleanVal = lua_toboolean(state, -2);
+            type = BOOL;
+        } else if(lua_isstring(state, -2)) {
+            val.stringVal = lua_tostring(state, -2);
+            type = STRING;
+        }
+        lua_pop(state, 2);
+        registerEventAttribute(attributes, type, val, key);
+    }
+    lua_pop(state, 1);
+
+    return attributes;
+}
+
 int luaFireEvent(lua_State *state) {
     td_scene scene = (td_scene) lua_topointer(state, lua_upvalueindex(1));
     td_entity entity = (td_entity) lua_topointer(state, 1);
     const char *eventName = luaL_checkstring(state, 2);
-    pushFiredEvent(scene, eventName, entity);
+    td_eventAttributes attributes = getEventAttributes(state, 3);
+    pushFiredEvent(scene, eventName, entity, attributes);
     return 1;
 }
 

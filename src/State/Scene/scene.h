@@ -7,6 +7,7 @@
 #include "../../DataStructures/LinkedList/linkedList.h"
 #include "../../DataStructures/HashMap/hashMap.h"
 #include "../../Renderer/camera.h"
+#include "../../Scripting/eventAttributes.h"
 
 typedef struct td_scene *td_scene;
 
@@ -22,7 +23,7 @@ td_linkedList getAnimations(td_scene);
 
 td_linkedList getTimeouts(td_scene);
 
-void pushFiredEvent(td_scene, char *, td_entity);
+void pushFiredEvent(td_scene, char *, td_entity, td_eventAttributes);
 
 void executeFiredEvents(lua_State *, td_scene);
 

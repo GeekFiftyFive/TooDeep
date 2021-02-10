@@ -50,7 +50,7 @@ static void mapValueCallback(void *entryData, void *callbackData, char *key) {
 }
 
 void mapToLuaTable(td_eventAttributes eventAttributes, lua_State *state) {
-    if(!listLength(eventAttributes -> variables)) {
+    if(!eventAttributes || !listLength(eventAttributes -> variables)) {
         return;
     }
     lua_createtable(state, 0, listLength(eventAttributes -> variables));
