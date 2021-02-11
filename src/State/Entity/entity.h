@@ -31,6 +31,8 @@ float getEntityGravityAccleration(td_entity);
 
 void setEntityGravityAcceleration(td_entity, float);
 
+void setEntityTerminalVelocity(td_entity, float);
+
 void setEntityPosition(td_entity, td_tuple);
 
 void setEntityFlip(td_entity, td_entityFlip);

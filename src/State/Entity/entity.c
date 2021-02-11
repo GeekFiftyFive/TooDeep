@@ -102,6 +102,10 @@ void setEntityGravityAcceleration(td_entity entity, float gravityAcceleration) {
     setPhysicsObjectGravityAcceleration(entity -> physicsObject, gravityAcceleration);
 }
 
+void setEntityTerminalVelocity(td_entity entity, float terminalVelocity) {
+    setPhysicsObjectTerminalVelocity(entity -> physicsObject, terminalVelocity);
+}
+
 void setEntityPosition(td_entity entity, td_tuple position) {
     td_tuple currentPosition = getPhysicsObjectPosition(entity -> physicsObject);
     setPhysicsObjectPosition(entity -> physicsObject, position);

@@ -273,6 +273,10 @@ void entityCallback(td_json json, void *data) {
         float gravityAccleration = (float) getJSONDouble(entityJSON, "physics.gravity_acceleration", NULL);
         setEntityGravityAcceleration(entity, gravityAccleration);
     }
+    if(jsonFieldExists(entityJSON, "physics.terminal_velocity")) {
+        float terminalVelocity = (float) getJSONDouble(entityJSON, "physics.terminal_velocity", NULL);
+        setEntityTerminalVelocity(entity, terminalVelocity);
+    }
     char *layerName = getJSONString(json, "render_info.layer", NULL); 
     int *layerIndex = getFromHashMap(dataCast -> layerIndexes, layerName);
 

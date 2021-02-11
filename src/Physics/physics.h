@@ -20,6 +20,8 @@ float getPhysicsObjectGravityAccleration(td_physicsObject);
 
 void setPhysicsObjectGravityAcceleration(td_physicsObject, float);
 
+void setPhysicsObjectTerminalVelocity(td_physicsObject, float);
+
 void enableGravity(td_physicsObject, bool);
 
 void applyForceToPhysicsObject(td_physicsObject, td_tuple);

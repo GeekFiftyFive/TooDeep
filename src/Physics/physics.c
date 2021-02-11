@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <math.h>
 #include "physics.h"
 #include "../IO/logger.h"
 
@@ -9,6 +10,7 @@ struct td_physicsObject {
     bool gravity;
     float gravityAccel;
     float mass;
+    float terminalVelocity;
 };
 
 td_physicsObject createPhysicsObject() {
@@ -19,6 +21,7 @@ td_physicsObject createPhysicsObject() {
     physicsObject -> mass          = 1.0; // TODO: Make this configurable per object
     physicsObject -> gravity       = false;
     physicsObject -> gravityAccel  = 0.005;
+    physicsObject -> terminalVelocity = INFINITY;
     return physicsObject;
 }
 
@@ -46,6 +49,10 @@ void setPhysicsObjectGravityAcceleration(td_physicsObject physicsObject, float g
     physicsObject -> gravityAccel = gravity;
 }
 
+void setPhysicsObjectTerminalVelocity(td_physicsObject physicsObject, float terminalVelocity) {
+    physicsObject -> terminalVelocity = terminalVelocity;
+}
+
 void enableGravity(td_physicsObject physicsObject, bool gravity) {
     physicsObject -> gravity = gravity;
 }
@@ -58,7 +65,7 @@ td_tuple updatePhysicsObject(td_physicsObject physicsObject, int delta) {
     td_tuple posDelta = multiplyTuple(delta, physicsObject -> velocity);
     physicsObject -> position = addTuple(physicsObject -> position, posDelta);
     td_tuple acceleration = multiplyTuple(1.0 / physicsObject -> mass, physicsObject -> force);
-    if(physicsObject -> gravity) {
+    if(physicsObject -> gravity && -physicsObject -> velocity.y < physicsObject -> terminalVelocity) {
         acceleration = addTuple(acceleration, (td_tuple) { 0, -physicsObject -> gravityAccel });
     }
     physicsObject -> velocity = addTuple(physicsObject -> velocity, multiplyTuple(delta, acceleration));
