@@ -25,11 +25,11 @@ void startEventLoop(td_game game) {
         }
         clearRenderQueue(getRenderer(game));
         copySceneToRenderQueue(game);
+        debug(createDebugRenderables(game));
         renderFrame(getRenderer(game));
         // FIXME: Doing this is overkill. Should just swap at renderables
         // that need to be swapped out when they need to be swapped out
         // e.g. when an animation begins playing
-        debug(createDebugRenderables(game));
         int delta = SDL_GetTicks() - prevTicks;
         prevTicks = SDL_GetTicks();
         
