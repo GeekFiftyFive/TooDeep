@@ -70,10 +70,12 @@ void insertIntoHashMap(td_hashMap map, char *key, void *data, void *freeFunc) {
     map -> usage++;
 
     if((float) map -> usage / map -> size > map -> loadFactor) {
-        // TODO: Do this in a less dumb way
         td_hashMap newMap = createHashMapWithLoadFactor(map -> size * 2, map -> loadFactor);
         listForEach(map -> insertions, addToNewTable, newMap);
-        for(int i = 0; i < map -> size; i++) destroyLinkedList(map -> entries[i]);
+        for(int i = 0; i < map -> size; i++) {
+            dangerouslyAddFreeFunc(map -> entries[i], NULL);
+            destroyLinkedList(map -> entries[i]);
+        }
         map -> size *= 2;
         map -> entries = newMap -> entries;
         destroyLinkedList(newMap -> insertions);
