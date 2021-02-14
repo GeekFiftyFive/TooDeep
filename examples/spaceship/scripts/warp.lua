@@ -1,8 +1,8 @@
 local warp = getEntity(entityID)
 
 if (
-    getCollisions(warp, "warp_region")[0]
-    and getCollisions(warp, "warp_region")[0]["entityID"] == "player"
+    getCollisions(warp, "warp_region")[1]
+    and getCollisions(warp, "warp_region")[1]["entityID"] == "player"
 )
 then
     setScene("Scene 2")
