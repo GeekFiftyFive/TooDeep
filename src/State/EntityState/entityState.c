@@ -15,7 +15,7 @@ struct td_entry {
 td_entityState createEntityState() {
     td_entityState state = malloc(sizeof(struct td_entityState));
 
-    state -> store = createHashMap(10);
+    state -> store = createHashMap(20);
 
     return state;
 }
