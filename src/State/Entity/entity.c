@@ -19,6 +19,7 @@ struct td_entity {
     td_entityFlip flip;
     td_entityState state;
     td_stateMachine animationStateMachine;
+    td_hashMap flippedColliders;
 };
 
 td_entity createEntity(char *ID, td_renderable renderable) {
@@ -34,6 +35,7 @@ td_entity createEntity(char *ID, td_renderable renderable) {
     entity -> renderables = createLinkedList();
     entity -> state = createEntityState();
     entity -> animationStateMachine = NULL;
+    entity -> flippedColliders = createHashMap(10);
     return entity;
 }
 
@@ -157,6 +159,9 @@ void applyForceToEntity(td_entity entity, td_tuple force) {
 
 void addCollisionHull(td_entity entity, td_boxCollider collider, char *key) {
     append(entity -> collisionHulls, collider, key);
+    td_entityFlip *flip = malloc(sizeof(td_entityFlip));
+    *flip = TD_NO_FLIP;
+    insertIntoHashMap(entity -> flippedColliders, key, flip, free);
 }
 
 td_tuple getPositionDelta(td_entity entity) {
@@ -210,6 +215,28 @@ void setEntityBoxColliderDimensions(td_entity entity, char *name, td_tuple dimen
     );
 }
 
+void flipEntityColliderHorizontally(td_entity entity, char *colliderName, td_entityFlip flip) {
+    td_entityFlip *flipped = getFromHashMap(entity -> flippedColliders, colliderName);
+
+    if(*flipped == flip) {
+        return;
+    }
+
+    td_renderable renderable = getRenderable(entity);
+    td_tuple dimensions = getRenderableSize(renderable);
+    td_tuple colliderPos = getEntityBoxColliderPosition(entity, colliderName);
+    td_tuple colliderDim = getEntityBoxColliderDimensions(entity, colliderName);
+
+    float distance = colliderPos.x - (dimensions.x / 2);
+    setEntityBoxColliderPosition(
+        entity,
+        colliderName,
+        (td_tuple) { (dimensions.x / 2) - distance - colliderDim.x, colliderPos.y }
+    );
+
+    *flipped = flip;
+}
+
 void entityPhysicsUpdate(void *data, void *callbackData, char *key) {
     td_entity entity = (td_entity) data;
     int delta = *((int*) callbackData);
@@ -228,6 +255,7 @@ void destroyEntity(td_entity entity) {
     destroyLinkedList(entity -> renderables);
     destroyHashMap(entity -> animations);
     destroyEntityState(entity -> state);
+    destroyHashMap(entity -> flippedColliders);
 
     if(entity -> animationStateMachine) {
         destroyStateMachine(entity -> animationStateMachine);

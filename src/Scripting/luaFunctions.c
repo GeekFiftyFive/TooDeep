@@ -526,17 +526,13 @@ int luaSetColliderDimensions(lua_State *state) {
 int luaFlipColliderHorizontally(lua_State *state) {
     td_entity entity = (td_entity) lua_topointer(state, 1);
     const char *colliderName = luaL_checkstring(state, 2);
-    td_renderable renderable = getRenderable(entity);
-    td_tuple dimensions = getRenderableSize(renderable);
-    td_tuple colliderPos = getEntityBoxColliderPosition(entity, colliderName);
-    td_tuple colliderDim = getEntityBoxColliderDimensions(entity, colliderName);
+    if(!lua_isboolean(state, 3)) {
+        return 0;
+    }
 
-    float distance = colliderPos.x - (dimensions.x / 2);
-    setEntityBoxColliderPosition(
-        entity,
-        colliderName,
-        (td_tuple) { (dimensions.x / 2) - distance - colliderDim.x, colliderPos.y }
-    );
+    bool isFlip = lua_toboolean(state, 3);
+    td_entityFlip flip = isFlip ? TD_HORIZONTAL_FLIP : TD_NO_FLIP;
+    flipEntityColliderHorizontally(entity, colliderName, flip); 
 
     return 1;
 }

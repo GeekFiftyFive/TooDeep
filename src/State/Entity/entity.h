@@ -65,6 +65,8 @@ td_tuple getEntityBoxColliderDimensions(td_entity, char *);
 
 void setEntityBoxColliderDimensions(td_entity, char *, td_tuple);
 
+void flipEntityColliderHorizontally(td_entity, char *, td_entityFlip);
+
 void entityPhysicsUpdate(void *, void *, char *);
 
 void destroyEntity(td_entity);
