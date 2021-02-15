@@ -191,6 +191,10 @@ void setRenderableTextureRegion(td_renderable renderable, SDL_Rect region) {
     *(renderable -> textureRegion) = region;
 }
 
+td_tuple getRenderableSize(td_renderable renderable) {
+    return renderable -> size;
+}
+
 void setRenderableSize(td_renderable renderable, td_tuple size) {
     renderable -> size = size;
 }

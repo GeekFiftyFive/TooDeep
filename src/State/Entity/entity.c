@@ -167,16 +167,43 @@ td_boxCollider getCollisionHull(td_entity entity, char *name) {
     return getFromList(entity -> collisionHulls, name);
 }
 
+td_tuple getEntityBoxColliderPosition(td_entity entity, char *name) {
+    td_boxCollider collider = getFromList(entity -> collisionHulls, name);
+    if(!collider) {
+        return (td_tuple) { 0, 0 };
+    }
+
+    return subtractTuple(
+        getBoxColliderPosition(collider),
+        getPhysicsObjectPosition(entity -> physicsObject)
+    );
+}
+
 void setEntityBoxColliderPosition(td_entity entity, char *name, td_tuple position) {
     td_boxCollider collider = getFromList(entity -> collisionHulls, name);
+    if(!collider) {
+        return;
+    }
     setBoxColliderPosition(
         collider,
         addTuple(position, getPhysicsObjectPosition(entity -> physicsObject))
     );
 }
 
+td_tuple getEntityBoxColliderDimensions(td_entity entity, char *name) {
+    td_boxCollider collider = getFromList(entity -> collisionHulls, name);
+    if(!collider) {
+        return (td_tuple) { 0, 0 };
+    }
+
+    return getBoxColliderDimensions(collider);
+}
+
 void setEntityBoxColliderDimensions(td_entity entity, char *name, td_tuple dimensions) {
     td_boxCollider collider = getFromList(entity -> collisionHulls, name);
+    if(!collider) {
+        return;
+    }
     setBoxColliderDimensions(
         collider,
         dimensions

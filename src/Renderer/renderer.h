@@ -33,6 +33,8 @@ void setRenderableFlip(td_renderable, SDL_RendererFlip);
 
 void setRenderableTextureRegion(td_renderable, SDL_Rect);
 
+td_tuple getRenderableSize(td_renderable);
+
 void setRenderableSize(td_renderable, td_tuple);
 
 td_tuple getRenderablePosition(td_renderable);
