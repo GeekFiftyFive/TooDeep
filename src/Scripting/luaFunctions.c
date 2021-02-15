@@ -494,6 +494,15 @@ int luaFireEvent(lua_State *state) {
     return 1;
 }
 
+int luaToggleCursor(lua_State *state) {
+    if(lua_isboolean(state, 1)) {
+        toggleCursor(lua_toboolean(state, 1));
+        return 1;
+    }
+
+    return 0;
+}
+
 void executeCallback(lua_State *state, int reference) {
     lua_rawgeti(state, LUA_REGISTRYINDEX, reference);
     lua_pushvalue(state, 1);
@@ -592,4 +601,7 @@ void registerCFunctions(
 
     lua_pushcfunction(state, luaGetEntityGravity);
     lua_setglobal(state, "getEntityGravity");
+
+    lua_pushcfunction(state, luaToggleCursor);
+    lua_setglobal(state, "toggleCursor");
 }

@@ -95,6 +95,10 @@ td_renderer initRenderer(char *title, int width, int height, bool fullscreen) {
     return renderer;
 }
 
+void toggleCursor(bool toggle) {
+    SDL_ShowCursor(toggle);
+}
+
 /*
 Private helper function to create a texture from a surface
 */

@@ -15,6 +15,8 @@ typedef struct td_renderable *td_renderable;
 
 td_renderer initRenderer(char *, int, int, bool);
 
+void toggleCursor(bool);
+
 SDL_Texture *surfaceToTexture(td_renderer, SDL_Surface *);
 
 void appendToRenderQueue(td_renderer, td_renderable);
