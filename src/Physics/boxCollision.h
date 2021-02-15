@@ -37,4 +37,6 @@ void setBoxColliderPosition(td_boxCollider, td_tuple);
 
 td_tuple getBoxColliderDimensions(td_boxCollider);
 
+void setBoxColliderDimensions(td_boxCollider, td_tuple);
+
 #endif

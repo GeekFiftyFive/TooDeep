@@ -513,6 +513,16 @@ int luaSetColliderPosition(lua_State *state) {
     return 1;
 }
 
+int luaSetColliderDimensions(lua_State *state) {
+    td_entity entity = (td_entity) lua_topointer(state, 1);
+    const char *colliderName = luaL_checkstring(state, 2);
+    float w = luaL_checknumber(state, 3);
+    float h = luaL_checknumber(state, 4);
+    setEntityBoxColliderDimensions(entity, colliderName, (td_tuple) { w, h });
+
+    return 1;
+}
+
 void executeCallback(lua_State *state, int reference) {
     lua_rawgeti(state, LUA_REGISTRYINDEX, reference);
     lua_pushvalue(state, 1);
@@ -617,4 +627,7 @@ void registerCFunctions(
 
     lua_pushcfunction(state, luaSetColliderPosition);
     lua_setglobal(state, "setColliderPosition");
+
+    lua_pushcfunction(state, luaSetColliderDimensions);
+    lua_setglobal(state, "setColliderDimensions");
 }

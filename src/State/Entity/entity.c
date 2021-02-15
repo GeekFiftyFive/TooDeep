@@ -175,6 +175,14 @@ void setEntityBoxColliderPosition(td_entity entity, char *name, td_tuple positio
     );
 }
 
+void setEntityBoxColliderDimensions(td_entity entity, char *name, td_tuple dimensions) {
+    td_boxCollider collider = getFromList(entity -> collisionHulls, name);
+    setBoxColliderDimensions(
+        collider,
+        dimensions
+    );
+}
+
 void entityPhysicsUpdate(void *data, void *callbackData, char *key) {
     td_entity entity = (td_entity) data;
     int delta = *((int*) callbackData);
