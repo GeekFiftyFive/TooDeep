@@ -57,6 +57,8 @@ td_tuple getPositionDelta(td_entity);
 
 td_boxCollider getCollisionHull(td_entity, char *);
 
+void setEntityBoxColliderPosition(td_entity, char *, td_tuple);
+
 void entityPhysicsUpdate(void *, void *, char *);
 
 void destroyEntity(td_entity);

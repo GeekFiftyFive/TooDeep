@@ -503,6 +503,16 @@ int luaToggleCursor(lua_State *state) {
     return 0;
 }
 
+int luaSetColliderPosition(lua_State *state) {
+    td_entity entity = (td_entity) lua_topointer(state, 1);
+    const char *colliderName = luaL_checkstring(state, 2);
+    float x = luaL_checknumber(state, 3);
+    float y = luaL_checknumber(state, 4);
+    setEntityBoxColliderPosition(entity, colliderName, (td_tuple) { x, y });
+
+    return 1;
+}
+
 void executeCallback(lua_State *state, int reference) {
     lua_rawgeti(state, LUA_REGISTRYINDEX, reference);
     lua_pushvalue(state, 1);
@@ -604,4 +614,7 @@ void registerCFunctions(
 
     lua_pushcfunction(state, luaToggleCursor);
     lua_setglobal(state, "toggleCursor");
+
+    lua_pushcfunction(state, luaSetColliderPosition);
+    lua_setglobal(state, "setColliderPosition");
 }
