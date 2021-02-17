@@ -1,0 +1,7 @@
+{
+    "name": "hud_element",
+    "start_look": {
+        "type": "texture",
+        "asset": "warp.png"
+    }
+}

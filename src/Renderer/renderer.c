@@ -175,6 +175,10 @@ td_renderable createRenderableFromSurface(td_renderer renderer, SDL_Surface *sur
     return createRenderableFromTexture(renderer, texture);
 }
 
+void setRenderSpace(td_renderable renderable, td_renderSpace space) {
+    renderable -> space = space;
+}
+
 void setCurrentCamera(td_renderer renderer, td_camera camera) {
     renderer -> camera = camera;
 }
@@ -211,10 +215,6 @@ void updateRenderablePosition(td_renderable renderable, td_tuple delta) {
     renderable -> pos = addTuple(renderable -> pos, delta);
 }
 
-void setRenderSpace(td_renderable renderable, td_renderSpace space) {
-    renderable -> space = space;
-}
-
 SDL_Rect scaleRect(td_tuple pos, td_tuple size, td_renderer renderer) {
     float scaleFactor = renderer -> scaleFactor;
     td_tuple cameraPosition = getCameraPosition(renderer -> camera);
@@ -235,6 +235,19 @@ SDL_Rect scaleRect(td_tuple pos, td_tuple size, td_renderer renderer) {
     return scaled;
 }
 
+SDL_Rect scaleScreenSpaceRect(td_tuple pos, td_tuple size, td_renderer renderer) {
+    float scaleFactor = renderer -> scaleFactor;
+
+    SDL_Rect scaled = {
+        pos.x  * scaleFactor,
+        pos.y  * scaleFactor,
+        size.x * scaleFactor,
+        size.y * scaleFactor
+    };
+
+    return scaled;
+}
+
 void addDebugRect(td_renderer renderer, td_tuple pos, td_tuple size) {
     struct td_debugRenderable *renderable = malloc(sizeof(struct td_debugRenderable));
     SDL_Rect rect = scaleRect(pos, size, renderer);
@@ -245,8 +258,13 @@ void addDebugRect(td_renderer renderer, td_tuple pos, td_tuple size) {
 static void drawRenderable(void *renderableData, void *rendererData, char *key) {
     td_renderable renderable = (td_renderable) renderableData;
     td_renderer renderer = (td_renderer) rendererData;
+    SDL_Rect drawArea;
 
-    SDL_Rect drawArea = scaleRect(renderable -> pos, renderable -> size, renderer);
+    if(renderable -> space == WORLD_SPACE) {
+        drawArea = scaleRect(renderable -> pos, renderable -> size, renderer);
+    } else if(renderable -> space == SCREEN_SPACE) {
+        drawArea = scaleScreenSpaceRect(renderable -> pos, renderable -> size, renderer);
+    }
 
     SDL_RenderCopyEx(
         renderer -> renderer,

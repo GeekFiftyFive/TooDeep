@@ -7,7 +7,7 @@
 #include "camera.h"
 #include "../DataStructures/Tuple/tuple.h"
 
-typedef enum {UI_SPACE, WORLD_SPACE} td_renderSpace;
+typedef enum {SCREEN_SPACE, WORLD_SPACE} td_renderSpace;
 
 typedef struct td_renderer *td_renderer;
 

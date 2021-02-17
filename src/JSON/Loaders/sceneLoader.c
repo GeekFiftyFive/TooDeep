@@ -277,8 +277,18 @@ void entityCallback(td_json json, void *data) {
         float terminalVelocity = (float) getJSONDouble(entityJSON, "physics.terminal_velocity", NULL);
         setEntityTerminalVelocity(entity, terminalVelocity);
     }
+
     char *layerName = getJSONString(json, "render_info.layer", NULL); 
     int *layerIndex = getFromHashMap(dataCast -> layerIndexes, layerName);
+
+    char *renderSpace = getJSONString(json, "render_info.space", NULL);
+    if(strcmp(renderSpace, "world_space") == 0) {
+        setRenderSpace(renderable, WORLD_SPACE);
+    } else if(strcmp(renderSpace, "screen_space") == 0) {
+        setRenderSpace(renderable, SCREEN_SPACE);
+    } else {
+        logError("Invalid render space: %s\n", renderSpace);
+    }
 
     // Register collision hulls
     struct addCollisionHullCallbackData addCollisionHullCallbackData;
