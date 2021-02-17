@@ -294,7 +294,9 @@ void entityCallback(td_json json, void *data) {
     struct addCollisionHullCallbackData addCollisionHullCallbackData;
     addCollisionHullCallbackData.entity = entity;
     addCollisionHullCallbackData.mutableColliders = dataCast -> mutableColliders;
-    jsonArrayForEach(entityJSON, "physics.collision_hulls", addCollisionHullCallback, &addCollisionHullCallbackData);
+    if(jsonFieldExists(entityJSON, "physics.collision_hulls")) {
+        jsonArrayForEach(entityJSON, "physics.collision_hulls", addCollisionHullCallback, &addCollisionHullCallbackData);
+    }
 
     // Add entitiy to corresponding layer
     td_linkedList layer = dataCast -> layers[*layerIndex];
