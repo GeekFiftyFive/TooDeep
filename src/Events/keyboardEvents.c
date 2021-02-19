@@ -7,6 +7,7 @@ const char *keySymToString(SDL_Keycode sym) {
         key(SDLK_LEFT, "left_arrow");
         key(SDLK_RIGHT, "right_arrow");
         key(SDLK_SPACE, "space_bar");
+        key(SDLK_RETURN, "return");
         default: return "";
     }
 }
