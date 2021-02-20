@@ -97,8 +97,11 @@ void executeFiredEvents(lua_State *state, td_scene scene) {
 
     while((event = (struct firedEvent*) iteratorNext(eventsIterator))) {
         td_linkedList behaviors = (td_linkedList) getFromHashMap(scene -> behaviors, event -> eventName);
+        if(!behaviors) {
+            continue;
+        }
         td_iterator behaviorIterator = getIterator(behaviors);
-        td_script script;
+        td_script script = NULL;
         while((script = (td_script) iteratorNext(behaviorIterator))) {
             char *entityID = getScriptEntityID(script);
             if(strcmp(entityID, getEntityID(event -> entity)) == 0) {
