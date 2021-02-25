@@ -32,6 +32,7 @@ struct checkWorldCollisionsCallbackData {
 struct executeTimeoutCallbackData {
     td_linkedList toRemove;
     lua_State *state;
+    int currentTime;
 };
 
 struct firedEvent {
@@ -136,7 +137,8 @@ void executeTimeoutCallback(void *entryData, void *callbackData, char *key) {
     td_luaCallback callback = (td_luaCallback) entryData;
     lua_State *state = ((struct executeTimeoutCallbackData*) callbackData) -> state;
     td_linkedList toRemove = ((struct executeTimeoutCallbackData*) callbackData) -> toRemove;
-    if(shouldTriggerLuaCallback(callback, SDL_GetTicks())) {
+    int currentTime = ((struct executeTimeoutCallbackData*) callbackData) -> currentTime;
+    if(shouldTriggerLuaCallback(callback, currentTime)) {
         executeCallback(state, getLuaCallbackReference(callback));
         appendWithFree(toRemove, entryData, NULL, destroyLuaCallback);
     }
@@ -149,7 +151,7 @@ void removeTimeoutCallback(void *entryData, void *callbackData, char *key) {
 
 void executeTimeouts(lua_State *state, td_scene scene) {
     td_linkedList toRemove = createLinkedList();
-    struct executeTimeoutCallbackData callbackData = { toRemove, state };
+    struct executeTimeoutCallbackData callbackData = { toRemove, state, SDL_GetTicks() };
     listForEach(scene -> timeouts, executeTimeoutCallback, &callbackData);
     listForEach(toRemove, removeTimeoutCallback, scene -> timeouts);
     destroyLinkedList(toRemove);
