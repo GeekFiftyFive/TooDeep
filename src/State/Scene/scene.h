@@ -47,6 +47,8 @@ void registerTimeout(td_scene, int, float);
 
 void executeTimeouts(lua_State *, td_scene);
 
+void updateTicks(td_scene);
+
 void executeEventBehaviors(lua_State *, td_scene, td_hashMap, SDL_Event);
 
 td_linkedList getWorldColliders(td_scene);

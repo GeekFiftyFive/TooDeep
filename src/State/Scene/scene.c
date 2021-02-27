@@ -21,6 +21,7 @@ struct td_scene {
     td_linkedList animations;
     td_linkedList timeouts;
     td_linkedList firedEvents;
+    int currentTick;
 };
 
 struct checkWorldCollisionsCallbackData {
@@ -51,6 +52,7 @@ td_scene createScene() {
     scene -> animations = createLinkedList();
     scene -> timeouts = createLinkedList();
     scene -> firedEvents = createLinkedList();
+    scene -> currentTick = SDL_GetTicks();
     return scene;
 }
 
@@ -129,7 +131,7 @@ void physicsUpdate(td_scene scene, int delta) {
 }
 
 void registerTimeout(td_scene scene, int reference, float timeout) {
-    td_luaCallback callback = createLuaCallback(reference, SDL_GetTicks(), timeout);
+    td_luaCallback callback = createLuaCallback(reference, scene -> currentTick, timeout);
     append(scene -> timeouts, callback, NULL);
 }
 
@@ -151,7 +153,7 @@ void removeTimeoutCallback(void *entryData, void *callbackData, char *key) {
 
 void executeTimeouts(lua_State *state, td_scene scene) {
     td_linkedList toRemove = createLinkedList();
-    struct executeTimeoutCallbackData callbackData = { toRemove, state, SDL_GetTicks() };
+    struct executeTimeoutCallbackData callbackData = { toRemove, state, scene -> currentTick };
     listForEach(scene -> timeouts, executeTimeoutCallback, &callbackData);
     listForEach(toRemove, removeTimeoutCallback, scene -> timeouts);
     destroyLinkedList(toRemove);
@@ -253,6 +255,10 @@ void iterateAnimationsCallback(void *entryData, void *callbackData, char *key) {
 
 void iterateAnimations(td_scene scene) {
     listForEach(scene -> animations, iterateAnimationsCallback, NULL);
+}
+
+void updateTicks(td_scene scene) {
+    scene -> currentTick = SDL_GetTicks();
 }
 
 void executeEventBehaviors(lua_State *state, td_scene scene, td_hashMap keymap, SDL_Event e) {
