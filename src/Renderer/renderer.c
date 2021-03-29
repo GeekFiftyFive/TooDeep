@@ -75,7 +75,12 @@ td_renderer initRenderer(char *title, int width, int height, bool fullscreen) {
     }
 
     // Create the accelerated renderer
+#ifdef __APPLE__
+    // Workaround for weird issue with full screen accelerated renderer on macOS
+    sdlRenderer = SDL_CreateRenderer(window, -1, fullscreen ? SDL_RENDERER_SOFTWARE : SDL_RENDERER_ACCELERATED);
+#else
     sdlRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+#endif
 
     if(!sdlRenderer) {
         logError("Unable to initialise the renderer: %s\n", SDL_GetError());
