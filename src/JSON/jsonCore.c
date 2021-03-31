@@ -1,13 +1,9 @@
+#include <stdlib.h>
+#include <stdio.h>
 #include "jsonCore.h"
 #include "../DataStructures/HashMap/hashMap.h"
 
 typedef enum { OBJECT, ARRAY, NUMBER, BOOLEAN,  STRING } td_jsonType;
-
-struct td_jsonRoot {
-    td_jsonType type;
-    td_jsonObject object;
-    td_jsonArray array;
-};
 
 struct td_jsonObject {
     td_hashMap keyValuePairs;
@@ -15,7 +11,7 @@ struct td_jsonObject {
 
 struct td_jsonArray {
     int size;
-    td_jsonValue *values;
+    td_json *values;
 };
 
 union td_jsonNumber {
@@ -30,7 +26,15 @@ union td_innerValue {
     td_jsonBoolean boolean;
 };
 
-struct td_jsonValue {
+struct td_json {
     td_jsonType type;
     union td_innerValue value;
 };
+
+td_json parseJSON(const char *input) {
+    return NULL;
+}
+
+void dumpJSON(td_json json) {
+    
+}
