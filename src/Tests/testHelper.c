@@ -8,6 +8,7 @@
 #include "tupleTests.h"
 #include "stringUtilsTests.h"
 #include "stateMachineTests.h"
+#include "tmpJSONTests.h"
 #include "../IO/logger.h"
 
 int runTests() {
@@ -20,6 +21,7 @@ int runTests() {
     testFailures += runTupleTests();
     testFailures += runStringUtilsTests();
     testFailures += runStateMachineTests();
+    testFailures += runTmpJsonTests();
 
     if(testFailures) {
         logError("%d tests failed!\n", testFailures);

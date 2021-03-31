@@ -36,5 +36,7 @@ td_json parseJSON(const char *input) {
 }
 
 void dumpJSON(td_json json) {
-    
+    if(!json) {
+        printf("JSON Null\n");
+    }
 }
