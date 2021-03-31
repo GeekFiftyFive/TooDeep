@@ -11,5 +11,10 @@ else
 fi
 echo Running unit tests
 ./tooDeep -run-tests
+
+if [ "$1" = "--tests-only" ]; then
+    exit
+fi
+
 echo Launching game
 ./tooDeep examples/spaceship
