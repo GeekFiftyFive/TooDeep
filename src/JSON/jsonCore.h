@@ -14,4 +14,6 @@ td_json parseJSON(const char *);
 
 void dumpJSON(td_json);
 
+void destroyJSON(td_json);
+
 #endif
