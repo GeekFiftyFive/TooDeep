@@ -168,7 +168,7 @@ static td_json parseNumber(char **input) {
 
     consumeWhitespace(input);
 
-    if(**input != ',') {
+    if(!(**input == ',' || **input == '}')) {
         *input = start;
         free(string);
         return NULL;
