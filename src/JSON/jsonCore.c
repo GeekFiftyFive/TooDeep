@@ -114,7 +114,7 @@ static td_json parseObject(char **input) {
             bail(object);
         }
 
-        logInfo("parseObject string: %s\n", fieldName);
+        logDebug("parseObject string: %s\n", fieldName);
         
         (*input)++;
 
@@ -290,7 +290,7 @@ static td_json parseArray(char **input) {
 }
 
 static td_json parseValue(char **input) {
-    logInfo("Attempting to parse object\n");
+    logDebug("Attempting to parse object\n");
 
     // Attempt to parse object
     td_json json = parseObject(input);
@@ -299,27 +299,27 @@ static td_json parseValue(char **input) {
         return json;
     }
 
-    logInfo("Attempting to parse number\n");
+    logDebug("Attempting to parse number\n");
 
     // Attempt to parse number
     json = parseNumber(input);
 
     if(json) {
         if(json -> type == FNUMBER) {
-            logInfo("floatVal: %f\n", json -> value.number.floatVal);
+            logDebug("floatVal: %f\n", json -> value.number.floatVal);
         }
         if(json -> type == INUMBER) {
-            logInfo("intVal: %d\n", json -> value.number.intVal);
+            logDebug("intVal: %d\n", json -> value.number.intVal);
         }
         return json;
     }
 
-    logInfo("Attempting to parse string\n");
+    logDebug("Attempting to parse string\n");
 
     // Attempt to parse string
     char *string = parseString(input);
     if(string) {
-        logInfo("string: %s\n", string);
+        logDebug("string: %s\n", string);
         union td_innerValue value;
         value.string = string;
         json = malloc(sizeof(struct td_json));
@@ -328,22 +328,22 @@ static td_json parseValue(char **input) {
         return json;
     }
 
-    logInfo("Attempting to parse boolean\n");
+    logDebug("Attempting to parse boolean\n");
 
     // Attempt to parse boolean
     json = parseBoolean(input);
 
     if(json) {
         if(json -> value.boolean) {
-            logInfo("booleanVal: true\n");
+            logDebug("booleanVal: true\n");
         } else {
-            logInfo("booleanVal: false\n");
+            logDebug("booleanVal: false\n");
         }
 
         return json;
     }
 
-    logInfo("Attempting to parse array\n");
+    logDebug("Attempting to parse array\n");
 
     // Attempt to parse array
     json = parseArray(input);
