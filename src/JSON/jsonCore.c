@@ -27,6 +27,7 @@ union td_innerValue {
     td_jsonArray array;
     td_jsonNumber number;
     td_jsonBoolean boolean;
+    char *string;
 };
 
 struct td_json {
@@ -46,7 +47,9 @@ static void consumeWhitespace(char **input) {
 }
 
 static const char *parseString(char **input) {
+    char *start = *input;
     if(**input != '"') {
+        *input = start;
         return NULL;
     }
 
@@ -67,6 +70,7 @@ static const char *parseString(char **input) {
 
     if(count == 19 && **input != '"') {
         free(string);
+        *input = start;
         return NULL;
     }
 
@@ -90,7 +94,7 @@ static td_json parseObject(char **input) {
     td_json object = malloc(sizeof(struct td_json));
 
     // Attempt to consume fields
-    while(**input != '}') {
+    while(true) {
         if(**input == '\0') {
             logError("Expected '}'\n");
         }
@@ -113,6 +117,16 @@ static td_json parseObject(char **input) {
         }
 
         td_json value = parseValue(input);
+        consumeWhitespace(input);
+        if(**input != ',') {
+            if(**input != '}') {
+                logError("Improperly terminated object\n");
+                bail(object);
+            } else {
+                return object;
+            }
+        }
+        (*input)++;
     }
 
     return object;
@@ -146,6 +160,8 @@ static td_json parseNumber(char **input) {
         count++;
         (*input)++;
     }
+
+    string[count] = '\0';
 
     consumeWhitespace(input);
 
@@ -198,6 +214,20 @@ static td_json parseValue(char **input) {
         if(json -> type == INUMBER) {
             logInfo("intVal: %d\n", json -> value.number.intVal);
         }
+        return json;
+    }
+
+    logInfo("Attempting to parse string\n");
+
+    // Attempt to parse string
+    char *string = parseString(input);
+    if(string) {
+        logInfo("string: %s\n", string);
+        union td_innerValue value;
+        value.string = string;
+        json = malloc(sizeof(struct td_json));
+        json -> type = STRING;
+        json -> value = value;
         return json;
     }
 }
