@@ -4,6 +4,8 @@
 #include "../DataStructures/HashMap/hashMap.h"
 #include "../IO/logger.h"
 
+#define bail(object) free(object); object = NULL; break;
+
 typedef enum { OBJECT, ARRAY, NUMBER, BOOLEAN,  STRING } td_jsonType;
 
 struct td_jsonObject {
@@ -61,7 +63,7 @@ static const char *parseString(char **input) {
     }
 
     string[count] = '\0';
-    *input += count + 2;
+    (*input)++;
 
     if(count == 19 && **input != '"') {
         free(string);
@@ -93,18 +95,29 @@ static td_json parseObject(char **input) {
         consumeWhitespace(input);
 
         const char *fieldName = parseString(input);
-        logInfo("%s\n", fieldName);
+        if(**input != ':') {
+            bail(object);
+        }
+
+        logInfo("parseObject string: %s\n", fieldName);
+        
+        (*input)++;
 
         if(!fieldName) {
-            free(object);
-            object = NULL;
-            break;
+            bail(object);
         }
 
         td_json value = parseValue(input);
     }
 
     return object;
+}
+
+static td_json parseNumber(char **input) {
+    // Attempt to consume whitespace
+    consumeWhitespace(input);
+
+    logInfo("parseNumber: %c\n", **input);
 }
 
 static td_json parseValue(char **input) {
@@ -114,6 +127,9 @@ static td_json parseValue(char **input) {
     if(json) {
         return json;
     }
+
+    // Attempt to parse number
+    json = parseNumber(input);
 }
 
 td_json parseJSON(const char *input) {
