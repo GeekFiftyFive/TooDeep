@@ -241,12 +241,16 @@ static td_json parseBoolean(char **input) {
 }
 
 static td_json parseValue(char **input) {
+    logInfo("Attempting to parse object\n");
+
     // Attempt to parse object
     td_json json = parseObject(input);
 
     if(json) {
         return json;
     }
+
+    logInfo("Attempting to parse number\n");
 
     // Attempt to parse number
     json = parseNumber(input);
