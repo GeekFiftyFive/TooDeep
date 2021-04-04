@@ -2,6 +2,7 @@
 #include <string.h>
 #include "jsonCore.h"
 #include "../DataStructures/HashMap/hashMap.h"
+#include "../DataStructures/LinkedList/linkedList.h"
 #include "../IO/logger.h"
 
 #define bail(object) free(object); object = NULL; break;
@@ -14,7 +15,7 @@ struct td_jsonObject {
 
 struct td_jsonArray {
     int size;
-    td_json *values;
+    td_linkedList values;
 };
 
 union td_jsonNumber {
@@ -245,6 +246,21 @@ static td_json parseBoolean(char **input) {
     return json;
 }
 
+static td_json parseArray(char **input) {
+    char *start = *input;
+
+    consumeWhitespace(input);
+
+    if(**input != '[') {
+        *input = start;
+        return NULL;
+    }
+
+    td_linkedList list = createLinkedList();
+
+    return NULL;
+}
+
 static td_json parseValue(char **input) {
     logInfo("Attempting to parse object\n");
 
@@ -298,6 +314,12 @@ static td_json parseValue(char **input) {
 
         return json;
     }
+
+    logInfo("Attempting to parse array\n");
+
+    // Attempt to parse array
+    json = parseArray(input);
+    return json;
 }
 
 td_json parseJSON(const char *input) {
