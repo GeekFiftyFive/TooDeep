@@ -257,8 +257,27 @@ static td_json parseArray(char **input) {
     }
 
     td_linkedList list = createLinkedList();
+    int size = 0;
 
-    return NULL;
+    (*input)++;
+
+    while(**input != ']') {
+        td_json element = parseValue(input);
+        (*input)++;
+        consumeWhitespace(input);
+        size++;
+        appendWithFree(list, element, NULL, destroyJSON);
+    }
+
+    td_json json = malloc(sizeof(struct td_json));
+
+    json -> type = ARRAY;
+    td_jsonArray array = malloc(sizeof(struct td_jsonArray));
+    array -> size = size;
+    array -> values = list;
+    json -> value.array = array;
+
+    return json;
 }
 
 static td_json parseValue(char **input) {
