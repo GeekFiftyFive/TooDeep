@@ -126,9 +126,14 @@ static td_json parseObject(char **input) {
                 logError("Improperly terminated object\n");
                 bail(object);
             } else {
+                (*input)++;
                 return object;
             }
         }
+        (*input)++;
+    }
+
+    if(**input != '\0') {
         (*input)++;
     }
 
