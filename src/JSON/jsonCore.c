@@ -199,6 +199,47 @@ static td_json parseNumber(char **input) {
     return json;
 }
 
+static td_json parseBoolean(char **input) {
+    consumeWhitespace(input);
+
+    char *string = malloc(6);
+    memcpy(string, *input, 5);
+    string[5] = '\0';
+
+    bool isTrue = false;
+    bool isFalse = false;
+
+    if(strcmp(string, "false") == 0) {
+        isFalse = true;
+    } else {
+        memcpy(string, *input, 4);
+        string[4] = '\0';
+        if(strcmp(string, "true") == 0) {
+            isTrue = true;
+        }
+    }
+
+    free(string);
+
+    if(!isTrue && !isFalse) {
+        return NULL;
+    }
+
+    td_json json = malloc(sizeof(struct td_json));
+
+    if(isTrue) {
+        (*input) += 4;
+        json -> value.boolean = true;
+    }
+
+    if(isFalse) {
+        (*input) += 5;
+        json -> value.boolean = false;
+    }
+
+    return json;
+}
+
 static td_json parseValue(char **input) {
     // Attempt to parse object
     td_json json = parseObject(input);
@@ -231,6 +272,21 @@ static td_json parseValue(char **input) {
         json = malloc(sizeof(struct td_json));
         json -> type = STRING;
         json -> value = value;
+        return json;
+    }
+
+    logInfo("Attempting to parse boolean\n");
+
+    // Attempt to parse boolean
+    json = parseBoolean(input);
+
+    if(json) {
+        if(json -> value.boolean) {
+            logInfo("booleanVal: true\n");
+        } else {
+            logInfo("booleanVal: false\n");
+        }
+
         return json;
     }
 }
