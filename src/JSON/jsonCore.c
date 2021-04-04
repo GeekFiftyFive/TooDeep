@@ -269,6 +269,8 @@ static td_json parseArray(char **input) {
         appendWithFree(list, element, NULL, destroyJSON);
     }
 
+    (*input)++;
+
     td_json json = malloc(sizeof(struct td_json));
 
     json -> type = ARRAY;
