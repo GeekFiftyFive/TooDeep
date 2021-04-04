@@ -96,6 +96,9 @@ static td_json parseObject(char **input) {
     (*input)++;
 
     td_json object = malloc(sizeof(struct td_json));
+    td_hashMap pairs = createHashMap(10);
+    object -> value.object = malloc(sizeof(struct td_jsonObject));
+    object -> value.object -> keyValuePairs = pairs;
 
     // Attempt to consume fields
     while(true) {
@@ -117,10 +120,14 @@ static td_json parseObject(char **input) {
 
         if(!fieldName) {
             *input = start;
+            destroyHashMap(pairs);
             bail(object);
         }
 
         td_json value = parseValue(input);
+
+        insertIntoHashMap(pairs, fieldName, object, destroyJSON);
+
         consumeWhitespace(input);
         if(**input != ',') {
             if(**input != '}') {
