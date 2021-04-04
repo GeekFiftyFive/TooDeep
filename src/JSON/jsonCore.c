@@ -6,7 +6,7 @@
 
 #define bail(object) free(object); object = NULL; break;
 
-typedef enum { OBJECT, ARRAY, NUMBER, BOOLEAN,  STRING } td_jsonType;
+typedef enum { OBJECT, ARRAY, FNUMBER, INUMBER, BOOLEAN,  STRING } td_jsonType;
 
 struct td_jsonObject {
     td_hashMap keyValuePairs;
@@ -76,9 +76,12 @@ static const char *parseString(char **input) {
 static td_json parseValue(char **);
 
 static td_json parseObject(char **input) {
+    char *start = *input;
+
     // Attempt to consume open brace
     consumeWhitespace(input);
     if(**input != '{') {
+        *input = start;
         return NULL;
     }
 
@@ -96,6 +99,7 @@ static td_json parseObject(char **input) {
 
         const char *fieldName = parseString(input);
         if(**input != ':') {
+            *input = start;
             bail(object);
         }
 
@@ -104,6 +108,7 @@ static td_json parseObject(char **input) {
         (*input)++;
 
         if(!fieldName) {
+            *input = start;
             bail(object);
         }
 
@@ -113,11 +118,66 @@ static td_json parseObject(char **input) {
     return object;
 }
 
+static bool isNumeric(char character) {
+    return (character >= '0' && character <= '9') || character == '.';
+}
+
 static td_json parseNumber(char **input) {
+    char *start = *input;
+
     // Attempt to consume whitespace
     consumeWhitespace(input);
 
-    logInfo("parseNumber: %c\n", **input);
+    // TODO: Dynamically reallocate
+    char *string = malloc(20);
+    int count = 0;
+    bool isFloat = false;
+
+    while(isNumeric(**input) && count != 20) {
+        if(**input == '.') {
+            if(isFloat) {
+                // There are two decimal points, bail out
+                *input = start;
+                bail(string);
+            }
+            isFloat = true;
+        }
+        string[count] = **input;
+        count++;
+        (*input)++;
+    }
+
+    consumeWhitespace(input);
+
+    if(**input != ',') {
+        *input = start;
+        free(string);
+        return NULL;
+    }
+
+    td_jsonNumber number;
+    td_jsonType type;
+
+    if(isFloat) {
+        float floatVal = atof(string);
+        number.floatVal = floatVal;
+        type = FNUMBER;
+    } else {
+        int intVal = atoi(string);
+        number.intVal = intVal;
+        type = INUMBER;
+    }
+
+    free(string);
+
+    union td_innerValue innerValue;
+    innerValue.number = number;
+
+    td_json json = malloc(sizeof(struct td_json));
+    json -> type = type;
+    json -> value = innerValue;
+
+    return json;
 }
 
 static td_json parseValue(char **input) {
@@ -130,6 +190,16 @@ static td_json parseValue(char **input) {
 
     // Attempt to parse number
     json = parseNumber(input);
+
+    if(json) {
+        if(json -> type == FNUMBER) {
+            logInfo("floatVal: %f\n", json -> value.number.floatVal);
+        }
+        if(json -> type == INUMBER) {
+            logInfo("intVal: %d\n", json -> value.number.intVal);
+        }
+        return json;
+    }
 }
 
 td_json parseJSON(const char *input) {
