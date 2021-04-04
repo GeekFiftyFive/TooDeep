@@ -48,6 +48,9 @@ static void consumeWhitespace(char **input) {
 
 static const char *parseString(char **input) {
     char *start = *input;
+
+    consumeWhitespace(input);
+
     if(**input != '"') {
         *input = start;
         return NULL;
