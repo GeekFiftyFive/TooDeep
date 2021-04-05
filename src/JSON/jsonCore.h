@@ -13,9 +13,17 @@ bool isJSONObject(td_json);
 
 bool isJSONArray(td_json);
 
+bool isJSONInteger(td_json);
+
+bool isJSONFloat(td_json);
+
+int jsonToInt(td_json);
+
 td_json getJSONField(td_json, const char*);
 
 td_json parseJSON(const char *);
+
+void dumpJSONHashMap(td_json);
 
 void destroyJSON(td_json);
 

@@ -44,6 +44,28 @@ bool isJSONArray(td_json json) {
     return json -> type = ARRAY;
 }
 
+bool isJSONInteger(td_json json) {
+    return json -> type == INUMBER;
+}
+
+bool isJSONFloat(td_json json) {
+    return json -> type == FNUMBER;
+}
+
+int jsonToInt(td_json json) {
+    if(!isJSONInteger(json) && !isJSONFloat(json)) {
+        return 0;
+    }
+
+    if(isJSONInteger(json)) {
+        return json -> value.number.intVal;
+    }
+
+    if(isJSONFloat(json)) {
+        return (int) json -> value.number.floatVal;
+    }
+}
+
 td_json getJSONField(td_json json, const char* fieldName) {
     if(!isJSONObject(json)) {
         return NULL;
@@ -148,7 +170,7 @@ static td_json parseObject(char **input) {
 
         td_json value = parseValue(input);
 
-        insertIntoHashMap(pairs, fieldName, object, destroyJSON);
+        insertIntoHashMap(pairs, fieldName, value, destroyJSON);
 
         consumeWhitespace(input);
         if(**input != ',') {
@@ -163,11 +185,7 @@ static td_json parseObject(char **input) {
         (*input)++;
     }
 
-    if(**input != '\0') {
-        (*input)++;
-    }
-
-    return object;
+    return NULL;
 }
 
 static bool isNumeric(char character) {
@@ -382,6 +400,10 @@ td_json parseJSON(const char *input) {
     destroyJSON(json);
 
     return NULL;
+}
+
+void dumpJSONHashMap(td_json json) {
+    printHashMap(json -> value.object -> keyValuePairs);
 }
 
 void destroyJSON(td_json json) {
