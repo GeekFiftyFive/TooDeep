@@ -388,7 +388,7 @@ static td_json parseArray(char **input) {
         }
         consumeWhitespace(input);
         size++;
-        appendWithFree(list, element, NULL, destroyJSON);
+        append(list, element, NULL);
     }
 
     td_json *values = malloc(size * sizeof(td_json));
@@ -505,5 +505,37 @@ void jsonObjectIterate(td_json json, void (*callback)(void *, void *), void *cal
 }
 
 void destroyJSON(td_json json) {
-    // TODO: Implement
+    if(!json) {
+        return;
+    }
+
+    if(json -> fieldName) {
+        free(json -> fieldName);
+    }
+
+    switch(json -> type) {
+        case OBJECT:
+            destroyHashMap(json -> value.object -> keyValuePairs);
+            destroyLinkedList(json -> value.object -> values);
+            free(json -> value.object);
+            break;
+        case ARRAY: {
+            int size = json -> value.array -> size;
+            td_json *values = json -> value.array -> values;
+
+            for(int i = 0; i < size; i++) {
+                destroyJSON(values[i]);
+            }
+
+            free(values);
+            break;
+        }
+        case STRING:
+            free(json -> value.string);
+            break;
+        default:
+            break;
+    }
+
+    free(json);
 }
