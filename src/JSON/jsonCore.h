@@ -21,6 +21,8 @@ bool isJSONString(td_json);
 
 bool isJSONBool(td_json);
 
+bool isJSONArray(td_json);
+
 int jsonToInt(td_json);
 
 float jsonToFloat(td_json);
@@ -28,6 +30,10 @@ float jsonToFloat(td_json);
 char *jsonToString(td_json);
 
 bool jsonToBool(td_json);
+
+td_json *jsonToArray(td_json);
+
+int jsonArrayLength(td_json);
 
 td_json getJSONField(td_json, const char*);
 

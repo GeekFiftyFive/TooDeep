@@ -5,7 +5,7 @@
 #include "../JSON/jsonCore.h"
 #include "../IO/logger.h"
 
-int runjsonCoreTests() {
+int runJsonCoreTests() {
     td_json json = parseJSON(TEST_JSON);
     int failedTests = 0;
 
@@ -49,6 +49,26 @@ int runjsonCoreTests() {
     }
     failedTests += assert(true, isJSONFloat(doubleField), "Expect field \"double\" to be number with float type");
     failedTests += assert(31415, (int) (jsonToFloat(doubleField) * 10000), "Expect number value of type float to be evaluated");
+
+    // Interrogate array
+    failedTests += assert(3, jsonArrayLength(array), "Expect array to have correct length");
+
+    td_json *values = jsonToArray(array);
+    td_json val1 = values[0];
+    td_json val2 = values[1];
+    td_json val3 = values[2];
+
+    failedTests += assert(true, isJSONObject(val1), "Expect array element 1 to be object");
+    failedTests += assert(true, isJSONObject(val2), "Expect array element 2 to be object");
+    failedTests += assert(true, isJSONObject(val3), "Expect array element 3 to be object");
+
+    int intVal1 = jsonToInt(getJSONField(val1, "val"));
+    int intVal2 = jsonToInt(getJSONField(val2, "val"));
+    int intVal3 = jsonToInt(getJSONField(val3, "val"));
+
+    failedTests += assert(1, intVal1, "Expect array object 1 sub value to be correct");
+    failedTests += assert(2, intVal2, "Expect array object 2 sub value to be correct");
+    failedTests += assert(3, intVal3, "Expect array object 3 sub value to be correct");
 
     destroyJSON(json);
     return failedTests;

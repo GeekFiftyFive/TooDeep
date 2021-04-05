@@ -21,7 +21,7 @@ int runTests() {
     testFailures += runTupleTests();
     testFailures += runStringUtilsTests();
     testFailures += runStateMachineTests();
-    testFailures += runjsonCoreTests();
+    testFailures += runJsonCoreTests();
 
     if(testFailures) {
         logError("%d tests failed!\n", testFailures);

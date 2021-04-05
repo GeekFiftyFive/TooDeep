@@ -16,7 +16,7 @@ struct td_jsonObject {
 
 struct td_jsonArray {
     int size;
-    td_linkedList values;
+    td_json *values;
 };
 
 union td_jsonNumber {
@@ -106,6 +106,22 @@ bool jsonToBool(td_json json) {
     return json -> value.boolean;
 }
 
+td_json *jsonToArray(td_json json) {
+    if(!isJSONArray(json)) {
+        return NULL;
+    }
+
+    return json -> value.array -> values;
+}
+
+int jsonArrayLength(td_json json) {
+    if(!isJSONArray(json)) {
+        return 0;
+    }
+
+    return json -> value.array -> size;
+}
+
 td_json getJSONField(td_json json, const char* fieldName) {
     if(!isJSONObject(json)) {
         return NULL;
@@ -183,6 +199,7 @@ static td_json parseObject(char **input) {
     td_hashMap pairs = createHashMap(10);
     object -> value.object = malloc(sizeof(struct td_jsonObject));
     object -> value.object -> keyValuePairs = pairs;
+    object -> type = OBJECT;
 
     // Attempt to consume fields
     while(true) {
@@ -345,6 +362,8 @@ static td_json parseArray(char **input) {
         return NULL;
     }
 
+    // TODO: This is temporary because I am lazy.
+    // This should just dynamically reallocate as it goes.
     td_linkedList list = createLinkedList();
     int size = 0;
 
@@ -358,14 +377,25 @@ static td_json parseArray(char **input) {
         appendWithFree(list, element, NULL, destroyJSON);
     }
 
+    td_json *values = malloc(size * sizeof(td_json));
+    td_iterator iterator = getIterator(list);
+
+    for(int i = 0; i < size; i++) {
+        td_json value = iteratorNext(iterator);
+        values[i] = value;
+    }
+
     (*input)++;
+
+    destroyLinkedList(list);
+    destroyIterator(iterator);
 
     td_json json = malloc(sizeof(struct td_json));
 
     json -> type = ARRAY;
     td_jsonArray array = malloc(sizeof(struct td_jsonArray));
     array -> size = size;
-    array -> values = list;
+    array -> values = values;
     json -> value.array = array;
 
     return json;
