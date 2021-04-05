@@ -52,6 +52,14 @@ bool isJSONFloat(td_json json) {
     return json -> type == FNUMBER;
 }
 
+bool isJSONString(td_json json) {
+    return json -> type == STRING;
+}
+
+bool isJSONBool(td_json json) {
+    return json -> type == BOOLEAN;
+}
+
 int jsonToInt(td_json json) {
     if(!isJSONInteger(json) && !isJSONFloat(json)) {
         return 0;
@@ -64,6 +72,23 @@ int jsonToInt(td_json json) {
     if(isJSONFloat(json)) {
         return (int) json -> value.number.floatVal;
     }
+}
+
+char *jsonToString(td_json json) {
+    if(!isJSONString(json)) {
+        // TODO: Consider stringifying other types
+        return NULL;
+    }
+
+    return json -> value.string;
+}
+
+bool jsonToBool(td_json json) {
+    if(!isJSONBool(json)) {
+        return NULL;
+    }
+
+    return json -> value.boolean;
 }
 
 td_json getJSONField(td_json json, const char* fieldName) {
@@ -279,6 +304,8 @@ static td_json parseBoolean(char **input) {
     }
 
     td_json json = malloc(sizeof(struct td_json));
+
+    json -> type = BOOLEAN;
 
     if(isTrue) {
         (*input) += 4;

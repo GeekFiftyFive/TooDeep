@@ -17,7 +17,15 @@ bool isJSONInteger(td_json);
 
 bool isJSONFloat(td_json);
 
+bool isJSONString(td_json);
+
+bool isJSONBool(td_json);
+
 int jsonToInt(td_json);
+
+char *jsonToString(td_json);
+
+bool jsonToBool(td_json);
 
 td_json getJSONField(td_json, const char*);
 
