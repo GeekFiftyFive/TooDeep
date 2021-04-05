@@ -1,29 +1,9 @@
 #include <stdio.h>
 #include "jsonTests.h"
 #include "testHelper.h"
+#include "jsonTestHelper.h"
 #include "../JSON/jsonParser.h"
 #include "../IO/logger.h"
-
-#define TEST_JSON "{\
-                        \"block_1\": {\
-                            \"value_1\": 42,\
-                            \"value_2\": \"test string\",\
-                            \"block_2\": {\
-                                \"double\": 3.1415\
-                            }\
-                        },\
-                        \"array\": [\
-                            {\
-                                \"val\": 1\
-                            },\
-                            {\
-                                \"val\": 2\
-                            },\
-                            {\
-                                \"val\": 3\
-                            }\
-                        ]\
-                    }"
 
 void jsonTestCallback(td_json json, void *data) {
     int *intData = (int *) data;
