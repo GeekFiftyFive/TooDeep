@@ -5,5 +5,4 @@ A simple 2D game engine developed in C
 
 * SDL2
 * SDL2 Image
-* cJSON
 * lua5.3
