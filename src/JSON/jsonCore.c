@@ -138,11 +138,6 @@ td_json getJSONField(td_json json, const char* fieldName) {
     }
 
     td_json field = getFromHashMap(json -> value.object -> keyValuePairs, fieldName);
-
-    if(!field) {
-        logWarn("Field %s does not exist!\n", fieldName);
-    }
-
     return field;
 }
 
@@ -494,12 +489,19 @@ td_json parseJSON(const char *input) {
     return NULL;
 }
 
-void jsonObjectIterate(td_json json, void (*callback)(void *, void *, char *), void *callbackData) {
+void jsonObjectIterate(td_json json, void (*callback)(void *, void *), void *callbackData) {
     if(!isJSONObject(json)) {
         return;
     }
 
-    listForEach(json -> value.object -> values, callback, callbackData);
+    td_iterator iterator = getIterator(json -> value.object -> values);
+    td_json value;
+    
+    while(value = iteratorNext(iterator)) {
+        callback(value, callbackData);
+    }
+
+    destroyIterator(iterator);
 }
 
 void destroyJSON(td_json json) {

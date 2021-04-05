@@ -43,7 +43,7 @@ td_json getJSONField(td_json, const char*);
 
 td_json parseJSON(const char *);
 
-void jsonObjectIterate(td_json, void (*callback)(void *, void *, char *), void *);
+void jsonObjectIterate(td_json, void (*callback)(void *, void *), void *);
 
 void destroyJSON(td_json);
 

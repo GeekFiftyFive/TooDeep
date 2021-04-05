@@ -5,9 +5,15 @@
 #include "../JSON/jsonParser.h"
 #include "../IO/logger.h"
 
-void jsonTestCallback(td_json json, void *data) {
+void jsonArrayTestCallback(td_json json, void *data) {
     int *intData = (int *) data;
     int value = getJSONInt(json, "val", NULL);
+    *(intData) += value;
+}
+
+void jsonObjectTestCallback(td_json json, void *data) {
+    int *intData = (int *) data;
+    int value = getJSONInt(json, NULL, NULL);
     *(intData) += value;
 }
 
@@ -39,13 +45,18 @@ int runJsonTests() {
 
     // Call callback function on all elements of a JSON array
     int testData = 0;
-    jsonArrayForEach(json, "array", jsonTestCallback, &testData);
+    jsonArrayForEach(json, "array", jsonArrayTestCallback, &testData);
     failedTests += assert(6, testData, "callback function called for all elements of a JSON array");
+
+    // Call callback function on all fields in an object
+    testData = 0;
+    jsonObjectForEach(json, "block_3", jsonObjectTestCallback, &testData);
+    failedTests += assert(6, testData, "callback function called for all elements of a JSON object");
 
     // Ensure error value is populated
 
     // Avoid spamming logs
-    setLevelEnabled(LOG_WARN, false);    
+    setLevelEnabled(LOG_WARN, false);
 
     getJSONInt(json, "invalid_field", &error);
     failedTests += assert(JSON_ERROR, error, "Error value is populated");
