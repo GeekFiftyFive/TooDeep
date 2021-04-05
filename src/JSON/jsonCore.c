@@ -12,6 +12,7 @@ typedef enum { OBJECT, ARRAY, FNUMBER, INUMBER, BOOLEAN,  STRING } td_jsonType;
 
 struct td_jsonObject {
     td_hashMap keyValuePairs;
+    td_linkedList values;
 };
 
 struct td_jsonArray {
@@ -52,6 +53,10 @@ bool isJSONInteger(td_json json) {
 
 bool isJSONFloat(td_json json) {
     return json -> type == FNUMBER;
+}
+
+bool isJSONNumber(td_json json) {
+    return isJSONInteger(json) || isJSONFloat(json);
 }
 
 bool isJSONString(td_json json) {
@@ -165,10 +170,10 @@ static const char *parseString(char **input) {
     (*input)++;
 
     // TODO: Dynamically allocate this
-    char *string = malloc(20);
+    char *string = malloc(35);
     int count = 0;
 
-    while(**input != '"' && count != 19) {
+    while(**input != '"' && count != 34) {
         string[count] = **input;
         (*input)++;
         count++;
@@ -177,7 +182,7 @@ static const char *parseString(char **input) {
     string[count] = '\0';
     (*input)++;
 
-    if(count == 19 && **input != '"') {
+    if(count == 34 && **input != '"') {
         free(string);
         *input = start;
         return NULL;
@@ -202,8 +207,10 @@ static td_json parseObject(char **input) {
 
     td_json object = malloc(sizeof(struct td_json));
     td_hashMap pairs = createHashMap(10);
+    td_linkedList values = createLinkedList();
     object -> value.object = malloc(sizeof(struct td_jsonObject));
     object -> value.object -> keyValuePairs = pairs;
+    object -> value.object -> values = values;
     object -> type = OBJECT;
 
     // Attempt to consume fields
@@ -234,6 +241,7 @@ static td_json parseObject(char **input) {
 
         insertIntoHashMap(pairs, fieldName, value, destroyJSON);
         value -> fieldName = fieldName;
+        append(values, value, fieldName);
 
         consumeWhitespace(input);
         if(**input != ',') {
@@ -252,7 +260,7 @@ static td_json parseObject(char **input) {
 }
 
 static bool isNumeric(char character) {
-    return (character >= '0' && character <= '9') || character == '.';
+    return (character >= '0' && character <= '9') || character == '.' || character == '-';
 }
 
 static td_json parseNumber(char **input) {
@@ -262,11 +270,11 @@ static td_json parseNumber(char **input) {
     consumeWhitespace(input);
 
     // TODO: Dynamically reallocate
-    char *string = malloc(20);
+    char *string = malloc(35);
     int count = 0;
     bool isFloat = false;
 
-    while(isNumeric(**input) && count != 20) {
+    while(isNumeric(**input) && count != 35) {
         if(**input == '.') {
             if(isFloat) {
                 // There are two decimal points, bail out
@@ -284,7 +292,7 @@ static td_json parseNumber(char **input) {
 
     consumeWhitespace(input);
 
-    if(!(**input == ',' || **input == '}')) {
+    if(!(**input == ',' || **input == '}' || **input == ']')) {
         *input = start;
         free(string);
         return NULL;
@@ -375,10 +383,14 @@ static td_json parseArray(char **input) {
 
     (*input)++;
 
+    consumeWhitespace(input);
+
     while(**input != ']') {
         td_json element = parseValue(input);
         element -> fieldName = NULL;
-        (*input)++;
+        if(**input == ',') {
+            (*input)++;
+        }
         consumeWhitespace(input);
         size++;
         appendWithFree(list, element, NULL, destroyJSON);
@@ -482,8 +494,12 @@ td_json parseJSON(const char *input) {
     return NULL;
 }
 
-void dumpJSONHashMap(td_json json) {
-    printHashMap(json -> value.object -> keyValuePairs);
+void jsonObjectIterate(td_json json, void (*callback)(void *, void *, char *), void *callbackData) {
+    if(!isJSONObject(json)) {
+        return;
+    }
+
+    listForEach(json -> value.object -> values, callback, callbackData);
 }
 
 void destroyJSON(td_json json) {

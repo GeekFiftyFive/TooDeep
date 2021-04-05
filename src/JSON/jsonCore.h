@@ -17,6 +17,8 @@ bool isJSONInteger(td_json);
 
 bool isJSONFloat(td_json);
 
+bool isJSONNumber(td_json);
+
 bool isJSONString(td_json);
 
 bool isJSONBool(td_json);
@@ -41,7 +43,7 @@ td_json getJSONField(td_json, const char*);
 
 td_json parseJSON(const char *);
 
-void dumpJSONHashMap(td_json);
+void jsonObjectIterate(td_json, void (*callback)(void *, void *, char *), void *);
 
 void destroyJSON(td_json);
 

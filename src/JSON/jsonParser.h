@@ -1,13 +1,10 @@
 #ifndef JSON_PARSER
 #define JSON_PARSER
-#include <cjson/cJSON.h>
-#include <stdbool.h>
+#include "jsonCore.h"
 
 typedef enum {JSON_NO_ERROR, JSON_ERROR} td_jsonError;
 
 typedef enum {JSON_NUMBER, JSON_BOOL, JSON_STRING, JSON_OTHER} td_jsonType;
-
-typedef cJSON *td_json;
 
 td_json jsonParse(char *);
 

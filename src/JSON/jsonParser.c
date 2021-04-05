@@ -7,17 +7,7 @@
 #define delim "."
 
 td_json jsonParse(char *jsonData) {
-    td_json parsed = cJSON_Parse(jsonData);
-
-    if (!parsed) {
-        const char *error_ptr = cJSON_GetErrorPtr();
-        if (!error_ptr) {
-            logError("Error before: %s\n", error_ptr);
-            cJSON_Delete(parsed);
-            return NULL;
-        }
-    }
-
+    td_json parsed = parseJSON(jsonData);
     return parsed;
 }
 
@@ -36,7 +26,7 @@ td_json getJSONObject(td_json json, char *field, td_jsonError *error) {
             free(fieldCopy);
             return NULL;
         }
-        json = cJSON_GetObjectItemCaseSensitive(json, token);
+        json = getJSONField(json, token);
         token = strtok(NULL, delim);
     }
 
@@ -54,13 +44,13 @@ int getJSONInt(td_json json, char *field, td_jsonError *error) {
         return 0;
     }
 
-    if(!cJSON_IsNumber(obj)) {
+    if(!isJSONNumber(obj)) {
         logWarn("field at %s is not a number!\n", field);
         if(error) *(error) = JSON_ERROR;
         return 0;
     }
 
-    return obj -> valueint;
+    return jsonToInt(obj);
 }
 
 bool getJSONBool(td_json json, char *field, td_jsonError *error) {
@@ -71,15 +61,16 @@ bool getJSONBool(td_json json, char *field, td_jsonError *error) {
         return false;
     }
 
-    if(!cJSON_IsBool(obj)) {
+    if(!isJSONBool(obj)) {
         logWarn("field at %s is not a boolean!\n", field);
         if(error) *(error) = JSON_ERROR;
         return false;
     }
 
-    return (bool) obj -> valueint;
+    return jsonToBool(obj);
 }
 
+// TODO change name and type signature to float
 double getJSONDouble(td_json json, char *field, td_jsonError *error) {
     if(error) *(error) = JSON_NO_ERROR;
     td_json obj = getJSONObject(json, field, error);
@@ -88,13 +79,13 @@ double getJSONDouble(td_json json, char *field, td_jsonError *error) {
         return 0;
     }
 
-    if(!cJSON_IsNumber(obj)) {
+    if(!isJSONNumber(obj)) {
         logWarn("field at %s is not a number!\n", field);
         if(error) *(error) = JSON_ERROR;
         return (double) 0;
     }
 
-    return obj -> valuedouble;
+    return jsonToFloat(obj);
 }
 
 char *getJSONString(td_json json, char *field, td_jsonError *error) {
@@ -106,13 +97,13 @@ char *getJSONString(td_json json, char *field, td_jsonError *error) {
         return NULL;
     }
 
-    if(!cJSON_IsString(obj)) {
+    if(!isJSONString(obj)) {
         logWarn("field at %s is not a string!\n", field);
         if(error) *(error) = JSON_ERROR;
         return NULL;
     }
 
-    return obj -> valuestring;
+    return jsonToString(obj);
 }
 
 bool jsonFieldExists(td_json json, char *field) {
@@ -123,30 +114,32 @@ bool jsonFieldExists(td_json json, char *field) {
 
 bool isJSONFieldArray(td_json json, char *field) {
     td_json obj = getJSONObject(json, field, NULL);
-    return cJSON_IsArray(obj);
+    return isJSONArray(obj);
 }
 
 bool isJSONFieldBoolean(td_json json, char *field) {
     td_json obj = getJSONObject(json, field, NULL);
-    return cJSON_IsBool(obj);
+    return isJSONBool(obj);
 }
 
 void jsonArrayForEach(td_json json, char *field, void (*callback)(td_json, void *), void *data) {
     td_json obj = getJSONObject(json, field, NULL);
 
-    if(!cJSON_IsArray(obj)) {
+    if(!isJSONArray(obj)) {
         logWarn("field at %s is not an array!\n", field);
         return;
     }
 
-    int size = cJSON_GetArraySize(obj);
+    int size = jsonArrayLength(obj);
+    td_json *values = jsonToArray(obj);
 
     for(int i = 0; i < size; i++) {
-        td_json item = cJSON_GetArrayItem(obj, i);
+        td_json item = values[i];
         callback(item, data);
     }    
 }
 
+// TODO rename
 void jsonObjectForEach(td_json json, char *field, void (*callback)(td_json, void *), void *data) {
     td_json obj = getJSONObject(json, field, NULL);
 
@@ -154,49 +147,49 @@ void jsonObjectForEach(td_json json, char *field, void (*callback)(td_json, void
         return;
     }
 
-    if(!cJSON_IsObject(obj)) {
+    if(!isJSONObject(obj)) {
         logWarn("field at %s is not an object!\n", field);
         return;
     }
     
-    td_json child = obj -> child;
-
-    while(child) {
-        callback(child, data);
-        child = child -> next;
-    }
+    jsonObjectIterate(obj, callback, data);
 }
 
 td_jsonType getJSONType(td_json json) {
-    switch(json -> type) {
-        case cJSON_True:
-        case cJSON_False:
-            return JSON_BOOL;
-        case cJSON_String:
-            return JSON_STRING;
-        case cJSON_Number:
-            return JSON_NUMBER;
-        default:
-            logWarn("Could not convert cJSON type to td_jsonType");
-            return JSON_OTHER;
+    if(isJSONNumber(json)) {
+        return JSON_NUMBER;
     }
+
+    if(isJSONBool(json)) {
+        return JSON_BOOL;
+    }
+
+    if(isJSONString(json)) {
+        return JSON_STRING;
+    }
+
+    return JSON_OTHER;
 }
 
+//TODO: This seems redundant now, swap usages over to jsonCore method
 char *getFieldName(td_json json) {
-    return json -> string;
+    logWarn("DEPRECATED: Use getJSONFieldName instead of getFieldName\n");
+    return getJSONFieldName(json);
 }
 
 int getJSONArrayLength(td_json json, char* field) {
     td_json obj = getJSONObject(json, field, NULL);
 
-    if(!cJSON_IsArray(obj)) {
+    if(!isJSONArray(obj)) {
         logWarn("field at %s is not an array!\n", field);
         return 0;
     }
 
-    return cJSON_GetArraySize(obj);
+    return jsonArrayLength(obj);
 }
 
+//TODO: This seems redundant now, swap usages over to jsonCore method
 void freeJson(td_json content) {
-    cJSON_Delete(content);
+    logWarn("DEPRECATED: Use destroyJSON instead of freeJson\n");
+    destroyJSON(content);
 }

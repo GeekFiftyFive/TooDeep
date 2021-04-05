@@ -34,7 +34,7 @@ int runJsonTests() {
     failedTests += assert(JSON_NO_ERROR, error, "Non error response for valid string fetch");
 
     // Get a double value from JSON
-    failedTests += assert(3.1415, getJSONDouble(json, "block_1.block_2.double", &error), "getJSONDouble no error");
+    failedTests += assert(31415, (int) ((float) getJSONDouble(json, "block_1.block_2.double", &error) * 10000), "getJSONDouble no error");
     failedTests += assert(JSON_NO_ERROR, error, "Non error response for valid double fetch");
 
     // Call callback function on all elements of a JSON array

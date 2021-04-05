@@ -44,6 +44,13 @@ int runJsonCoreTests() {
     failedTests += assert(true, isJSONBool(value_3), "Expect field \"value_3\" to be boolean");
     failedTests += assert(true, jsonToBool(value_3), "Expect value of type boolean to be evaluated");
 
+    td_json value_4 = getJSONField(block_1, "value_4");
+    if(!value_4) {
+        failedTests += fail("Expected value_4 to exist");
+    }
+    failedTests += assert(true, isJSONInteger(value_4), "Expect field \"value_4\" to be boolean");
+    failedTests += assert(-73, jsonToInt(value_4), "Expect value of type boolean to be evaluated");
+
     td_json block_2 = getJSONField(block_1, "block_2");
     failedTests += assert(true, isJSONObject(block_2), "Expect field \"block_2\" to be object");
 
