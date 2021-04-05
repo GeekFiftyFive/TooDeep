@@ -1,4 +1,4 @@
-#include "tmpJSONTests.h"
+#include "jsonCoreTests.h"
 #include "testHelper.h"
 #include "../JSON/jsonCore.h"
 
@@ -24,8 +24,7 @@
                         ]\
                     }"
 
-int runTmpJsonTests() {
+int runjsonCoreTests() {
     td_json json = parseJSON(TEST_JSON);
-    dumpJSON(json);
     return 0;
 }

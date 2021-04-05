@@ -362,14 +362,6 @@ td_json parseJSON(const char *input) {
     return NULL;
 }
 
-void dumpJSON(td_json json) {
-    if(!json) {
-        logInfo("JSON Null\n");
-    } else {
-        logInfo("There's something here!\n");
-    }
-}
-
 void destroyJSON(td_json json) {
     // TODO: Implement
 }

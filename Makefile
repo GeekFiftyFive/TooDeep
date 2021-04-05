@@ -41,7 +41,7 @@ tooDeep: obj/main.o\
 		 obj/sceneLoader.o\
 		 obj/eventAttributes.o\
 		 obj/jsonCore.o\
-		 obj/tmpJSONTests.o
+		 obj/jsonCoreTests.o
 			cc $(ARGS) -o tooDeep obj/main.o\
 				obj/renderer.o\
 				obj/eventLoop.o\
@@ -77,7 +77,7 @@ tooDeep: obj/main.o\
 				obj/sceneLoader.o\
 				obj/eventAttributes.o\
 				obj/jsonCore.o\
-				obj/tmpJSONTests.o\
+				obj/jsonCoreTests.o\
 				$(LIBS)
 
 obj/main.o: src/main.c
@@ -185,8 +185,8 @@ obj/jsonCore.o: src/JSON/jsonCore.c src/JSON/jsonCore.h
 obj/stateMachineTests.o: src/Tests/stateMachineTests.c src/Tests/stateMachineTests.h
 			cc $(ARGS) -c src/Tests/stateMachineTests.c -o obj/stateMachineTests.o
 
-obj/tmpJSONTests.o: src/Tests/tmpJSONTests.c src/Tests/tmpJSONTests.h
-			cc $(ARGS) -c src/Tests/tmpJSONTests.c -o obj/tmpJSONTests.o
+obj/jsonCoreTests.o: src/Tests/jsonCoreTests.c src/Tests/jsonCoreTests.h
+			cc $(ARGS) -c src/Tests/jsonCoreTests.c -o obj/jsonCoreTests.o
 
 clean:
 	rm -rf obj/* && rm tooDeep
