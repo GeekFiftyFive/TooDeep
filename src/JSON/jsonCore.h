@@ -23,6 +23,8 @@ bool isJSONBool(td_json);
 
 bool isJSONArray(td_json);
 
+char *getJSONFieldName(td_json);
+
 int jsonToInt(td_json);
 
 float jsonToFloat(td_json);

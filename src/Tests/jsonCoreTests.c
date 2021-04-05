@@ -11,9 +11,13 @@ int runJsonCoreTests() {
 
     // Interrogate top level object
     failedTests += assert(true, isJSONObject(json), "Expect top JSON to be object");
+    if(getJSONFieldName(json) != NULL) {
+        failedTests += fail("Expected root level object to have null field name");
+    }
 
     td_json block_1 = getJSONField(json, "block_1");
     failedTests += assert(true, isJSONObject(block_1), "Expect field \"block_1\" to be object");
+    failedTests += assertString("block_1", getJSONFieldName(block_1), "Expected field name to be populated");
 
     td_json array = getJSONField(json, "array");
     failedTests += assert(true, isJSONArray(array), "Expect field \"array\" to be array");
@@ -69,6 +73,10 @@ int runJsonCoreTests() {
     failedTests += assert(1, intVal1, "Expect array object 1 sub value to be correct");
     failedTests += assert(2, intVal2, "Expect array object 2 sub value to be correct");
     failedTests += assert(3, intVal3, "Expect array object 3 sub value to be correct");
+
+    if(getJSONFieldName(val1) != NULL) {
+        failedTests += fail("Expected array element to have null field name");
+    }
 
     destroyJSON(json);
     return failedTests;

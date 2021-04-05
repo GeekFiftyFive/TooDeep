@@ -35,6 +35,7 @@ union td_innerValue {
 struct td_json {
     td_jsonType type;
     union td_innerValue value;
+    char *fieldName;
 };
 
 bool isJSONObject(td_json json) {
@@ -59,6 +60,10 @@ bool isJSONString(td_json json) {
 
 bool isJSONBool(td_json json) {
     return json -> type == BOOLEAN;
+}
+
+char *getJSONFieldName(td_json json) {
+    return json -> fieldName;
 }
 
 int jsonToInt(td_json json) {
@@ -228,6 +233,7 @@ static td_json parseObject(char **input) {
         td_json value = parseValue(input);
 
         insertIntoHashMap(pairs, fieldName, value, destroyJSON);
+        value -> fieldName = fieldName;
 
         consumeWhitespace(input);
         if(**input != ',') {
@@ -371,6 +377,7 @@ static td_json parseArray(char **input) {
 
     while(**input != ']') {
         td_json element = parseValue(input);
+        element -> fieldName = NULL;
         (*input)++;
         consumeWhitespace(input);
         size++;
@@ -466,6 +473,7 @@ td_json parseJSON(const char *input) {
     td_json json = parseValue(&input);
 
     if(json -> type == ARRAY || json -> type == OBJECT) {
+        json -> fieldName = NULL;
         return json;
     }
 
