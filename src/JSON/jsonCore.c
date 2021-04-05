@@ -36,6 +36,28 @@ struct td_json {
     union td_innerValue value;
 };
 
+bool isJSONObject(td_json json) {
+    return json -> type == OBJECT;
+}
+
+bool isJSONArray(td_json json) {
+    return json -> type = ARRAY;
+}
+
+td_json getJSONField(td_json json, const char* fieldName) {
+    if(!isJSONObject(json)) {
+        return NULL;
+    }
+
+    td_json field = getFromHashMap(json -> value.object -> keyValuePairs, fieldName);
+
+    if(!field) {
+        logWarn("Field %s does not exist!\n", fieldName);
+    }
+
+    return field;
+}
+
 static void consumeWhitespace(char **input) {
     while (
         **input == ' ' || 
