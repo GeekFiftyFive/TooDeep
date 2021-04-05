@@ -3,6 +3,7 @@
 #include "testHelper.h"
 #include "jsonTestHelper.h"
 #include "../JSON/jsonCore.h"
+#include "../IO/logger.h"
 
 int runjsonCoreTests() {
     td_json json = parseJSON(TEST_JSON);
@@ -41,6 +42,13 @@ int runjsonCoreTests() {
 
     td_json block_2 = getJSONField(block_1, "block_2");
     failedTests += assert(true, isJSONObject(block_2), "Expect field \"block_2\" to be object");
+
+    td_json doubleField = getJSONField(block_2, "double");
+    if(!doubleField) {
+        failedTests += fail("Expected double to exist");
+    }
+    failedTests += assert(true, isJSONFloat(doubleField), "Expect field \"double\" to be number with float type");
+    failedTests += assert(31415, (int) (jsonToFloat(doubleField) * 10000), "Expect number value of type float to be evaluated");
 
     destroyJSON(json);
     return failedTests;

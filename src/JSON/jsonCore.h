@@ -23,6 +23,8 @@ bool isJSONBool(td_json);
 
 int jsonToInt(td_json);
 
+float jsonToFloat(td_json);
+
 char *jsonToString(td_json);
 
 bool jsonToBool(td_json);

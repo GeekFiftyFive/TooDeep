@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "jsonCore.h"
 #include "../DataStructures/HashMap/hashMap.h"
 #include "../DataStructures/LinkedList/linkedList.h"
@@ -71,6 +72,20 @@ int jsonToInt(td_json json) {
 
     if(isJSONFloat(json)) {
         return (int) json -> value.number.floatVal;
+    }
+}
+
+float jsonToFloat(td_json json) {
+    if(!isJSONInteger(json) && !isJSONFloat(json)) {
+        return NAN;
+    }
+
+    if(isJSONInteger(json)) {
+        return (float) json -> value.number.intVal;
+    }
+
+    if(isJSONFloat(json)) {
+        return json -> value.number.floatVal;
     }
 }
 
