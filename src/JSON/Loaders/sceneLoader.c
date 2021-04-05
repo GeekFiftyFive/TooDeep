@@ -138,6 +138,7 @@ void behaviourCallback(td_json json, void *data) {
     struct callbackData *dataCast = (struct callbackData*) data;
 
     if(isJSONFieldArray(json, NULL)) {
+        logInfo("%s\n", fieldName);
         struct addBehaviourCallbackData behaviourCallbackData = { fieldName, dataCast };
         jsonArrayForEach(json, NULL, loadBehaviourCallback, &behaviourCallbackData);
     } else {

@@ -44,7 +44,7 @@ bool isJSONObject(td_json json) {
 }
 
 bool isJSONArray(td_json json) {
-    return json -> type = ARRAY;
+    return json -> type == ARRAY;
 }
 
 bool isJSONInteger(td_json json) {
