@@ -8,7 +8,7 @@
 
 #define bail(object) free(object); object = NULL; break;
 
-typedef enum { OBJECT, ARRAY, FNUMBER, INUMBER, BOOLEAN,  STRING } td_jsonType;
+typedef enum { OBJECT, ARRAY, FNUMBER, INUMBER, BOOLEAN, STRING } td_jsonType;
 
 struct td_jsonObject {
     td_hashMap keyValuePairs;
