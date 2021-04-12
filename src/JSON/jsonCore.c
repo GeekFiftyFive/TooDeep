@@ -4,6 +4,7 @@
 #include "jsonCore.h"
 #include "../DataStructures/HashMap/hashMap.h"
 #include "../DataStructures/LinkedList/linkedList.h"
+#include "../Utils/stringUtils.h"
 #include "../IO/logger.h"
 
 #define bail(object) free(object); object = NULL; break;
@@ -164,26 +165,27 @@ static const char *parseString(char **input) {
 
     (*input)++;
 
-    // TODO: Dynamically allocate this
-    char *string = malloc(35);
-    int count = 0;
+    td_string string = createString();
 
-    while(**input != '"' && count != 34) {
-        string[count] = **input;
+    while(**input != '"' && **input != '\0') {
+        appendChar(string, **input);
         (*input)++;
-        count++;
     }
 
-    string[count] = '\0';
     (*input)++;
 
-    if(count == 34 && **input != '"') {
-        free(string);
+    char *cString = toCString(string);
+
+    if(**input == '\0') {
+        logError("Error parsing string! Reached end of input before terminating quote\n");
+        destroyString(string);
         *input = start;
         return NULL;
     }
 
-    return string;
+    destroyString(string);
+
+    return cString;
 }
 
 static td_json parseValue(char **);
@@ -265,48 +267,49 @@ static td_json parseNumber(char **input) {
     consumeWhitespace(input);
 
     // TODO: Dynamically reallocate
-    char *string = malloc(35);
-    int count = 0;
+    td_string string = createString();
     bool isFloat = false;
 
-    while(isNumeric(**input) && count != 35) {
+    while(isNumeric(**input)) {
         if(**input == '.') {
             if(isFloat) {
                 // There are two decimal points, bail out
                 *input = start;
-                bail(string);
+                destroyString(string);
+                string = NULL;
+                break;
             }
             isFloat = true;
         }
-        string[count] = **input;
-        count++;
+        appendChar(string, **input);
         (*input)++;
     }
-
-    string[count] = '\0';
 
     consumeWhitespace(input);
 
     if(!(**input == ',' || **input == '}' || **input == ']')) {
         *input = start;
-        free(string);
+        destroyString(string);
         return NULL;
     }
 
     td_jsonNumber number;
     td_jsonType type;
 
+    char *cString = toCString(string);
+    destroyString(string);
+
     if(isFloat) {
-        float floatVal = atof(string);
+        float floatVal = atof(cString);
         number.floatVal = floatVal;
         type = FNUMBER;
     } else {
-        int intVal = atoi(string);
+        int intVal = atoi(cString);
         number.intVal = intVal;
         type = INUMBER;
     }
 
-    free(string);
+    free(cString);
 
     union td_innerValue innerValue;
     innerValue.number = number;
