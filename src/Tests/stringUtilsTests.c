@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "stringUtilsTests.h"
 #include "testHelper.h"
 #include "../Utils/stringUtils.h"
@@ -25,10 +26,13 @@ int runStringUtilsTests() {
 
     appendString(string, "part 1, ");
     appendString(string, "part 2, ");
-    appendString(string, "part 3!");
+    appendString(string, "part 3");
+    appendChar(string, '!');
 
     actual = toCString(string);
-    testFailures += assertString(CONCATINATED, actual, "appendString");
+    testFailures += assertString(CONCATINATED, actual, "string append");
+    testFailures += assert(strlen(CONCATINATED), getStringLength(string), "string length");
+
     free(actual);
 
     destroyString(string);

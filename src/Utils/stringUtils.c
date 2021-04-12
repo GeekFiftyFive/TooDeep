@@ -26,17 +26,33 @@ char *toCString(td_string string) {
     return out;
 }
 
+static void expand(td_string string, int length) {
+    if(string -> length + length > string -> capacity / 2) {
+        string -> capacity *= (2 * (1 + length / string -> capacity));
+        string -> cString = realloc(string -> cString, string -> capacity);
+    }
+}
+
 void appendString(td_string string, char *app) {
     int len = strlen(app);
 
-    if(string -> length + len > string -> capacity / 2) {
-        string -> capacity *= (2 * (1 + len / string -> capacity));
-        string -> cString = realloc(string -> cString, string -> capacity);
-    }
+    expand(string, len);
 
     memcpy(string -> cString + string -> length, app, len);
     string -> length += len;
     string -> cString[string -> length] = '\0';
+}
+
+void appendChar(td_string string, char chr) {
+    expand(string, 1);
+
+    string -> cString[string -> length] = chr;
+    string -> cString[string -> length + 1] = '\0';
+    string -> length++;
+}
+
+int getStringLength(td_string string) {
+    return string -> length;
 }
 
 void destroyString(td_string string) {
