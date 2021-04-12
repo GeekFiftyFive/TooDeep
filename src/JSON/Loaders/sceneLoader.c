@@ -104,7 +104,7 @@ void registerVariableCallback(td_json json, void *data) {
             val.intVal = 0;
     }
 
-    registerVariable(script, getFieldName(json), variableType, val);
+    registerVariable(script, getJSONFieldName(json), variableType, val);
 }
 
 void loadBehaviour(td_json json, struct callbackData *data, char *fieldName) {
@@ -134,7 +134,7 @@ void loadBehaviourCallback(td_json json, void *data) {
 }
 
 void behaviourCallback(td_json json, void *data) {
-    char *fieldName = getFieldName(json);
+    char *fieldName = getJSONFieldName(json);
     struct callbackData *dataCast = (struct callbackData*) data;
 
     if(isJSONFieldArray(json, NULL)) {

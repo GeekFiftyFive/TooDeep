@@ -55,7 +55,7 @@ void addJsonToHashmapCallback(char *path, void *rawData) {
     char *nameCpy = (char *) malloc(strlen(name) + 1);
     strcpy(nameCpy, name);
     if(error) logError("Malformed JSON! Must contain name!\n");
-    else insertIntoHashMap(data -> map, nameCpy, parsed, freeJson);
+    else insertIntoHashMap(data -> map, nameCpy, parsed, destroyJSON);
 }
 
 static char *getAction(td_json json, char* actionName) {
@@ -72,7 +72,7 @@ static char *getAction(td_json json, char* actionName) {
 
 void keymapCallback(td_json json, void *data) {
     td_hashMap keymap = (td_hashMap) data;
-    char *fieldName = getFieldName(json);
+    char *fieldName = getJSONFieldName(json);
 
     char *downAction = getAction(json, "down");
     char *upAction = getAction(json, "up");
@@ -90,7 +90,7 @@ td_hashMap loadKeymap(td_resourceLoader loader) {
     if(json) {
         td_json keymapData = jsonParse(json);
         jsonObjectForEach(keymapData, "mapping", keymapCallback, keymap);
-        freeJson(keymapData);
+        destroyJSON(keymapData);
     } else {
         logWarn("Could not load td-keymap.json\n");
     }
@@ -271,6 +271,6 @@ void destroyGame(td_game game) {
     destroyHashMap(game -> stateMachines);
     destroyScene(game -> currentScene);
     lua_close(game -> state);
-    freeJson(game -> manifest);
+    destroyJSON(game -> manifest);
     free(game);
 }
