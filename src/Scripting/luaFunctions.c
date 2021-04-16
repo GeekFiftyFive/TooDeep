@@ -546,6 +546,11 @@ void executeCallback(lua_State *state, int reference) {
     }
 }
 
+void luaPlayAudio(lua_State *state) {
+    const char *name = luaL_checkstring(state, 1);
+    logInfo("This will play the sound %s!\n", name);
+}
+
 void registerCFunctions(
     lua_State *state,
     td_game game
@@ -647,4 +652,7 @@ void registerCFunctions(
 
     lua_pushcfunction(state, luaFlipColliderHorizontally);
     lua_setglobal(state, "flipColliderHorizontally");
+
+    lua_pushcfunction(state, luaPlayAudio);
+    lua_setglobal(state, "playAudio");
 }
