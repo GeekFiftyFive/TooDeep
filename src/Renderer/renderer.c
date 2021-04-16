@@ -55,12 +55,12 @@ td_renderer initRenderer(char *title, int width, int height, bool fullscreen) {
         return NULL;
     }
 
-    if(Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
+    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
         logError("Failed to open audio!\n");
+    } else {
+        Mix_VolumeMusic(128);
+        Mix_AllocateChannels(16);
     }
-
-    Mix_VolumeMusic(128);
-    Mix_AllocateChannels(16);
 
     // The main game window
     SDL_Window *window = NULL;

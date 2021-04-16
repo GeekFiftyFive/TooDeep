@@ -1,6 +1,7 @@
 #include <lualib.h>
 #include <lauxlib.h>
 #include <string.h>
+#include "../IO/fileIO.h"
 #include "luaFunctions.h"
 #include "../State/Entity/entity.h"
 #include "../DataStructures/LinkedList/linkedList.h"
@@ -547,8 +548,15 @@ void executeCallback(lua_State *state, int reference) {
 }
 
 void luaPlayAudio(lua_State *state) {
-    const char *name = luaL_checkstring(state, 1);
-    logInfo("This will play the sound %s!\n", name);
+    td_game game = (td_game) lua_topointer(state, lua_upvalueindex(1));
+    const char *path = luaL_checkstring(state, 1);
+    char *fullPath = concatPath("assets", path);
+    td_resourceLoader loader = getResourceLoader(game);
+
+    Mix_Chunk *chunk = loadWavResource(loader, fullPath);
+    free(fullPath);
+
+    Mix_PlayChannel(-1, chunk, 0);
 }
 
 void registerCFunctions(
@@ -592,6 +600,10 @@ void registerCFunctions(
     lua_pushlightuserdata(state, scene);
     lua_pushcclosure(state, luaFireEvent, 1);
     lua_setglobal(state, "fireEvent");
+
+    lua_pushlightuserdata(state, game);
+    lua_pushcclosure(state, luaPlayAudio, 1);
+    lua_setglobal(state, "playAudio");
 
     lua_pushcfunction(state, luaGetCameraPosition);
     lua_setglobal(state, "getCameraPosition");
@@ -652,7 +664,4 @@ void registerCFunctions(
 
     lua_pushcfunction(state, luaFlipColliderHorizontally);
     lua_setglobal(state, "flipColliderHorizontally");
-
-    lua_pushcfunction(state, luaPlayAudio);
-    lua_setglobal(state, "playAudio");
 }

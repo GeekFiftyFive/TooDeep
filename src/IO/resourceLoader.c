@@ -12,6 +12,7 @@ struct td_resourceLoader {
     char *basePath;
     char *(*plaintextLoader)(char *path);
     SDL_Surface *(*surfaceLoader)(char *path);
+    Mix_Chunk *(*wavLoader)(char *path);
 };
 
 char *plaintextLoader(char *path) {
@@ -22,6 +23,10 @@ SDL_Surface *surfaceLoader(char *path) {
     return IMG_Load(path);
 }
 
+Mix_Chunk *wavLoader(char *path) {
+    return Mix_LoadWAV(path);
+}
+
 td_resourceLoader createResourceLoader(char *basePath) {
     td_resourceLoader resourceLoader = malloc(sizeof(struct td_resourceLoader));
 
@@ -29,6 +34,7 @@ td_resourceLoader createResourceLoader(char *basePath) {
     resourceLoader -> basePath = basePath;
     resourceLoader -> plaintextLoader = plaintextLoader;
     resourceLoader -> surfaceLoader = surfaceLoader;
+    resourceLoader -> wavLoader = wavLoader;
 
     return resourceLoader;
 }
@@ -79,6 +85,23 @@ SDL_Surface *loadSurfaceResource(td_resourceLoader rl, char *path) {
     return surface;
 }
 
+// TODO: Better error handling when a resource is not found
+Mix_Chunk *loadWavResource(td_resourceLoader rl, char *path) {
+    Mix_Chunk *chunk = (Mix_Chunk*) getFromHashMap(rl -> resources, path);
+
+    if(chunk) {
+        return chunk;
+    }
+
+    char *fullPath = concatPath(rl -> basePath, path);
+
+    chunk = rl -> wavLoader(fullPath);
+    insertIntoHashMap(rl -> resources, path, chunk, Mix_FreeChunk);
+
+    free(fullPath);
+    return chunk;
+}
+
 void setPlaintextLoader(td_resourceLoader rl, char *(*loader)(char *)) {
     rl -> plaintextLoader = loader;
 }
@@ -87,9 +110,14 @@ void setSurfaceLoader(td_resourceLoader rl, SDL_Surface *(*loader)(char *)) {
     rl -> surfaceLoader = loader;
 }
 
+void setWavLoader(td_resourceLoader rl, Mix_Chunk *(*loader)(char *)) {
+    rl -> wavLoader = loader;
+}
+
 void resetLoaders(td_resourceLoader rl) {
     rl -> plaintextLoader = plaintextLoader;
     rl -> surfaceLoader = surfaceLoader;
+    rl -> wavLoader = wavLoader;
 }
 
 void destroyResourceLoader(td_resourceLoader rl) {
