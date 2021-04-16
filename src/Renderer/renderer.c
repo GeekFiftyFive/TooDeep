@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <SDL2/SDL_mixer.h>
 #include "renderer.h"
 #include "../DataStructures/LinkedList/linkedList.h"
 #include "../DataStructures/HashMap/hashMap.h"
@@ -53,6 +54,13 @@ td_renderer initRenderer(char *title, int width, int height, bool fullscreen) {
         logError("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
         return NULL;
     }
+
+    if(Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
+        logError("Failed to open audio!\n");
+    }
+
+    Mix_VolumeMusic(128);
+    Mix_AllocateChannels(16);
 
     // The main game window
     SDL_Window *window = NULL;
@@ -321,6 +329,7 @@ SDL_Rect getTextureRegion(SDL_Texture *texture, SDL_Rect dimensions, int index) 
 void destroyRenderer(td_renderer renderer) {
     SDL_DestroyWindow(renderer -> window);
     SDL_DestroyRenderer(renderer -> renderer);
+    Mix_CloseAudio();
     destroyLinkedList(renderer -> renderQueue);
     destroyLinkedList(renderer -> debugLayer);
     destroyHashMap(renderer -> textures);
