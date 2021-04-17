@@ -4,7 +4,7 @@ LUA_LIB = `pkg-config --libs lua5.3`
 
 ARGS = -std=c99 -Wall -O2 -g -D_DEFAULT_SOURCE=__STRICT_ANSI__ $(LUA_INC)
 
-LIBS = -lSDL2 -lSDL2_image -lSDL2_mixer -lm $(LUA_LIB)
+LIBS = -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lm $(LUA_LIB)
 
 tooDeep: obj/main.o\
 		 obj/renderer.o\
