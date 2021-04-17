@@ -7,12 +7,17 @@
 #include "../DataStructures/HashMap/hashMap.h"
 #include "fileIO.h"
 
+#define fontLoadError(path) logError("An error was encounted whilst loading the font %s\n", path); return NULL;
+#define wavLoadError(path) logError("An error was encountered whilst loading the wav %s\n", path); return NULL;
+#define surfaceLoadError(path) logError("An error was encountered whilst loading the surface %s\n", path); return NULL;
+
 struct td_resourceLoader {
     td_hashMap resources;
     char *basePath;
     char *(*plaintextLoader)(char *path);
     SDL_Surface *(*surfaceLoader)(char *path);
     Mix_Chunk *(*wavLoader)(char *path);
+    SDL_RWops *(*genericSDLLoader)(char *path);
 };
 
 char *plaintextLoader(char *path) {
@@ -27,6 +32,11 @@ Mix_Chunk *wavLoader(char *path) {
     return Mix_LoadWAV(path);
 }
 
+SDL_RWops *genericSDLLoader(char *path) {
+    // Opens a binary file for reading
+    return SDL_RWFromFile(path, "rb");
+}
+
 td_resourceLoader createResourceLoader(char *basePath) {
     td_resourceLoader resourceLoader = malloc(sizeof(struct td_resourceLoader));
 
@@ -35,6 +45,7 @@ td_resourceLoader createResourceLoader(char *basePath) {
     resourceLoader -> plaintextLoader = plaintextLoader;
     resourceLoader -> surfaceLoader = surfaceLoader;
     resourceLoader -> wavLoader = wavLoader;
+    resourceLoader -> genericSDLLoader = genericSDLLoader;
 
     return resourceLoader;
 }
@@ -79,13 +90,16 @@ SDL_Surface *loadSurfaceResource(td_resourceLoader rl, char *path) {
     char *fullPath = concatPath(rl -> basePath, path);
 
     surface = rl -> surfaceLoader(fullPath);
-    insertIntoHashMap(rl -> resources, path, surface, SDL_FreeSurface);
-
     free(fullPath);
+
+    if(!surface) {
+        surfaceLoadError(path);
+    }
+
+    insertIntoHashMap(rl -> resources, path, surface, SDL_FreeSurface);
     return surface;
 }
 
-// TODO: Better error handling when a resource is not found
 Mix_Chunk *loadWavResource(td_resourceLoader rl, char *path) {
     Mix_Chunk *chunk = (Mix_Chunk*) getFromHashMap(rl -> resources, path);
 
@@ -96,10 +110,36 @@ Mix_Chunk *loadWavResource(td_resourceLoader rl, char *path) {
     char *fullPath = concatPath(rl -> basePath, path);
 
     chunk = rl -> wavLoader(fullPath);
-    insertIntoHashMap(rl -> resources, path, chunk, Mix_FreeChunk);
-
     free(fullPath);
+
+    if(!chunk) {
+        wavLoadError(path);
+    }
+
+    insertIntoHashMap(rl -> resources, path, chunk, Mix_FreeChunk);
     return chunk;
+}
+
+TTF_Font *loadFontResource(td_resourceLoader rl, char *path, int pnt) {
+    SDL_RWops *rawFont = (SDL_RWops*) getFromHashMap(rl -> resources, path);
+
+    if(!rawFont) {
+        char *fullPath = concatPath(rl -> basePath, path);
+        rawFont = rl -> genericSDLLoader(fullPath);
+        free(fullPath);
+        if(!rawFont) {
+            fontLoadError(path);
+        }
+        insertIntoHashMap(rl -> resources, path, rawFont, rawFont -> close);
+    }
+
+    TTF_Font *font = TTF_OpenFontRW(rawFont, 0, pnt);
+
+    if(!font) {
+        fontLoadError(path);
+    }
+
+    return font;
 }
 
 void setPlaintextLoader(td_resourceLoader rl, char *(*loader)(char *)) {
@@ -114,10 +154,15 @@ void setWavLoader(td_resourceLoader rl, Mix_Chunk *(*loader)(char *)) {
     rl -> wavLoader = loader;
 }
 
+void setGenericSDLLoader(td_resourceLoader rl, SDL_RWops *(*loader)(char *)) {
+    rl -> genericSDLLoader = loader;
+}
+
 void resetLoaders(td_resourceLoader rl) {
     rl -> plaintextLoader = plaintextLoader;
     rl -> surfaceLoader = surfaceLoader;
     rl -> wavLoader = wavLoader;
+    rl -> genericSDLLoader = genericSDLLoader;
 }
 
 void destroyResourceLoader(td_resourceLoader rl) {

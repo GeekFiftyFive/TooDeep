@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <math.h>
 #include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_ttf.h>
 #include "renderer.h"
 #include "../DataStructures/LinkedList/linkedList.h"
 #include "../DataStructures/HashMap/hashMap.h"
@@ -9,6 +8,8 @@
 #include "../Utils/stringUtils.h"
 
 #define BASE_WIDTH 1920
+
+typedef enum {SURFACE, TEXT} td_renderableType;
 
 struct td_renderer {
     SDL_Window *window;
@@ -28,6 +29,8 @@ struct td_renderable {
     td_renderSpace space;
     SDL_Rect *textureRegion;
     SDL_RendererFlip flip;
+    td_renderableType type;
+    char *message; // Only for text renderables
 };
 
 struct td_debugRenderable {
@@ -185,6 +188,7 @@ td_renderable createRenderableFromTexture(td_renderer renderer, SDL_Texture *tex
     renderable -> space  = WORLD_SPACE;
     renderable -> textureRegion = NULL;
     renderable -> flip = SDL_FLIP_NONE;
+    renderable -> type = SURFACE;
 
     return renderable;
 }
@@ -193,6 +197,10 @@ td_renderable createRenderableFromSurface(td_renderer renderer, SDL_Surface *sur
     SDL_Texture *texture = surfaceToTexture(renderer, surface);
 
     return createRenderableFromTexture(renderer, texture);
+}
+
+td_renderable createRenderableFromText(td_renderer renderer, TTF_Font *font, char *message, SDL_Color color, float height) {
+    return NULL;
 }
 
 void setRenderSpace(td_renderable renderable, td_renderSpace space) {

@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_ttf.h>
 
 typedef struct td_resourceLoader *td_resourceLoader;
 
@@ -21,6 +22,8 @@ void setPlaintextLoader(td_resourceLoader, char *(*loader)(char *));
 void setSurfaceLoader(td_resourceLoader, SDL_Surface *(*loader)(char *));
 
 void setWavLoader(td_resourceLoader, Mix_Chunk *(*loader)(char *));
+
+void setGenericSDLLoader(td_resourceLoader, SDL_RWops *(*loader)(char *));
 
 void resetLoaders(td_resourceLoader);
 

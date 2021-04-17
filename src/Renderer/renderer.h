@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include "camera.h"
 #include "../DataStructures/Tuple/tuple.h"
 
@@ -26,6 +27,8 @@ void clearRenderQueue(td_renderer);
 td_renderable createRenderableFromTexture(td_renderer, SDL_Texture *);
 
 td_renderable createRenderableFromSurface(td_renderer, SDL_Surface *);
+
+td_renderable createRenderableFromText(td_renderer, TTF_Font *, char *, SDL_Color, float);
 
 void setCurrentCamera(td_renderer, td_camera);
 
