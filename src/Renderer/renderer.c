@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_ttf.h>
 #include "renderer.h"
 #include "../DataStructures/LinkedList/linkedList.h"
 #include "../DataStructures/HashMap/hashMap.h"
@@ -50,7 +51,7 @@ td_renderer initRenderer(char *title, int width, int height, bool fullscreen) {
     }
 
     int imgFlags = IMG_INIT_PNG;
-    if( !( IMG_Init( imgFlags ) & imgFlags ) ) {
+    if(!( IMG_Init( imgFlags ) & imgFlags) ) {
         logError("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
         return NULL;
     }
@@ -62,6 +63,10 @@ td_renderer initRenderer(char *title, int width, int height, bool fullscreen) {
         Mix_AllocateChannels(16);
     }
 
+    if(TTF_Init()) {
+        logError("Failed to initialise TTF rendering\n");
+    }
+
     // The main game window
     SDL_Window *window = NULL;
 
@@ -69,12 +74,14 @@ td_renderer initRenderer(char *title, int width, int height, bool fullscreen) {
     SDL_Renderer *sdlRenderer = NULL;
 
     //Create the window
-    window = SDL_CreateWindow(  title, 
+    window = SDL_CreateWindow(
+                                title, 
                                 SDL_WINDOWPOS_UNDEFINED,
                                 SDL_WINDOWPOS_UNDEFINED,
                                 width,
                                 height,
-                                SDL_WINDOW_SHOWN );
+                                SDL_WINDOW_SHOWN
+                            );
     SDL_SetWindowFullscreen(window, fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
 
     if(!window) {
