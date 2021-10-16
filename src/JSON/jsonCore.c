@@ -266,7 +266,6 @@ static td_json parseNumber(char **input) {
     // Attempt to consume whitespace
     consumeWhitespace(input);
 
-    // TODO: Dynamically reallocate
     td_string string = createString();
     bool isFloat = false;
 
