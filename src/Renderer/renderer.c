@@ -39,7 +39,7 @@ struct td_debugRenderable {
 
 /*
     Initialises the main window and returns the renderer struct.
-    SDL must have bee initialised before this can be called.
+    SDL must have been initialised before this can be called.
 */
 td_renderer initRenderer(char *title, int width, int height, bool fullscreen) {
     if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")){
