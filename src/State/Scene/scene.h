@@ -1,7 +1,7 @@
 #ifndef TD_SCENE
 #define TD_SCENE
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <lua.h>
 #include "../Entity/entity.h"
 #include "../../DataStructures/LinkedList/linkedList.h"

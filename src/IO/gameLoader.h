@@ -2,7 +2,7 @@
 #define GAME_LOADER
 
 #include <lua.h>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include "resourceLoader.h"
 #include "../JSON/jsonParser.h"
 #include "../Renderer/renderer.h"

@@ -1,6 +1,6 @@
 #include <stdbool.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <SDL.h>
+#include <SDL_image.h>
 #include "../IO/gameLoader.h"
 #include "../IO/logger.h"
 #include "../State/Entity/entity.h"

@@ -1,10 +1,10 @@
-LUA_INC = `pkg-config --cflags lua5.3`
+INC = `pkg-config --cflags lua5.3 sdl2`
 
-LUA_LIB = `pkg-config --libs lua5.3`
+LINKS = `pkg-config --libs lua5.3 sdl2`
 
-ARGS = -std=c99 -Wall -O2 -g -D_DEFAULT_SOURCE=__STRICT_ANSI__ $(LUA_INC)
+ARGS = -std=c99 -Wall -O2 -g -D_DEFAULT_SOURCE=__STRICT_ANSI__ $(INC)
 
-LIBS = -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lm $(LUA_LIB)
+LIBS = -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lm $(LINKS)
 
 tooDeep: obj/main.o\
 		 obj/renderer.o\

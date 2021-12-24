@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <math.h>
-#include <SDL2/SDL_mixer.h>
+#include <SDL_mixer.h>
 #include "renderer.h"
 #include "../DataStructures/LinkedList/linkedList.h"
 #include "../DataStructures/HashMap/hashMap.h"

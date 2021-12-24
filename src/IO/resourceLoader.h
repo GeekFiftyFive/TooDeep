@@ -1,9 +1,9 @@
 #ifndef RESOURCE_LOADER
 #define RESOURCE_LOADER
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_ttf.h>
+#include <SDL.h>
+#include <SDL_mixer.h>
+#include <SDL_ttf.h>
 
 typedef struct td_resourceLoader *td_resourceLoader;
 
