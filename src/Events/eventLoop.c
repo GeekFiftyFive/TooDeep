@@ -19,7 +19,6 @@ void startEventLoop(td_game game) {
     int startCount = prevTicks;
 
     while(!quit) {
-        quit = e.type == SDL_QUIT;
         if(SDL_GetTicks() == prevTicks) {
             continue;
         }
@@ -40,6 +39,7 @@ void startEventLoop(td_game game) {
 
         executeTick(game, delta);
         while(SDL_PollEvent(&e)) {
+            quit = e.type == SDL_QUIT;
             executeEvent(game, e);
         }
         acc++;
